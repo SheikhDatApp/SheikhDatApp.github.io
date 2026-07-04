@@ -1,3 +1,4 @@
+"homepage": "https://SheikhDatApp.github.io/SheikhDatAppgithub.io",
 import { useState, useEffect } from "react";
 
 // Weekday → workout. JS getDay(): 0=Sun...6=Sat
