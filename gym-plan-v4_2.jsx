@@ -1,4 +1,13 @@
-"homepage": "https://SheikhDatApp.github.io/SheikhDatAppgithub.io",
+{
+  "homepage": "https://sheikhdatapp.github.io/",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  }
+}
+
 import { useState, useEffect } from "react";
 
 // Weekday → workout. JS getDay(): 0=Sun...6=Sat
