@@ -27,8 +27,8 @@
 <!--  local-only mode with no login.                                 -->
 <!-- ============================================================= -->
 <script>
-  const SUPABASE_URL = "https://npfameipmnoibhhbvdtk.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wZmFtZWlwbW5vaWJoaGJ2ZHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzMxODgsImV4cCI6MjA5ODc0OTE4OH0.c43SJ8VRGVj0Pqza_eAXnc0g1TB1SaIZwgI56Rw9oCE";
+  const SUPABASE_URL = "";
+  const SUPABASE_ANON_KEY = "";
   if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
     window._sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   } else {
@@ -1162,7 +1162,19 @@ function GymDashboard() {
       color: "#888",
       letterSpacing: 1
     }
-  }, "DAILY")), /*#__PURE__*/React.createElement("div", {
+  }, "DAILY"), window._sb && user && /*#__PURE__*/React.createElement("button", {
+    onClick: handleSignOut,
+    style: {
+      marginLeft: "auto",
+      background: "transparent",
+      border: "1px solid #333",
+      color: "#888",
+      borderRadius: 6,
+      padding: "3px 9px",
+      fontSize: 10,
+      cursor: "pointer"
+    }
+  }, "Sign out")), /*#__PURE__*/React.createElement("div", {
     style: {
       color: "#666",
       fontSize: 13,
@@ -1192,8 +1204,7 @@ function GymDashboard() {
       gap: 8,
       padding: "10px 0 0",
       alignItems: "center",
-      flexWrap: "wrap",
-      justifyContent: "space-between"
+      flexWrap: "wrap"
     }
   }, (() => {
     const cfg = !!window._sb;
@@ -1224,26 +1235,7 @@ function GymDashboard() {
       hour: "2-digit",
       minute: "2-digit"
     })}` : "");
-  })(), window._sb && user && /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 10,
-      color: "#666",
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 8
-    }
-  }, user.email, /*#__PURE__*/React.createElement("button", {
-    onClick: handleSignOut,
-    style: {
-      background: "transparent",
-      border: "1px solid #333",
-      color: "#888",
-      borderRadius: 6,
-      padding: "3px 9px",
-      fontSize: 10,
-      cursor: "pointer"
-    }
-  }, "Sign out"))))), /*#__PURE__*/React.createElement("div", {
+  })()))), /*#__PURE__*/React.createElement("div", {
     style: {
       maxWidth: 760,
       margin: "0 auto",
