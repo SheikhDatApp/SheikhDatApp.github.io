@@ -27,8 +27,8 @@
 <!--  local-only mode with no login.                                 -->
 <!-- ============================================================= -->
 <script>
-  const SUPABASE_URL = "";
-  const SUPABASE_ANON_KEY = "";
+  const SUPABASE_URL = "https://npfameipmnoibhhbvdtk.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wZmFtZWlwbW5vaWJoaGJ2ZHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzMxODgsImV4cCI6MjA5ODc0OTE4OH0.c43SJ8VRGVj0Pqza_eAXnc0g1TB1SaIZwgI56Rw9oCE";
   if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
     window._sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   } else {
