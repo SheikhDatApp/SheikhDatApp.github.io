@@ -1,0 +1,3337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#0a0a0f"/>
+<title>Recomp Protocol — Daily Tracker</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMwYTBhMGYiLz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmOTczMTYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNhODU1ZjciLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48ZyBmaWxsPSJ1cmwoI2cpIj48cmVjdCB4PSIxMCIgeT0iMjYiIHdpZHRoPSI2IiBoZWlnaHQ9IjEyIiByeD0iMiIvPjxyZWN0IHg9IjE3IiB5PSIyMSIgd2lkdGg9IjYiIGhlaWdodD0iMjIiIHJ4PSIyIi8+PHJlY3QgeD0iMjQiIHk9IjI5IiB3aWR0aD0iMTYiIGhlaWdodD0iNiIgcng9IjMiLz48cmVjdCB4PSI0MSIgeT0iMjEiIHdpZHRoPSI2IiBoZWlnaHQ9IjIyIiByeD0iMiIvPjxyZWN0IHg9IjQ4IiB5PSIyNiIgd2lkdGg9IjYiIGhlaWdodD0iMTIiIHJ4PSIyIi8+PC9nPjwvc3ZnPg=="/>
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMwYTBhMGYiLz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmOTczMTYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNhODU1ZjciLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48ZyBmaWxsPSJ1cmwoI2cpIj48cmVjdCB4PSIxMCIgeT0iMjYiIHdpZHRoPSI2IiBoZWlnaHQ9IjEyIiByeD0iMiIvPjxyZWN0IHg9IjE3IiB5PSIyMSIgd2lkdGg9IjYiIGhlaWdodD0iMjIiIHJ4PSIyIi8+PHJlY3QgeD0iMjQiIHk9IjI5IiB3aWR0aD0iMTYiIGhlaWdodD0iNiIgcng9IjMiLz48cmVjdCB4PSI0MSIgeT0iMjEiIHdpZHRoPSI2IiBoZWlnaHQ9IjIyIiByeD0iMiIvPjxyZWN0IHg9IjQ4IiB5PSIyNiIgd2lkdGg9IjYiIGhlaWdodD0iMTIiIHJ4PSIyIi8+PC9nPjwvc3ZnPg=="/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>html,body,#root{margin:0;padding:0;background:#0a0a0f;min-height:100vh}</style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- ============================================================= -->
+<!--  SUPABASE CONFIG - paste your 2 values between the quotes       -->
+<!--  Supabase dashboard -> Project Settings -> API                  -->
+<!--  URL must be JUST the domain, e.g. https://abcd.supabase.co     -->
+<!--  (no trailing slash, no /rest/v1).                               -->
+<!--  Once set, the app REQUIRES sign-in (email + password) and      -->
+<!--  each account only sees its own data. Leave blank for           -->
+<!--  local-only mode with no login.                                 -->
+<!-- ============================================================= -->
+<script>
+  const SUPABASE_URL = "https://npfameipmnoibhhbvdtk.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wZmFtZWlwbW5vaWJoaGJ2ZHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzMxODgsImV4cCI6MjA5ODc0OTE4OH0.c43SJ8VRGVj0Pqza_eAXnc0g1TB1SaIZwgI56Rw9oCE";
+  if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
+    window._sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } else {
+    window._sb = null;
+  }
+</script>
+
+<script>
+// Weekday → workout. JS getDay(): 0=Sun...6=Sat
+// Sat=Upper, Sun=Lower, Mon=Rest, Tue=Push, Wed=Pull, Thu=Legs, Fri=Rest
+const WEEK = {
+  6: "UPPER",
+  0: "LOWER",
+  1: "REST_MON",
+  2: "PUSH",
+  3: "PULL",
+  4: "LEGS",
+  5: "REST_FRI"
+};
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const DAY_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const WEEK_ORDER = [6, 0, 1, 2, 3, 4, 5];
+const workouts = {
+  PUSH: {
+    day: "Push Day",
+    label: "PUSH",
+    color: "#f97316",
+    icon: "🔺",
+    muscles: "Chest · Shoulders · Triceps",
+    focus: "Horizontal push + overhead press strength",
+    type: "train",
+    exercises: [{
+      name: "Barbell Bench Press",
+      sets: "4",
+      reps: "6–8",
+      rest: "90s",
+      tip: "Retract scapula, controlled descent 3 sec"
+    }, {
+      name: "Seated DB Shoulder Press",
+      sets: "3",
+      reps: "8–10",
+      rest: "75s",
+      tip: "Primary press — do it fresh. Don't flare elbows too wide"
+    }, {
+      name: "Incline DB Press",
+      sets: "3",
+      reps: "10–12",
+      rest: "75s",
+      tip: "30–45° incline, squeeze at top"
+    }, {
+      name: "Cable Lateral Raise",
+      sets: "3",
+      reps: "12–15",
+      rest: "60s",
+      tip: "Lead with elbow, keep slight bend — side delts drive width"
+    }, {
+      name: "Overhead DB Tricep Extension",
+      sets: "3",
+      reps: "10–12",
+      rest: "60s",
+      tip: "Keep upper arms vertical — long head stretch"
+    }, {
+      name: "Tricep Rope Pushdown",
+      sets: "3",
+      reps: "12–15",
+      rest: "60s",
+      tip: "Flare rope at bottom"
+    }]
+  },
+  PULL: {
+    day: "Pull Day",
+    label: "PULL",
+    color: "#3b82f6",
+    icon: "🔻",
+    muscles: "Back · Biceps · Rear Delts",
+    focus: "Vertical + horizontal pull, rear delt volume",
+    type: "train",
+    exercises: [{
+      name: "Weighted Pull-ups / Lat Pulldown",
+      sets: "4",
+      reps: "6–8",
+      rest: "90s",
+      tip: "Full stretch at bottom, drive elbows to hips"
+    }, {
+      name: "Barbell Bent-Over Row",
+      sets: "4",
+      reps: "6–8",
+      rest: "90s",
+      tip: "Hinge 45°, pull to lower chest"
+    }, {
+      name: "Seated Cable Row (wide grip)",
+      sets: "3",
+      reps: "10–12",
+      rest: "75s",
+      tip: "Chest proud, avoid rounding"
+    }, {
+      name: "Face Pulls",
+      sets: "3",
+      reps: "15–20",
+      rest: "60s",
+      tip: "External rotate at end — protects shoulder"
+    }, {
+      name: "DB Incline Curl",
+      sets: "3",
+      reps: "10–12",
+      rest: "60s",
+      tip: "Full stretch = more bicep activation"
+    }, {
+      name: "Hammer Curl",
+      sets: "3",
+      reps: "12–15",
+      rest: "60s",
+      tip: "Neutral grip hits brachialis"
+    }]
+  },
+  LEGS: {
+    day: "Legs Day",
+    label: "LEGS",
+    color: "#22c55e",
+    icon: "⬛",
+    muscles: "Quads · Hamstrings · Glutes · Calves",
+    focus: "Quad-focused squat pattern + posterior chain",
+    type: "train",
+    exercises: [{
+      name: "Barbell Back Squat",
+      sets: "4",
+      reps: "6–8",
+      rest: "2min",
+      tip: "FORM: Start light. Feet shoulder-width, toes out 15–30°. Brace core, push knees out over toes, hit parallel or below, drive through mid-foot. RED FLAGS: heels rising, knees caving, butt wink."
+    }, {
+      name: "Romanian Deadlift",
+      sets: "4",
+      reps: "8–10",
+      rest: "90s",
+      tip: "FORM: Start light. Soft knee bend, push hips BACK not down, bar drags close to legs, flat back. Lower to strong hamstring stretch. If you feel lower back not hamstrings — you're rounding, go lighter."
+    }, {
+      name: "Leg Press",
+      sets: "3",
+      reps: "10–12",
+      rest: "75s",
+      tip: "High foot placement = more glutes"
+    }, {
+      name: "Bulgarian Split Squat",
+      sets: "3",
+      reps: "10 each",
+      rest: "75s",
+      tip: "FORM: Bodyweight only until solid. Rear foot on bench, front foot forward so knee stays behind toes. Torso upright, lower straight down, don't let front knee cave. Hold something for balance first 2 weeks."
+    }, {
+      name: "Leg Curl (seated or lying)",
+      sets: "3",
+      reps: "10–12",
+      rest: "60s",
+      tip: "Full stretch is key — direct hamstring isolation"
+    }, {
+      name: "Calf Raise (standing)",
+      sets: "4",
+      reps: "15–20",
+      rest: "60s",
+      tip: "Pause at top & bottom"
+    }]
+  },
+  UPPER: {
+    day: "Upper Day",
+    label: "UPPER",
+    color: "#a855f7",
+    icon: "▲",
+    muscles: "Full Upper Body · Rear Delts",
+    focus: "Balanced push/pull, rear delt priority",
+    type: "train",
+    exercises: [{
+      name: "DB Flat Press",
+      sets: "3",
+      reps: "10–12",
+      rest: "75s",
+      tip: "Slight arch, feet flat"
+    }, {
+      name: "Arnold Press",
+      sets: "3",
+      reps: "10–12",
+      rest: "75s",
+      tip: "Rotate as you press — hits all 3 heads"
+    }, {
+      name: "Cable Row (close grip)",
+      sets: "3",
+      reps: "10–12",
+      rest: "75s",
+      tip: "Full retraction at end"
+    }, {
+      name: "Chest-Supported DB Row",
+      sets: "3",
+      reps: "12–15",
+      rest: "60s",
+      tip: "Eliminates lower back fatigue"
+    }, {
+      name: "Rear Delt Machine Fly",
+      sets: "3",
+      reps: "15–20",
+      rest: "60s",
+      tip: "Lead with elbows — year-round now. Machine keeps form consistent. Your rear delts need this."
+    }, {
+      name: "Barbell or EZ Curl",
+      sets: "3",
+      reps: "10–12",
+      rest: "60s",
+      tip: "Supinate at the top"
+    }]
+  },
+  LOWER: {
+    day: "Lower Day",
+    label: "LOWER",
+    color: "#eab308",
+    icon: "▼",
+    muscles: "Glutes · Hamstrings · Quads · Core",
+    focus: "Glute/hamstring focus — balances quad-heavy Legs day",
+    type: "train",
+    exercises: [{
+      name: "Deadlift (conventional)",
+      sets: "4",
+      reps: "5–6",
+      rest: "2min",
+      tip: "FORM: Very light in Month 1. Bar over mid-foot, hinge to grip, arms straight, brace hard, engage lats, push floor away — don't yank. Hips & shoulders rise together, bar drags up shins, lock out with glutes. RED FLAGS: rounding back, bar swinging out, hips shooting up first."
+    }, {
+      name: "Hip Thrust",
+      sets: "3",
+      reps: "8–12",
+      rest: "90s",
+      tip: "Best direct glute builder. Upper back on bench, chin tucked, drive hips up, squeeze glutes hard at top, full lockout. Substitute: Cable Pull-Through or high-foot Leg Press if setup is awkward."
+    }, {
+      name: "Hack Squat or Goblet Squat",
+      sets: "3",
+      reps: "10–12",
+      rest: "75s",
+      tip: "Goblet is great for form work"
+    }, {
+      name: "Walking Lunges",
+      sets: "3",
+      reps: "12 each",
+      rest: "75s",
+      tip: "Torso upright, don't let front knee cave. 12 per leg = 24 total steps"
+    }, {
+      name: "Leg Extension",
+      sets: "3",
+      reps: "12–15",
+      rest: "60s",
+      tip: "Terminal knee isolation — slow eccentric"
+    }, {
+      name: "Ab Wheel / Hanging Knee Raise",
+      sets: "3",
+      reps: "10–15",
+      rest: "60s",
+      tip: "Control the negative"
+    }]
+  },
+  REST_MON: {
+    day: "Rest Day",
+    label: "REST",
+    color: "#6b7280",
+    icon: "💤",
+    muscles: "Full body recovery",
+    focus: "Active recovery — light walk, stretch, foam roll",
+    type: "rest",
+    exercises: [{
+      name: "Light Walk / Cycling",
+      sets: "1",
+      reps: "20–30 min",
+      rest: "—",
+      tip: "Low intensity, heart rate under 120 bpm"
+    }, {
+      name: "Full Body Stretching",
+      sets: "1",
+      reps: "15 min",
+      rest: "—",
+      tip: "Focus on hips, lats, hamstrings"
+    }, {
+      name: "Foam Rolling",
+      sets: "1",
+      reps: "10–15 min",
+      rest: "—",
+      tip: "Target legs and thoracic spine"
+    }]
+  },
+  REST_FRI: {
+    day: "Rest Day",
+    label: "REST",
+    color: "#6b7280",
+    icon: "💤",
+    muscles: "Full rest · Cheat meal tonight 🍕",
+    focus: "Complete rest + Friday cheat dinner",
+    type: "rest",
+    exercises: [{
+      name: "Optional: 20 min walk",
+      sets: "—",
+      reps: "—",
+      rest: "—",
+      tip: "Keep it easy. Don't add intensity."
+    }, {
+      name: "Sleep 8+ hours",
+      sets: "—",
+      reps: "—",
+      rest: "—",
+      tip: "Muscle is built during recovery, not training"
+    }, {
+      name: "🍕 Cheat Meal (dinner)",
+      sets: "—",
+      reps: "—",
+      rest: "—",
+      tip: "800–1,000 kcal. Eat normally all day. One meal, not one day. ~40g protein. Saturday back to normal."
+    }]
+  }
+};
+const cardioByMonth = {
+  "Month 1": [{
+    weeks: "Weeks 1–2",
+    label: "No cardio",
+    detail: "Let your body adapt to 5-day training first. Adding cardio now risks burnout.",
+    color: "#6b7280"
+  }, {
+    weeks: "Weeks 3–4",
+    label: "1–2× LISS",
+    detail: "20–30 min incline treadmill walk or easy bike. HR 100–130 bpm.",
+    color: "#22c55e"
+  }],
+  "Month 2": [{
+    weeks: "Weeks 5–6",
+    label: "2–3× LISS",
+    detail: "25–35 min incline walk or bike. Never before lifting.",
+    color: "#3b82f6"
+  }, {
+    weeks: "Week 7",
+    label: "3× LISS",
+    detail: "35–40 min. Main fat-loss lever alongside diet.",
+    color: "#a855f7"
+  }, {
+    weeks: "Week 8 (Deload)",
+    label: "2× LISS only",
+    detail: "Lifting reduced. 2 easy sessions. Full recovery.",
+    color: "#6b7280"
+  }],
+  "Month 3": [{
+    weeks: "Weeks 9–10",
+    label: "3× LISS",
+    detail: "35–40 min. Incline treadmill walk ideal.",
+    color: "#f97316"
+  }, {
+    weeks: "Weeks 11–12",
+    label: "2× LISS + 1× HIIT",
+    detail: "20 min HIIT: 30s hard / 90s easy × 8 rounds.",
+    color: "#ef4444"
+  }],
+  "Month 4": [{
+    weeks: "Weeks 13–14",
+    label: "3× LISS + 1× HIIT",
+    detail: "Peak cardio. LISS on rest days, HIIT post-session once weekly.",
+    color: "#f97316"
+  }, {
+    weeks: "Week 15 (Deload)",
+    label: "2× LISS only",
+    detail: "Final deload. Easy 25 min walks.",
+    color: "#6b7280"
+  }, {
+    weeks: "Week 16",
+    label: "2× LISS",
+    detail: "Maintain easy cardio. Feel your best.",
+    color: "#22c55e"
+  }]
+};
+const ytLinks = {
+  "Barbell Bench Press": "https://www.youtube.com/results?search_query=jeff+nippard+bench+press+tutorial",
+  "Incline DB Press": "https://www.youtube.com/results?search_query=jeff+nippard+incline+dumbbell+press",
+  "Seated DB Shoulder Press": "https://www.youtube.com/results?search_query=jeff+nippard+shoulder+press+tutorial",
+  "Cable Lateral Raise": "https://www.youtube.com/results?search_query=jeff+nippard+lateral+raise+tutorial",
+  "Tricep Rope Pushdown": "https://www.youtube.com/results?search_query=jeff+nippard+tricep+pushdown+tutorial",
+  "Overhead DB Tricep Extension": "https://www.youtube.com/results?search_query=jeff+nippard+overhead+tricep+extension",
+  "Weighted Pull-ups / Lat Pulldown": "https://www.youtube.com/results?search_query=jeff+nippard+lat+pulldown+pull+up+tutorial",
+  "Barbell Bent-Over Row": "https://www.youtube.com/results?search_query=jeff+nippard+bent+over+row+tutorial",
+  "Seated Cable Row (wide grip)": "https://www.youtube.com/results?search_query=jeff+nippard+cable+row+tutorial",
+  "Face Pulls": "https://www.youtube.com/results?search_query=jeff+nippard+face+pull+tutorial",
+  "DB Incline Curl": "https://www.youtube.com/results?search_query=jeff+nippard+incline+curl+tutorial",
+  "Hammer Curl": "https://www.youtube.com/results?search_query=jeff+nippard+hammer+curl+tutorial",
+  "Barbell Back Squat": "https://www.youtube.com/results?search_query=jeff+nippard+squat+tutorial",
+  "Romanian Deadlift": "https://www.youtube.com/results?search_query=jeff+nippard+romanian+deadlift+tutorial",
+  "Leg Press": "https://www.youtube.com/results?search_query=jeff+nippard+leg+press+tutorial",
+  "Leg Curl (seated or lying)": "https://www.youtube.com/results?search_query=jeff+nippard+leg+curl+tutorial",
+  "Bulgarian Split Squat": "https://www.youtube.com/results?search_query=jeff+nippard+bulgarian+split+squat+tutorial",
+  "Calf Raise (standing)": "https://www.youtube.com/results?search_query=jeff+nippard+calf+raise+tutorial",
+  "DB Flat Press": "https://www.youtube.com/results?search_query=jeff+nippard+dumbbell+bench+press+tutorial",
+  "Cable Row (close grip)": "https://www.youtube.com/results?search_query=jeff+nippard+cable+row+tutorial",
+  "Arnold Press": "https://www.youtube.com/results?search_query=jeff+nippard+arnold+press+tutorial",
+  "Chest-Supported DB Row": "https://www.youtube.com/results?search_query=jeff+nippard+chest+supported+row+tutorial",
+  "Cable Fly or Pec Deck": "https://www.youtube.com/results?search_query=jeff+nippard+cable+fly+pec+deck+tutorial",
+  "Barbell or EZ Curl": "https://www.youtube.com/results?search_query=jeff+nippard+barbell+curl+tutorial",
+  "Rear Delt Machine Fly": "https://www.youtube.com/results?search_query=jeff+nippard+rear+delt+fly+tutorial",
+  "Deadlift (conventional)": "https://www.youtube.com/results?search_query=jeff+nippard+deadlift+tutorial",
+  "Hip Thrust": "https://www.youtube.com/results?search_query=jeff+nippard+hip+thrust+tutorial",
+  "Hack Squat or Goblet Squat": "https://www.youtube.com/results?search_query=jeff+nippard+goblet+squat+tutorial",
+  "Walking Lunges": "https://www.youtube.com/results?search_query=jeff+nippard+lunges+tutorial",
+  "Leg Extension": "https://www.youtube.com/results?search_query=jeff+nippard+leg+extension+tutorial",
+  "Plank": "https://www.youtube.com/results?search_query=jeff+nippard+plank+core+tutorial",
+  "Ab Wheel / Hanging Knee Raise": "https://www.youtube.com/results?search_query=jeff+nippard+hanging+knee+raise+ab+tutorial"
+};
+const measureGuide = [{
+  key: "waist",
+  name: "Waist",
+  color: "#22c55e",
+  primary: true,
+  guide: "Measure at navel level, standing relaxed. Don't suck in. Measure at the end of a normal exhale. Your #1 fat-loss indicator."
+}, {
+  key: "chest",
+  name: "Chest",
+  color: "#3b82f6",
+  guide: "Around the fullest part of your chest, tape under armpits across nipples. Arms relaxed, end of exhale."
+}, {
+  key: "hips",
+  name: "Hips",
+  color: "#a855f7",
+  guide: "Around the widest part of glutes/hips, feet together. Keep tape level all the way around."
+}, {
+  key: "larm",
+  name: "L Arm",
+  color: "#f97316",
+  guide: "Around the largest part of your relaxed left upper arm, hanging at your side. Measure relaxed, not flexed."
+}, {
+  key: "rarm",
+  name: "R Arm",
+  color: "#f97316",
+  guide: "Around the largest part of your relaxed right upper arm, hanging at your side. Same spot weekly."
+}, {
+  key: "lthigh",
+  name: "L Thigh",
+  color: "#eab308",
+  guide: "Around the largest part of your left thigh, mid-way hip to knee. Weight even on both legs."
+}, {
+  key: "rthigh",
+  name: "R Thigh",
+  color: "#eab308",
+  guide: "Around the largest part of your right thigh, mid-way hip to knee. Same spot each time."
+}, {
+  key: "neck",
+  name: "Neck",
+  color: "#06b6d4",
+  guide: "Around the middle of your neck, just below the Adam's apple. Snug not tight, look straight ahead."
+}];
+const START_W = 90.5,
+  GOAL_W = 80;
+function GymDashboard() {
+  const realDow = new Date().getDay();
+  const [view, setView] = React.useState("today");
+  const [selDow, setSelDow] = React.useState(realDow);
+  const [selMonth, setSelMonthRaw] = React.useState(() => {
+    try {
+      return localStorage.getItem("v41:selMonth") || "Month 1";
+    } catch {
+      return "Month 1";
+    }
+  });
+  const setSelMonth = m => {
+    setSelMonthRaw(m);
+    try {
+      localStorage.setItem("v41:selMonth", m);
+    } catch {}
+  };
+  const [openSec, setOpenSec] = React.useState({}); // collapsible section states, default collapsed
+  const toggleSec = key => setOpenSec(p => ({
+    ...p,
+    [key]: !p[key]
+  }));
+  const [expandedEx, setExpandedEx] = React.useState(null);
+  const [expandedLog, setExpandedLog] = React.useState({}); // key: `${exName}-${idx}` -> bool
+  const [setsByDay, setSetsByDay] = React.useState({}); // { "YYYY-MM-DD": { "wkKey-ei-si": true } }
+  const [weightLogs, setWeightLogs] = React.useState({});
+  const [bodyWeight, setBodyWeight] = React.useState([]);
+  const [measurements, setMeasurements] = React.useState([]);
+  const [cardioLog, setCardioLog] = React.useState([]); // [{date, type, minutes, month}]
+
+  const [syncState, setSyncState] = React.useState("local"); // local | syncing | synced | error
+  const [lastSync, setLastSync] = React.useState(null);
+
+  // ---- Auth state ----
+  const [authChecked, setAuthChecked] = React.useState(false); // has initial session check finished
+  const [user, setUser] = React.useState(null); // supabase user object or null
+  const [authMode, setAuthMode] = React.useState("signin"); // signin | signup
+  const [authEmail, setAuthEmail] = React.useState("");
+  const [authPassword, setAuthPassword] = React.useState("");
+  const [authError, setAuthError] = React.useState("");
+  const [authBusy, setAuthBusy] = React.useState(false);
+  const [authNotice, setAuthNotice] = React.useState("");
+  React.useEffect(() => {
+    if (!window._sb) {
+      setAuthChecked(true);
+      return;
+    } // local-only mode: no auth needed
+    window._sb.auth.getSession().then(({
+      data
+    }) => {
+      const u = data?.session?.user || null;
+      setUser(u);
+      if (u) window._SB_ROW_ID = u.id;
+      setAuthChecked(true);
+    });
+    const {
+      data: sub
+    } = window._sb.auth.onAuthStateChange((_event, session) => {
+      const u = session?.user || null;
+      setUser(u);
+      if (u) window._SB_ROW_ID = u.id;
+    });
+    return () => {
+      sub?.subscription?.unsubscribe?.();
+    };
+  }, []);
+  const handleAuth = async e => {
+    e.preventDefault();
+    setAuthError("");
+    setAuthNotice("");
+    setAuthBusy(true);
+    try {
+      if (authMode === "signup") {
+        const {
+          error
+        } = await window._sb.auth.signUp({
+          email: authEmail,
+          password: authPassword
+        });
+        if (error) throw error;
+        setAuthNotice("Account created. Check your email to confirm, then sign in.");
+        setAuthMode("signin");
+      } else {
+        const {
+          error
+        } = await window._sb.auth.signInWithPassword({
+          email: authEmail,
+          password: authPassword
+        });
+        if (error) throw error;
+      }
+    } catch (err) {
+      setAuthError(err.message || "Something went wrong.");
+    } finally {
+      setAuthBusy(false);
+    }
+  };
+  const handleSignOut = async () => {
+    if (!window._sb) return;
+    await window._sb.auth.signOut();
+    setUser(null);
+  };
+
+  // Load: try Supabase first, fall back to localStorage
+  React.useEffect(() => {
+    // Always hydrate from localStorage immediately (instant paint / offline)
+    try {
+      const wl = localStorage.getItem("v41:weightLogs");
+      if (wl) setWeightLogs(JSON.parse(wl));
+    } catch {}
+    try {
+      const bw = localStorage.getItem("v41:bodyWeight");
+      if (bw) setBodyWeight(JSON.parse(bw));
+    } catch {}
+    try {
+      const ms = localStorage.getItem("v41:measurements");
+      if (ms) setMeasurements(JSON.parse(ms));
+    } catch {}
+    try {
+      const cl = localStorage.getItem("v41:cardioLog");
+      if (cl) setCardioLog(JSON.parse(cl));
+    } catch {}
+    try {
+      const sd = localStorage.getItem("v41:setsByDay");
+      if (sd) {
+        const parsed = JSON.parse(sd);
+        const t = new Date().toISOString().slice(0, 10);
+        const pruned = parsed[t] ? {
+          [t]: parsed[t]
+        } : {};
+        setSetsByDay(pruned);
+        localStorage.setItem("v41:setsByDay", JSON.stringify(pruned));
+      }
+    } catch {}
+    // Then pull the latest cloud copy if Supabase is configured AND the user is signed in
+    (async () => {
+      if (!window._sb || !user) return;
+      setSyncState("syncing");
+      try {
+        const {
+          data,
+          error
+        } = await window._sb.from("logs").select("payload,updated_at").eq("user_id", window._SB_ROW_ID).maybeSingle();
+        if (error) throw error;
+        if (data && data.payload) {
+          const p = data.payload;
+          if (p.weightLogs) {
+            setWeightLogs(p.weightLogs);
+            localStorage.setItem("v41:weightLogs", JSON.stringify(p.weightLogs));
+          }
+          if (p.bodyWeight) {
+            setBodyWeight(p.bodyWeight);
+            localStorage.setItem("v41:bodyWeight", JSON.stringify(p.bodyWeight));
+          }
+          if (p.measurements) {
+            setMeasurements(p.measurements);
+            localStorage.setItem("v41:measurements", JSON.stringify(p.measurements));
+          }
+          if (p.cardioLog) {
+            setCardioLog(p.cardioLog);
+            localStorage.setItem("v41:cardioLog", JSON.stringify(p.cardioLog));
+          }
+          if (p.setsByDay) {
+            const t = new Date().toISOString().slice(0, 10);
+            const pr = p.setsByDay[t] ? {
+              [t]: p.setsByDay[t]
+            } : {};
+            setSetsByDay(pr);
+            localStorage.setItem("v41:setsByDay", JSON.stringify(pr));
+          }
+          setLastSync(data.updated_at ? new Date(data.updated_at) : new Date());
+        }
+        setSyncState("synced");
+      } catch (e) {
+        setSyncState("error");
+      }
+    })();
+  }, [user]);
+
+  // Debounced cloud push whenever data changes
+  const cloudTimer = React.useRef(null);
+  const pushCloud = (over = {}) => {
+    if (!window._sb || !user) return;
+    clearTimeout(cloudTimer.current);
+    cloudTimer.current = setTimeout(async () => {
+      setSyncState("syncing");
+      const payload = {
+        weightLogs: over.weightLogs ?? weightLogs,
+        bodyWeight: over.bodyWeight ?? bodyWeight,
+        measurements: over.measurements ?? measurements,
+        cardioLog: over.cardioLog ?? cardioLog,
+        setsByDay: over.setsByDay ?? setsByDay
+      };
+      try {
+        const {
+          error
+        } = await window._sb.from("logs").upsert({
+          user_id: window._SB_ROW_ID,
+          payload,
+          updated_at: new Date().toISOString()
+        });
+        if (error) throw error;
+        setSyncState("synced");
+        setLastSync(new Date());
+      } catch (e) {
+        setSyncState("error");
+      }
+    }, 800);
+  };
+
+  // persist writes to localStorage instantly + queues a cloud push
+  const persist = (k, v) => {
+    try {
+      localStorage.setItem(k, JSON.stringify(v));
+    } catch {}
+    const map = {
+      "v41:weightLogs": "weightLogs",
+      "v41:bodyWeight": "bodyWeight",
+      "v41:measurements": "measurements",
+      "v41:cardioLog": "cardioLog",
+      "v41:setsByDay": "setsByDay"
+    };
+    pushCloud({
+      [map[k]]: v
+    });
+  };
+  const today = () => new Date().toISOString().slice(0, 10);
+  const wkKey = WEEK[selDow];
+  const w = workouts[wkKey];
+  const isToday = selDow === realDow;
+  const toggleSet = (ei, si) => {
+    const t = today();
+    const k = `${wkKey}-${ei}-${si}`;
+    const day = {
+      ...(setsByDay[t] || {})
+    };
+    day[k] = !day[k];
+    const next = {
+      [t]: day
+    }; // keep only today's checks
+    setSetsByDay(next);
+    persist("v41:setsByDay", next);
+  };
+  const isSetChecked = (ei, si) => !!(setsByDay[today()] || {})[`${wkKey}-${ei}-${si}`];
+
+  // Today's entry index for an exercise (single entry per day in Exercises tab)
+  const todayEntryIdx = exName => (weightLogs[exName] || []).findIndex(e => e.date === today());
+  const ensureTodayEntry = (exName, sets) => {
+    let idx = todayEntryIdx(exName);
+    if (idx === -1) {
+      const entry = {
+        date: today(),
+        sets: Array.from({
+          length: sets
+        }, () => ({
+          w: "",
+          r: ""
+        }))
+      };
+      const arr = [...(weightLogs[exName] || []), entry];
+      const next = {
+        ...weightLogs,
+        [exName]: arr
+      };
+      setWeightLogs(next);
+      persist("v41:weightLogs", next);
+      return arr.length - 1;
+    }
+    return idx;
+  };
+
+  // Benchmark: highest weight ever logged for an exercise + reps at that weight
+  const benchmark = exName => {
+    const entries = weightLogs[exName] || [];
+    let best = null;
+    entries.forEach(en => (en.sets || []).forEach(s => {
+      const wv = parseFloat(s.w);
+      const rv = parseInt(s.r);
+      if (!isNaN(wv) && wv > 0 && (!best || wv > best.w)) best = {
+        w: wv,
+        r: isNaN(rv) ? null : rv,
+        date: en.date
+      };
+    }));
+    return best;
+  };
+  const addWeightEntry = (exName, sets) => {
+    const entry = {
+      date: today(),
+      sets: Array.from({
+        length: sets
+      }, () => ({
+        w: "",
+        r: ""
+      }))
+    };
+    const arr = [...(weightLogs[exName] || []), entry];
+    const next = {
+      ...weightLogs,
+      [exName]: arr
+    };
+    setWeightLogs(next);
+    persist("v41:weightLogs", next);
+    setExpandedLog(p => ({
+      ...p,
+      [`${exName}-${arr.length - 1}`]: true
+    })); // open the new one
+  };
+  const updateWeightEntry = (exName, idx, si, field, value) => {
+    const arr = [...(weightLogs[exName] || [])];
+    if (si === -1) arr[idx] = {
+      ...arr[idx],
+      date: value
+    };else arr[idx] = {
+      ...arr[idx],
+      sets: arr[idx].sets.map((s, i) => i === si ? {
+        ...s,
+        [field]: value
+      } : s)
+    };
+    const next = {
+      ...weightLogs,
+      [exName]: arr
+    };
+    setWeightLogs(next);
+    persist("v41:weightLogs", next);
+  };
+  const deleteWeightEntry = (exName, idx) => {
+    const next = {
+      ...weightLogs,
+      [exName]: (weightLogs[exName] || []).filter((_, i) => i !== idx)
+    };
+    setWeightLogs(next);
+    persist("v41:weightLogs", next);
+  };
+  const addBodyWeight = () => {
+    const next = [...bodyWeight, {
+      date: today(),
+      kg: ""
+    }];
+    setBodyWeight(next);
+    persist("v41:bodyWeight", next);
+  };
+  const updateBodyWeight = (idx, field, val) => {
+    const next = bodyWeight.map((e, i) => i === idx ? {
+      ...e,
+      [field]: val
+    } : e);
+    setBodyWeight(next);
+    persist("v41:bodyWeight", next);
+  };
+  const deleteBodyWeight = idx => {
+    const next = bodyWeight.filter((_, i) => i !== idx);
+    setBodyWeight(next);
+    persist("v41:bodyWeight", next);
+  };
+  const addMeasurement = () => {
+    const b = {
+      date: today()
+    };
+    measureGuide.forEach(m => b[m.key] = "");
+    const next = [...measurements, b];
+    setMeasurements(next);
+    persist("v41:measurements", next);
+  };
+  const updateMeasurement = (idx, key, val) => {
+    const next = measurements.map((e, i) => i === idx ? {
+      ...e,
+      [key]: val
+    } : e);
+    setMeasurements(next);
+    persist("v41:measurements", next);
+  };
+  const deleteMeasurement = idx => {
+    const next = measurements.filter((_, i) => i !== idx);
+    setMeasurements(next);
+    persist("v41:measurements", next);
+  };
+  const addCardio = () => {
+    const next = [...cardioLog, {
+      date: today(),
+      type: "LISS",
+      minutes: "",
+      month: selMonth
+    }];
+    setCardioLog(next);
+    persist("v41:cardioLog", next);
+  };
+  const updateCardio = (idx, field, val) => {
+    const next = cardioLog.map((e, i) => i === idx ? {
+      ...e,
+      [field]: val
+    } : e);
+    setCardioLog(next);
+    persist("v41:cardioLog", next);
+  };
+  const deleteCardio = idx => {
+    const next = cardioLog.filter((_, i) => i !== idx);
+    setCardioLog(next);
+    persist("v41:cardioLog", next);
+  };
+
+  // Week boundaries (Sat-start week to match training split)
+  const weekStart = (offset = 0) => {
+    const d = new Date();
+    const dow = d.getDay(); // 0 Sun..6 Sat
+    const daysSinceSat = (dow + 1) % 7; // Sat->0, Sun->1...
+    d.setDate(d.getDate() - daysSinceSat - offset * 7);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  };
+  const inWeek = (dateStr, offset = 0) => {
+    const d = new Date(dateStr + "T00:00:00");
+    const s = weekStart(offset);
+    const e = new Date(s);
+    e.setDate(e.getDate() + 7);
+    return d >= s && d < e;
+  };
+  // Aggregate total volume (sum of weight*reps) per exercise for a given week offset
+  const weekVolume = offset => {
+    let total = 0;
+    Object.values(weightLogs).forEach(entries => {
+      (entries || []).forEach(en => {
+        if (inWeek(en.date, offset)) {
+          en.sets.forEach(s => {
+            const wv = parseFloat(s.w) || 0,
+              rv = parseFloat(s.r) || 0;
+            total += wv * rv;
+          });
+        }
+      });
+    });
+    return total;
+  };
+  const weekSessions = offset => {
+    const dates = new Set();
+    Object.values(weightLogs).forEach(entries => (entries || []).forEach(en => {
+      if (inWeek(en.date, offset)) dates.add(en.date);
+    }));
+    return dates.size;
+  };
+  const weekCardioMin = offset => cardioLog.filter(c => inWeek(c.date, offset)).reduce((a, c) => a + (parseFloat(c.minutes) || 0), 0);
+  const weekBodyWeight = offset => {
+    const e = bodyWeight.filter(b => b.kg !== "" && inWeek(b.date, offset));
+    return e.length ? e.reduce((a, b) => a + parseFloat(b.kg), 0) / e.length : null;
+  };
+  const thisVol = weekVolume(0),
+    lastVol = weekVolume(1);
+  const volDelta = lastVol > 0 ? (thisVol - lastVol) / lastVol * 100 : null;
+  const thisSess = weekSessions(0),
+    lastSess = weekSessions(1);
+  const thisCardio = weekCardioMin(0),
+    lastCardio = weekCardioMin(1);
+  const thisBW = weekBodyWeight(0),
+    lastBW = weekBodyWeight(1);
+  const bwDelta = thisBW != null && lastBW != null ? thisBW - lastBW : null;
+  const dayGroups = [{
+    key: "PUSH",
+    label: "Push",
+    color: "#f97316"
+  }, {
+    key: "PULL",
+    label: "Pull",
+    color: "#3b82f6"
+  }, {
+    key: "LEGS",
+    label: "Legs",
+    color: "#22c55e"
+  }, {
+    key: "UPPER",
+    label: "Upper",
+    color: "#a855f7"
+  }, {
+    key: "LOWER",
+    label: "Lower",
+    color: "#eab308"
+  }];
+  const allExerciseNames = (() => {
+    const names = [];
+    Object.values(workouts).forEach(wk => (wk.exercises || []).forEach(ex => {
+      if (!names.includes(ex.name) && (parseInt(ex.sets) || 0) > 0) names.push(ex.name);
+    }));
+    return names;
+  })();
+  const latestW = bodyWeight.filter(e => e.kg !== "").slice(-1)[0]?.kg;
+  const lost = latestW ? (START_W - parseFloat(latestW)).toFixed(1) : "0.0";
+  const remaining = latestW ? (parseFloat(latestW) - GOAL_W).toFixed(1) : (START_W - GOAL_W).toFixed(1);
+  const Card = ({
+    children,
+    style = {}
+  }) => /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#111118",
+      border: "1px solid #1e1e2e",
+      borderRadius: 14,
+      padding: 20,
+      ...style
+    }
+  }, children);
+  const Bebas = ({
+    children,
+    size = 22,
+    color,
+    style = {}
+  }) => /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Bebas Neue',sans-serif",
+      letterSpacing: 2,
+      fontSize: size,
+      color,
+      ...style
+    }
+  }, children);
+
+  // Auth gate: if Supabase is configured but no user is signed in yet, show login/signup instead of the app
+  const needsAuth = !!window._sb && authChecked && !user;
+  const stillCheckingAuth = !!window._sb && !authChecked;
+  if (stillCheckingAuth) {
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: "'DM Sans',system-ui,sans-serif",
+        background: "#0a0a0f",
+        minHeight: "100vh",
+        color: "#666",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 13
+      }
+    }, "Loading…");
+  }
+  if (needsAuth) {
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: "'DM Sans',system-ui,sans-serif",
+        background: "#0a0a0f",
+        minHeight: "100vh",
+        color: "#e8e8f0",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 20
+      }
+    }, /*#__PURE__*/React.createElement("style", null, `
+          @import url(\'https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap\');
+          *{box-sizing:border-box}
+          .authInput{width:100%;background:#0a0a0f;border:1px solid #2a2a3a;border-radius:8px;color:#e8e8f0;padding:11px 14px;font-size:14px;font-family:\'DM Sans\',sans-serif;margin-bottom:12px}
+          .authInput:focus{outline:none;border-color:#a855f7}
+          .authBtn{width:100%;background:linear-gradient(90deg,#f97316,#a855f7);border:none;color:#fff;border-radius:8px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:\'DM Sans\',sans-serif}
+          .authBtn:disabled{opacity:.6;cursor:default}
+          .authSwitch{background:transparent;border:none;color:#a855f7;font-size:12px;cursor:pointer;text-decoration:underline;font-family:\'DM Sans\',sans-serif}
+        `), /*#__PURE__*/React.createElement("div", {
+      style: {
+        maxWidth: 360,
+        width: "100%"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        textAlign: "center",
+        marginBottom: 28
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: "'Bebas Neue'",
+        fontSize: 34,
+        letterSpacing: 2,
+        background: "linear-gradient(90deg,#f97316,#a855f7)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent"
+      }
+    }, "RECOMP PROTOCOL"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        color: "#666",
+        fontSize: 12,
+        marginTop: 4
+      }
+    }, authMode === "signup" ? "Create your account" : "Sign in to your tracker")), /*#__PURE__*/React.createElement("form", {
+      onSubmit: handleAuth,
+      style: {
+        background: "#111118",
+        border: "1px solid #1e1e2e",
+        borderRadius: 14,
+        padding: 24
+      }
+    }, /*#__PURE__*/React.createElement("input", {
+      className: "authInput",
+      type: "email",
+      required: true,
+      placeholder: "Email",
+      value: authEmail,
+      onChange: e => setAuthEmail(e.target.value),
+      autoComplete: "email"
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "authInput",
+      type: "password",
+      required: true,
+      minLength: 6,
+      placeholder: "Password",
+      value: authPassword,
+      onChange: e => setAuthPassword(e.target.value),
+      autoComplete: authMode === "signup" ? "new-password" : "current-password"
+    }), authError && /*#__PURE__*/React.createElement("div", {
+      style: {
+        color: "#ef4444",
+        fontSize: 12,
+        marginBottom: 12
+      }
+    }, authError), authNotice && /*#__PURE__*/React.createElement("div", {
+      style: {
+        color: "#22c55e",
+        fontSize: 12,
+        marginBottom: 12
+      }
+    }, authNotice), /*#__PURE__*/React.createElement("button", {
+      className: "authBtn",
+      type: "submit",
+      disabled: authBusy
+    }, authBusy ? "Please wait…" : authMode === "signup" ? "Sign up" : "Sign in")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        textAlign: "center",
+        marginTop: 16
+      }
+    }, authMode === "signup" ? /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12,
+        color: "#666"
+      }
+    }, "Already have an account? ", /*#__PURE__*/React.createElement("button", {
+      className: "authSwitch",
+      onClick: () => {
+        setAuthMode("signin");
+        setAuthError("");
+        setAuthNotice("");
+      }
+    }, "Sign in")) : /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12,
+        color: "#666"
+      }
+    }, "New here? ", /*#__PURE__*/React.createElement("button", {
+      className: "authSwitch",
+      onClick: () => {
+        setAuthMode("signup");
+        setAuthError("");
+        setAuthNotice("");
+      }
+    }, "Create an account")))));
+  }
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'DM Sans',system-ui,sans-serif",
+      background: "#0a0a0f",
+      minHeight: "100vh",
+      color: "#e8e8f0"
+    }
+  }, /*#__PURE__*/React.createElement("style", null, `
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap');
+        *{box-sizing:border-box;margin:0;padding:0}
+        ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:#111}::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+        .hov:hover{background:rgba(255,255,255,.04)}
+        .daybtn:hover{transform:translateY(-2px)}
+        .tabBtn{border:none;cursor:pointer;transition:all .2s;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;white-space:nowrap}
+        .pbar{height:3px;background:linear-gradient(90deg,#f97316,#a855f7,#22c55e,#06b6d4);border-radius:2px;background-size:200% 100%;animation:sh 3s linear infinite}
+        @keyframes sh{0%{background-position:0%}100%{background-position:200%}}
+        .chev{transition:transform .2s;display:inline-block}
+        input,select{font-family:'DM Sans',sans-serif}
+        .num-input{background:#0a0a0f;border:1px solid #2a2a3a;border-radius:6px;color:#e8e8f0;padding:6px 8px;font-size:13px;width:100%;text-align:center}
+        .num-input:focus{outline:none;border-color:#a855f7}
+        .add-btn{background:#1e1e3e;border:1px solid #3e3e6e;color:#c4b5fd;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+        .add-btn:hover{background:#2a2a4e}
+        .del-btn{background:transparent;border:none;color:#666;cursor:pointer;font-size:14px;padding:2px 6px}
+        .del-btn:hover{color:#ef4444}
+        select{background:#1a1a2a;border:1px solid #3e3e6e;border-radius:8px;color:#c4b5fd;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer}
+      `), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "linear-gradient(135deg,#0d0d18,#12101a)",
+      borderBottom: "1px solid #1e1e2e",
+      padding: "20px 20px 0"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      maxWidth: 760,
+      margin: "0 auto"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 12,
+      marginBottom: 4
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'Bebas Neue'",
+      fontSize: 30,
+      letterSpacing: 2,
+      background: "linear-gradient(90deg,#f97316,#a855f7)",
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent"
+    }
+  }, "RECOMP PROTOCOL"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#1e1e2e",
+      border: "1px solid #2e2e4e",
+      borderRadius: 6,
+      padding: "3px 10px",
+      fontSize: 11,
+      color: "#888",
+      letterSpacing: 1
+    }
+  }, "DAILY"), window._sb && user && /*#__PURE__*/React.createElement("button", {
+    onClick: handleSignOut,
+    style: {
+      marginLeft: "auto",
+      background: "transparent",
+      border: "1px solid #333",
+      color: "#888",
+      borderRadius: 6,
+      padding: "3px 9px",
+      fontSize: 10,
+      cursor: "pointer"
+    }
+  }, "Sign out")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: "#666",
+      fontSize: 13,
+      marginBottom: 16
+    }
+  }, "2,100 kcal/day · PPL + Upper/Lower"), /*#__PURE__*/React.createElement("div", {
+    className: "pbar"
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 3,
+      padding: "12px 0 0",
+      overflowX: "auto"
+    }
+  }, [["today", "Exercises"], ["weekly", "Weekly"], ["nutrition", "Nutrition"], ["tracker", "Tracker"]].map(([t, lbl]) => /*#__PURE__*/React.createElement("button", {
+    key: t,
+    className: "tabBtn",
+    onClick: () => setView(t),
+    style: {
+      background: view === t ? "#1e1e3e" : "transparent",
+      color: view === t ? "#c4b5fd" : "#666",
+      border: view === t ? "1px solid #3e3e6e" : "1px solid transparent"
+    }
+  }, lbl))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 8,
+      padding: "10px 0 0",
+      alignItems: "center",
+      flexWrap: "wrap"
+    }
+  }, (() => {
+    const cfg = !!window._sb;
+    const map = {
+      local: ["#6b7280", "Local only"],
+      syncing: ["#eab308", "Syncing…"],
+      synced: ["#22c55e", "Cloud synced"],
+      error: ["#ef4444", "Sync error"]
+    };
+    const [col, txt] = cfg ? map[syncState] : ["#6b7280", "Local only (no cloud)"];
+    return /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 10,
+        color: col,
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 5
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        width: 7,
+        height: 7,
+        borderRadius: "50%",
+        background: col,
+        display: "inline-block"
+      }
+    }), txt, lastSync && syncState === "synced" ? ` · ${lastSync.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    })}` : "");
+  })()))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      maxWidth: 760,
+      margin: "0 auto",
+      padding: "20px 16px",
+      display: "flex",
+      flexDirection: "column",
+      gap: 16
+    }
+  }, view === "today" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#0d0d18",
+      border: "1px solid #1e1e2e",
+      borderRadius: 12,
+      padding: "14px 16px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 12,
+      flexWrap: "wrap",
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: 1,
+      color: isToday ? "#22c55e" : "#a855f7"
+    }
+  }, isToday ? "📍 TODAY" : "👁 PREVIEW", " · ", DAY_NAMES[selDow]), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 8,
+      alignItems: "center"
+    }
+  }, !isToday && /*#__PURE__*/React.createElement("button", {
+    className: "add-btn",
+    onClick: () => setSelDow(realDow)
+  }, "↩ Back to Today"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(7,1fr)",
+      gap: 6
+    }
+  }, WEEK_ORDER.map(dow => {
+    const wk = workouts[WEEK[dow]];
+    const active = dow === selDow;
+    const realNow = dow === realDow;
+    return /*#__PURE__*/React.createElement("button", {
+      key: dow,
+      className: "daybtn",
+      onClick: () => {
+        setSelDow(dow);
+        setExpandedEx(null);
+      },
+      style: {
+        cursor: "pointer",
+        border: `1px solid ${active ? wk.color : realNow ? "#3e3e6e" : "#222"}`,
+        background: active ? wk.color : "#111118",
+        borderRadius: 10,
+        padding: "8px 2px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 3,
+        transition: "all .2s",
+        position: "relative"
+      }
+    }, realNow && !active && /*#__PURE__*/React.createElement("div", {
+      style: {
+        position: "absolute",
+        top: 3,
+        right: 3,
+        width: 5,
+        height: 5,
+        borderRadius: "50%",
+        background: "#22c55e"
+      }
+    }), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 9,
+        fontWeight: 700,
+        color: active ? "#fff" : "#888"
+      }
+    }, DAY_SHORT[dow]), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 13
+      }
+    }, wk.icon), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 7,
+        fontWeight: 600,
+        letterSpacing: .3,
+        color: active ? "#fff" : "#555"
+      }
+    }, wk.label));
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: `${w.color}18`,
+      border: `1px solid ${w.color}40`,
+      borderRadius: 14,
+      padding: "16px 20px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Bebas, {
+    size: 28,
+    color: w.color
+  }, w.day), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: "#aaa",
+      marginTop: 2
+    }
+  }, w.muscles)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 34
+    }
+  }, w.icon)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: w.color,
+      marginTop: 8,
+      background: `${w.color}15`,
+      borderRadius: 8,
+      padding: "6px 10px"
+    }
+  }, w.focus)), w.exercises.map((ex, ei) => {
+    const setsN = parseInt(ex.sets) || 0;
+    const open = expandedEx === ei;
+    const dc = Array.from({
+      length: setsN
+    }, (_, si) => isSetChecked(ei, si)).filter(Boolean).length;
+    const allDone = setsN > 0 && dc === setsN;
+    const bm = benchmark(ex.name);
+    const tIdx = todayEntryIdx(ex.name);
+    const todayEntry = tIdx >= 0 ? weightLogs[ex.name][tIdx] : null;
+    return /*#__PURE__*/React.createElement("div", {
+      key: ei,
+      style: {
+        background: allDone ? "rgba(34,197,94,0.06)" : "#111118",
+        border: `1px solid ${allDone ? "rgba(34,197,94,0.3)" : "#1e1e2e"}`,
+        borderRadius: 12,
+        overflow: "hidden"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "hov",
+      onClick: () => setExpandedEx(open ? null : ei),
+      style: {
+        cursor: "pointer",
+        padding: "14px 16px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 8
+      }
+    }, allDone && /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12
+      }
+    }, "✅"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 14,
+        fontWeight: 500,
+        color: allDone ? "#86efac" : "#e8e8f0"
+      }
+    }, ex.name)), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 12,
+        color: "#555",
+        marginTop: 3
+      }
+    }, ex.sets !== "—" && `${ex.sets} sets`, ex.reps !== "—" && ` · ${ex.reps} reps`, ex.rest !== "—" && ` · ${ex.rest} rest`, bm && /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: "#eab308"
+      }
+    }, " · PR ", bm.w, "kg"))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 8
+      }
+    }, setsN > 0 && /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        color: "#555"
+      }
+    }, dc, "/", setsN), /*#__PURE__*/React.createElement("span", {
+      className: "chev",
+      style: {
+        color: "#444",
+        fontSize: 12,
+        transform: open ? "rotate(180deg)" : "none"
+      }
+    }, "▾"))), open && /*#__PURE__*/React.createElement("div", {
+      style: {
+        padding: "0 16px 14px",
+        borderTop: "1px solid #1a1a2a"
+      }
+    }, ytLinks[ex.name] && /*#__PURE__*/React.createElement("a", {
+      href: ytLinks[ex.name],
+      target: "_blank",
+      rel: "noopener noreferrer",
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        background: "#1a0a0a",
+        border: "1px solid #ff000033",
+        borderRadius: 10,
+        padding: "11px 14px",
+        margin: "12px 0",
+        textDecoration: "none"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: 34,
+        height: 34,
+        background: "#ff0000",
+        borderRadius: 8,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+        fontSize: 14
+      }
+    }, "▶"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#e8e8f0"
+      }
+    }, "Search Jeff Nippard Tutorial"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        color: "#666"
+      }
+    }, "Opens YouTube search · pick top result")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginLeft: "auto",
+        fontSize: 11,
+        color: "#ff4444"
+      }
+    }, "↗")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        background: "#0d0d18",
+        borderRadius: 8,
+        padding: "10px 12px",
+        marginBottom: 12
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        color: "#f97316"
+      }
+    }, "💡 "), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12,
+        color: "#999",
+        lineHeight: 1.5
+      }
+    }, ex.tip)), setsN > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginBottom: 14
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        color: "#555",
+        marginBottom: 8,
+        letterSpacing: .5
+      }
+    }, "TAP TO LOG SETS (today · clears tomorrow)"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        gap: 8,
+        flexWrap: "wrap"
+      }
+    }, Array.from({
+      length: setsN
+    }, (_, si) => {
+      const dk = isSetChecked(ei, si);
+      return /*#__PURE__*/React.createElement("div", {
+        key: si,
+        onClick: () => toggleSet(ei, si),
+        style: {
+          width: 28,
+          height: 28,
+          borderRadius: "50%",
+          border: `2px solid ${dk ? w.color : "#333"}`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          background: dk ? `${w.color}33` : "transparent",
+          color: dk ? w.color : "#555",
+          fontSize: 11,
+          fontWeight: 600
+        }
+      }, dk ? "✓" : si + 1);
+    }))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        background: "linear-gradient(135deg,#1a1408,#0d0d18)",
+        border: "1px solid #eab30833",
+        borderRadius: 10,
+        padding: "12px 14px",
+        marginBottom: 12
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        fontWeight: 700,
+        letterSpacing: .5,
+        color: "#eab308",
+        marginBottom: 8
+      }
+    }, "🏆 BENCHMARK (all-time best)"), bm ? /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        gap: 16,
+        alignItems: "baseline"
+      }
+    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 24,
+        fontWeight: 700,
+        color: "#eab308"
+      }
+    }, bm.w), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12,
+        color: "#888"
+      }
+    }, " kg")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 12,
+        color: "#888"
+      }
+    }, bm.r != null ? `× ${bm.r} reps` : "reps not logged"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        color: "#555",
+        marginLeft: "auto"
+      }
+    }, bm.date)) : /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 12,
+        color: "#555"
+      }
+    }, "No lifts logged yet — enter today's weights below to set your first benchmark.")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        background: "#0d0d18",
+        borderRadius: 10,
+        padding: "12px 14px"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 10
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        fontWeight: 700,
+        letterSpacing: .5,
+        color: "#a855f7"
+      }
+    }, "📝 TODAY'S ENTRY"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        color: "#555"
+      }
+    }, today())), !todayEntry ? /*#__PURE__*/React.createElement("button", {
+      className: "add-btn",
+      onClick: () => ensureTodayEntry(ex.name, setsN),
+      style: {
+        width: "100%"
+      }
+    }, "+ Start logging today") : /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "grid",
+        gridTemplateColumns: "44px 1fr 1fr",
+        gap: 6,
+        alignItems: "center"
+      }
+    }, /*#__PURE__*/React.createElement("div", null), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 10,
+        color: "#666",
+        textAlign: "center"
+      }
+    }, "Weight (kg)"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 10,
+        color: "#666",
+        textAlign: "center"
+      }
+    }, "Reps"), todayEntry.sets.map((st, si) => /*#__PURE__*/React.createElement("div", {
+      key: si,
+      style: {
+        display: "contents"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        color: "#a855f7",
+        fontWeight: 600
+      }
+    }, "Set ", si + 1), /*#__PURE__*/React.createElement("input", {
+      className: "num-input",
+      type: "number",
+      inputMode: "decimal",
+      placeholder: "—",
+      value: st.w,
+      onChange: e => updateWeightEntry(ex.name, tIdx, si, "w", e.target.value)
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "num-input",
+      type: "number",
+      inputMode: "numeric",
+      placeholder: "—",
+      value: st.r,
+      onChange: e => updateWeightEntry(ex.name, tIdx, si, "r", e.target.value)
+    })))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 10,
+        color: "#555",
+        marginTop: 10
+      }
+    }, "Full history lives in the Tracker tab.")))));
+  })), view === "weekly" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#0d0d18",
+      border: "1px solid #1e1e2e",
+      borderRadius: 12,
+      padding: "14px 16px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      flexWrap: "wrap",
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: 1,
+      color: "#3b82f6"
+    }
+  }, "📅 PROGRAM MONTH"), /*#__PURE__*/React.createElement("select", {
+    value: selMonth,
+    onChange: e => setSelMonth(e.target.value)
+  }, Object.keys(cardioByMonth).map(m => /*#__PURE__*/React.createElement("option", {
+    key: m,
+    value: m
+  }, m))))), /*#__PURE__*/React.createElement(Card, {
+    style: {
+      borderColor: "#a855f733"
+    }
+  }, /*#__PURE__*/React.createElement(Bebas, {
+    color: "#a855f7",
+    style: {
+      marginBottom: 6
+    }
+  }, "THIS WEEK vs LAST WEEK"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555",
+      marginBottom: 16
+    }
+  }, "Weeks run Saturday → Friday, matching your split"), [{
+    label: "💪 Training Volume",
+    unit: "kg",
+    now: thisVol,
+    last: lastVol,
+    delta: volDelta,
+    deltaUnit: "%",
+    higherBetter: true,
+    fmt: v => Math.round(v).toLocaleString()
+  }, {
+    label: "🗓 Sessions Logged",
+    unit: "",
+    now: thisSess,
+    last: lastSess,
+    delta: thisSess - lastSess,
+    deltaUnit: "",
+    higherBetter: true,
+    fmt: v => v
+  }, {
+    label: "🚴 Cardio Minutes",
+    unit: "min",
+    now: thisCardio,
+    last: lastCardio,
+    delta: thisCardio - lastCardio,
+    deltaUnit: "min",
+    higherBetter: true,
+    fmt: v => Math.round(v)
+  }, {
+    label: "⚖️ Avg Body Weight",
+    unit: "kg",
+    now: thisBW,
+    last: lastBW,
+    delta: bwDelta,
+    deltaUnit: "kg",
+    higherBetter: false,
+    fmt: v => v != null ? v.toFixed(1) : "—"
+  }].map(row => {
+    const hasData = row.now != null && (row.last != null || row.label.includes("Volume") || row.label.includes("Sessions") || row.label.includes("Cardio"));
+    let deltaColor = "#666",
+      deltaText = "—";
+    if (row.delta != null && !isNaN(row.delta) && (row.last > 0 || row.delta !== 0)) {
+      const good = row.higherBetter ? row.delta > 0 : row.delta < 0;
+      const flat = Math.abs(row.delta) < (row.deltaUnit === "%" ? 0.5 : 0.05);
+      deltaColor = flat ? "#888" : good ? "#22c55e" : "#ef4444";
+      const sign = row.delta > 0 ? "+" : "";
+      deltaText = `${sign}${row.deltaUnit === "%" ? row.delta.toFixed(0) : row.delta.toFixed(row.deltaUnit === "kg" ? 1 : 0)}${row.deltaUnit}`;
+    }
+    return /*#__PURE__*/React.createElement("div", {
+      key: row.label,
+      style: {
+        background: "#0d0d18",
+        borderRadius: 10,
+        padding: "12px 14px",
+        marginBottom: 10
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 8
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#e8e8f0"
+      }
+    }, row.label), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12,
+        fontWeight: 700,
+        color: deltaColor,
+        background: deltaColor + "18",
+        border: "1px solid " + deltaColor + "33",
+        borderRadius: 6,
+        padding: "2px 8px"
+      }
+    }, deltaText)), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        gap: 16
+      }
+    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 10,
+        color: "#555"
+      }
+    }, "THIS WEEK"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 18,
+        fontWeight: 700,
+        color: "#e8e8f0"
+      }
+    }, row.fmt(row.now), " ", /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        color: "#555",
+        fontWeight: 400
+      }
+    }, row.unit))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        borderLeft: "1px solid #1e1e2e",
+        paddingLeft: 16
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 10,
+        color: "#555"
+      }
+    }, "LAST WEEK"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 18,
+        fontWeight: 700,
+        color: "#666"
+      }
+    }, row.fmt(row.last), " ", /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        color: "#555",
+        fontWeight: 400
+      }
+    }, row.unit)))));
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#555",
+      lineHeight: 1.6,
+      marginTop: 6
+    }
+  }, "Training volume = weight × reps across all logged sets. Log your weights in the Exercises tab and cardio below to populate this.")), /*#__PURE__*/React.createElement(Card, {
+    style: {
+      borderColor: "#3b82f633"
+    }
+  }, /*#__PURE__*/React.createElement(Bebas, {
+    color: "#3b82f6",
+    style: {
+      marginBottom: 6
+    }
+  }, "CARDIO PLAN · ", selMonth.toUpperCase()), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555",
+      marginBottom: 14
+    }
+  }, "Your target for this month per the roadmap"), cardioByMonth[selMonth].map((c, ci) => /*#__PURE__*/React.createElement("div", {
+    key: ci,
+    style: {
+      display: "flex",
+      gap: 12,
+      marginBottom: 10,
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: `${c.color}22`,
+      border: `1px solid ${c.color}55`,
+      borderRadius: 8,
+      padding: "4px 10px",
+      fontSize: 10,
+      fontWeight: 700,
+      color: c.color,
+      whiteSpace: "nowrap",
+      marginTop: 1
+    }
+  }, c.weeks), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 600,
+      color: "#e8e8f0",
+      marginBottom: 2
+    }
+  }, c.label), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#666",
+      lineHeight: 1.5
+    }
+  }, c.detail))))), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("cardioLog"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 0",
+      padding: 4,
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.cardioLog ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#22c55e"
+  }, "CARDIO LOG")), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: "#555"
+    }
+  }, "This week: ", /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "#22c55e",
+      fontWeight: 700
+    }
+  }, Math.round(thisCardio), " min"))), openSec.cardioLog && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "flex-end",
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "add-btn",
+    onClick: addCardio
+  }, "+ Log cardio")), cardioLog.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555"
+    }
+  }, "No cardio logged yet. Tap \"+ Log cardio\" after a session.") : /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 8
+    }
+  }, [...cardioLog].map((e, idx) => ({
+    e,
+    idx
+  })).reverse().map(({
+    e,
+    idx
+  }) => /*#__PURE__*/React.createElement("div", {
+    key: idx,
+    style: {
+      display: "flex",
+      gap: 8,
+      alignItems: "center",
+      background: "#0d0d18",
+      borderRadius: 8,
+      padding: "8px 10px",
+      flexWrap: "wrap"
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    value: e.date,
+    onChange: ev => updateCardio(idx, "date", ev.target.value),
+    style: {
+      background: "#0a0a0f",
+      border: "1px solid #2a2a3a",
+      borderRadius: 6,
+      color: "#aaa",
+      padding: "5px 8px",
+      fontSize: 11
+    }
+  }), /*#__PURE__*/React.createElement("select", {
+    value: e.type,
+    onChange: ev => updateCardio(idx, "type", ev.target.value),
+    style: {
+      padding: "5px 8px",
+      fontSize: 11
+    }
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "LISS"
+  }, "LISS"), /*#__PURE__*/React.createElement("option", {
+    value: "HIIT"
+  }, "HIIT"), /*#__PURE__*/React.createElement("option", {
+    value: "Walk"
+  }, "Walk")), /*#__PURE__*/React.createElement("input", {
+    className: "num-input",
+    type: "number",
+    inputMode: "numeric",
+    placeholder: "min",
+    value: e.minutes,
+    onChange: ev => updateCardio(idx, "minutes", ev.target.value),
+    style: {
+      width: 70
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: "#555"
+    }
+  }, "min"), /*#__PURE__*/React.createElement("button", {
+    className: "del-btn",
+    onClick: () => deleteCardio(idx),
+    style: {
+      marginLeft: "auto"
+    }
+  }, "🗑"))))))), view === "nutrition" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement(Bebas, {
+    color: "#f97316",
+    style: {
+      marginBottom: 16
+    }
+  }, "YOUR TARGETS"), [["🎯 Goal Weight", "80 kg"], ["⚖️ Current Weight", "90.5 kg (lose ~10.5 kg fat)"], ["🔥 Daily Calories", "2,100 kcal (flat, every day)"], ["📊 Approach", "Hold 2,100 · adjust by waist + photos"], ["📉 Target loss", "0.5–0.7 kg/week"], ["🥩 Protein", "180g/day minimum"], ["💧 Water", "3–4 L / day"], ["😴 Sleep", "7–9 hrs"]].map(([l, v]) => /*#__PURE__*/React.createElement("div", {
+    key: l,
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      padding: "10px 0",
+      borderBottom: "1px solid #1a1a2a",
+      alignItems: "center"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      color: "#aaa"
+    }
+  }, l), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      fontWeight: 500,
+      color: "#e8e8f0"
+    }
+  }, v)))), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("macros"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 0",
+      padding: 4,
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.macros ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#3b82f6"
+  }, "MACROS (2,100 kcal)"))), openSec.macros && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555",
+      marginBottom: 16
+    }
+  }, "Protein prioritised to protect muscle"), [{
+    macro: "Protein",
+    amount: "180g",
+    kcal: "720 kcal",
+    pct: "34%",
+    color: "#f97316",
+    bar: 34,
+    note: "Highest priority — spread across all meals"
+  }, {
+    macro: "Carbs",
+    amount: "190–205g",
+    kcal: "800 kcal",
+    pct: "38%",
+    color: "#3b82f6",
+    bar: 38,
+    note: "Around training — rice, oats, potato, fruit"
+  }, {
+    macro: "Fats",
+    amount: "65g",
+    kcal: "585 kcal",
+    pct: "28%",
+    color: "#22c55e",
+    bar: 28,
+    note: "Never below 60g — eggs, olive oil, nuts"
+  }].map(({
+    macro,
+    amount,
+    kcal,
+    pct,
+    color,
+    bar,
+    note
+  }) => /*#__PURE__*/React.createElement("div", {
+    key: macro,
+    style: {
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      marginBottom: 4
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      fontWeight: 600,
+      color
+    }
+  }, macro), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      color: "#e8e8f0"
+    }
+  }, amount, " ", /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "#555"
+    }
+  }, "· ", kcal, " · ", pct))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#1a1a2a",
+      borderRadius: 4,
+      height: 5,
+      marginBottom: 4
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: `${bar}%`,
+      height: "100%",
+      background: color,
+      borderRadius: 4,
+      opacity: .7
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#555"
+    }
+  }, note))))), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("mealSplit"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 0",
+      padding: 4,
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.mealSplit ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#a855f7"
+  }, "MEAL SPLIT"))), openSec.mealSplit && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555",
+      marginBottom: 16
+    }
+  }, "Snacks 25% · 3 meals share the rest"), [{
+    meal: "🌅 Breakfast",
+    pct: "25%",
+    kcal: 525,
+    p: "46g",
+    c: "48g",
+    f: "16g",
+    color: "#f97316"
+  }, {
+    meal: "☀️ Lunch",
+    pct: "30%",
+    kcal: 630,
+    p: "54g",
+    c: "60g",
+    f: "19g",
+    color: "#3b82f6"
+  }, {
+    meal: "🌙 Dinner",
+    pct: "20%",
+    kcal: 420,
+    p: "36g",
+    c: "38g",
+    f: "14g",
+    color: "#a855f7"
+  }, {
+    meal: "🍎 Snacks",
+    pct: "25%",
+    kcal: 525,
+    p: "44g",
+    c: "48g",
+    f: "16g",
+    color: "#22c55e"
+  }].map(({
+    meal,
+    pct,
+    kcal,
+    p,
+    c,
+    f,
+    color
+  }) => /*#__PURE__*/React.createElement("div", {
+    key: meal,
+    style: {
+      marginBottom: 12,
+      background: "#0d0d18",
+      borderRadius: 10,
+      padding: "12px 14px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 6
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      fontWeight: 600,
+      color
+    }
+  }, meal), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 8,
+      alignItems: "center"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: "#e8e8f0",
+      fontWeight: 600
+    }
+  }, kcal, " kcal"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      background: `${color}22`,
+      border: `1px solid ${color}44`,
+      borderRadius: 6,
+      padding: "2px 7px",
+      fontSize: 11,
+      fontWeight: 700,
+      color
+    }
+  }, pct))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#666"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "#f97316",
+      fontWeight: 700
+    }
+  }, "P "), p), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#666"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "#3b82f6",
+      fontWeight: 700
+    }
+  }, "C "), c), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#666"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "#22c55e",
+      fontWeight: 700
+    }
+  }, "F "), f)))))), /*#__PURE__*/React.createElement(Card, {
+    style: {
+      borderColor: "#f43f5e33"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("cheatMeal"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 0",
+      padding: 4,
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.cheatMeal ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#f43f5e"
+  }, "FRIDAY CHEAT MEAL")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#f43f5e22",
+      border: "1px solid #f43f5e44",
+      borderRadius: 6,
+      padding: "3px 10px",
+      fontSize: 11,
+      fontWeight: 700,
+      color: "#f43f5e"
+    }
+  }, "WEEKLY")), openSec.cheatMeal && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555",
+      marginBottom: 14
+    }
+  }, "800–1,000 kcal · dinner · Saturday back to normal"), [["✅", "One meal only — not one day"], ["✅", "Still hit ~40g protein"], ["✅", "Eat normally all day — don't skip to earn it"], ["❌", "Don't go past 1,200 kcal"]].map(([i, r]) => /*#__PURE__*/React.createElement("div", {
+    key: r,
+    style: {
+      display: "flex",
+      gap: 10,
+      marginBottom: 8,
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13
+    }
+  }, i), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      lineHeight: 1.6
+    }
+  }, r))))), /*#__PURE__*/React.createElement(Card, {
+    style: {
+      borderColor: "#06b6d433"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("supplements"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 0",
+      padding: 4,
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.supplements ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#06b6d4"
+  }, "SUPPLEMENT STACK")), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: "#555"
+    }
+  }, "5 supplements")), openSec.supplements && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 14,
+      display: "flex",
+      flexDirection: "column",
+      gap: 12
+    }
+  }, [{
+    name: "Dymatize ISO100 Hydrolyzed",
+    sub: "Fastest-absorbing whey",
+    tag: "✅",
+    color: "#22c55e",
+    when: "Post-workout in water. Rest days: between-meal top-up.",
+    desc: "Bridges the gap to hit 180g protein daily."
+  }, {
+    name: "Thorne Creatine Powder",
+    sub: "Monohydrate · 5g daily",
+    tag: "✅",
+    color: "#22c55e",
+    when: "Any time, every day. Mix into shake.",
+    desc: "Most evidence-backed strength supplement. May add 0.5–1kg water first 2 weeks — not fat."
+  }, {
+    name: "Thorne ALCAR",
+    sub: "500mg · 1–2 caps",
+    tag: "⚠️",
+    color: "#eab308",
+    when: "60–90 min before training/cardio. Skip full rest days.",
+    desc: "Fat oxidation + mental focus. Amplifier, not a driver."
+  }, {
+    name: "Pure Encapsulations Magnesium Glycinate",
+    sub: "Best-absorbed form",
+    tag: "✅",
+    color: "#22c55e",
+    when: "30–60 min before bed, nightly.",
+    desc: "Improves deep sleep = better recovery & growth hormone."
+  }, {
+    name: "Thorne Vitamin D + K2",
+    sub: "D3 + MK-7 K2",
+    tag: "✅",
+    color: "#22c55e",
+    when: "With lunch/dinner, daily.",
+    desc: "K2 directs calcium to bones. Supports testosterone & recovery."
+  }].map(s => /*#__PURE__*/React.createElement("div", {
+    key: s.name,
+    style: {
+      background: "#0d0d18",
+      borderRadius: 10,
+      padding: "14px",
+      border: "1px solid #1e1e2e"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      marginBottom: 8,
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Bebas, {
+    size: 16,
+    color: s.color
+  }, s.name), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555",
+      marginTop: 2
+    }
+  }, s.sub)), /*#__PURE__*/React.createElement("span", {
+    style: {
+      background: `${s.color}22`,
+      color: s.color,
+      border: `1px solid ${s.color}44`,
+      borderRadius: 6,
+      padding: "3px 9px",
+      fontSize: 12,
+      fontWeight: 700
+    }
+  }, s.tag)), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 13,
+      color: "#888",
+      lineHeight: 1.7,
+      marginBottom: 10
+    }
+  }, s.desc), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#111118",
+      borderRadius: 8,
+      padding: "10px 14px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: s.color,
+      fontWeight: 700,
+      marginBottom: 6,
+      letterSpacing: .5
+    }
+  }, "⏰ WHEN"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#777",
+      lineHeight: 1.6
+    }
+  }, s.when))))))), view === "tracker" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "linear-gradient(135deg,#1a0d2e,#0d1a0d)",
+      border: "1px solid #2e1a4e",
+      borderRadius: 14,
+      padding: 20
+    }
+  }, /*#__PURE__*/React.createElement(Bebas, {
+    size: 18,
+    color: "#c4b5fd",
+    style: {
+      marginBottom: 10
+    }
+  }, "YOUR SCORECARD"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 13,
+      color: "#888",
+      lineHeight: 1.7
+    }
+  }, "Waist shrinking = fat loss. Weight flat or slowly dropping = normal recomp. Lifts climbing = muscle built. Judge over ", /*#__PURE__*/React.createElement("strong", {
+    style: {
+      color: "#c4b5fd"
+    }
+  }, "2–4 weeks"), ". Data saves automatically.")), /*#__PURE__*/React.createElement(Card, {
+    style: {
+      borderColor: "#22c55e33"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("weightProgress"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 0",
+      padding: 4,
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.weightProgress ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#22c55e"
+  }, "WEIGHT PROGRESS")), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: "#666"
+    }
+  }, latestW || "90.5", " kg")), openSec.weightProgress && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555",
+      marginBottom: 14
+    }
+  }, "90.5 kg → 80 kg goal"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 10,
+      flexWrap: "wrap",
+      marginBottom: 16
+    }
+  }, [["CURRENT", latestW || "90.5", "#e8e8f0", "#1e1e2e"], ["LOST", lost, "#22c55e", "#22c55e33"], ["TO GOAL", remaining, "#f97316", "#f9731633"]].map(([lbl, val, col, bord]) => /*#__PURE__*/React.createElement("div", {
+    key: lbl,
+    style: {
+      flex: 1,
+      minWidth: 90,
+      background: "#0d0d18",
+      borderRadius: 10,
+      padding: 12,
+      textAlign: "center",
+      border: `1px solid ${bord}`
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#555"
+    }
+  }, lbl), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 20,
+      fontWeight: 700,
+      color: col
+    }
+  }, val), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#666"
+    }
+  }, "kg")))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: .5,
+      color: "#aaa"
+    }
+  }, "⚖️ WEIGHT LOG"), /*#__PURE__*/React.createElement("button", {
+    className: "add-btn",
+    onClick: addBodyWeight
+  }, "+ Add entry")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#555",
+      marginBottom: 12,
+      lineHeight: 1.6
+    }
+  }, "Weigh 3× per week — morning, after bathroom, before food. Watch the trend."), bodyWeight.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555"
+    }
+  }, "No entries yet.") : /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 8
+    }
+  }, [...bodyWeight].map((e, idx) => ({
+    e,
+    idx
+  })).reverse().map(({
+    e,
+    idx
+  }) => {
+    const lk = `bw-${idx}`;
+    const openE = !!expandedLog[lk];
+    return /*#__PURE__*/React.createElement("div", {
+      key: idx,
+      style: {
+        background: "#0d0d18",
+        borderRadius: 8,
+        border: "1px solid #1e1e2e",
+        overflow: "hidden"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "hov",
+      onClick: () => setExpandedLog(p => ({
+        ...p,
+        [lk]: !p[lk]
+      })),
+      style: {
+        cursor: "pointer",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "9px 11px"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 10
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "chev",
+      style: {
+        color: "#444",
+        fontSize: 10,
+        transform: openE ? "rotate(180deg)" : "none"
+      }
+    }, "▾"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12,
+        color: "#aaa"
+      }
+    }, e.date), !openE && /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        color: "#22c55e"
+      }
+    }, e.kg !== "" ? `${e.kg} kg` : "empty — tap to fill")), /*#__PURE__*/React.createElement("button", {
+      className: "del-btn",
+      onClick: ev => {
+        ev.stopPropagation();
+        deleteBodyWeight(idx);
+      }
+    }, "🗑")), openE && /*#__PURE__*/React.createElement("div", {
+      style: {
+        padding: "0 11px 11px",
+        borderTop: "1px solid #1a1a2a",
+        display: "flex",
+        gap: 8,
+        alignItems: "center",
+        marginTop: 9
+      }
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "date",
+      value: e.date,
+      onChange: ev => updateBodyWeight(idx, "date", ev.target.value),
+      style: {
+        background: "#0a0a0f",
+        border: "1px solid #2a2a3a",
+        borderRadius: 6,
+        color: "#aaa",
+        padding: "5px 8px",
+        fontSize: 11,
+        flex: 1
+      }
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "num-input",
+      type: "number",
+      inputMode: "decimal",
+      placeholder: "kg",
+      value: e.kg,
+      onChange: ev => updateBodyWeight(idx, "kg", ev.target.value),
+      style: {
+        width: 80
+      }
+    }), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        color: "#555"
+      }
+    }, "kg")));
+  })))), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("measurementLog"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 0",
+      padding: 4,
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.measurementLog ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#22c55e"
+  }, "MEASUREMENT LOG")), openSec.measurementLog && /*#__PURE__*/React.createElement("button", {
+    className: "add-btn",
+    onClick: e => {
+      e.stopPropagation();
+      addMeasurement();
+    }
+  }, "+ Add entry")), openSec.measurementLog && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 14
+    }
+  }, measurements.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555"
+    }
+  }, "No entries yet. All values in cm.") : /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 8
+    }
+  }, [...measurements].map((entry, idx) => ({
+    entry,
+    idx
+  })).reverse().map(({
+    entry,
+    idx
+  }) => {
+    const lk = `meas-${idx}`;
+    const openE = !!expandedLog[lk];
+    const waistVal = entry.waist;
+    return /*#__PURE__*/React.createElement("div", {
+      key: idx,
+      style: {
+        background: "#0d0d18",
+        borderRadius: 10,
+        border: "1px solid #1e1e2e",
+        overflow: "hidden"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "hov",
+      onClick: () => setExpandedLog(p => ({
+        ...p,
+        [lk]: !p[lk]
+      })),
+      style: {
+        cursor: "pointer",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "10px 12px"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 10
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "chev",
+      style: {
+        color: "#444",
+        fontSize: 11,
+        transform: openE ? "rotate(180deg)" : "none"
+      }
+    }, "▾"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12,
+        color: "#aaa"
+      }
+    }, entry.date), !openE && /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        color: "#22c55e"
+      }
+    }, waistVal ? `waist ${waistVal}cm` : "empty — tap to fill")), /*#__PURE__*/React.createElement("button", {
+      className: "del-btn",
+      onClick: e => {
+        e.stopPropagation();
+        deleteMeasurement(idx);
+      }
+    }, "🗑")), openE && /*#__PURE__*/React.createElement("div", {
+      style: {
+        padding: "0 12px 12px",
+        borderTop: "1px solid #1a1a2a"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        margin: "10px 0"
+      }
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "date",
+      value: entry.date,
+      onChange: ev => updateMeasurement(idx, "date", ev.target.value),
+      style: {
+        background: "#0a0a0f",
+        border: "1px solid #2a2a3a",
+        borderRadius: 6,
+        color: "#aaa",
+        padding: "5px 8px",
+        fontSize: 11
+      }
+    })), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "grid",
+        gridTemplateColumns: "repeat(2,1fr)",
+        gap: 8
+      }
+    }, measureGuide.map(m => /*#__PURE__*/React.createElement("div", {
+      key: m.key,
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        gap: 4
+      }
+    }, /*#__PURE__*/React.createElement("label", {
+      style: {
+        fontSize: 11,
+        color: m.color,
+        fontWeight: 600
+      }
+    }, m.name, m.primary ? " ⭐" : "", " ", /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: "#555"
+      }
+    }, "(cm)")), /*#__PURE__*/React.createElement("input", {
+      className: "num-input",
+      type: "number",
+      inputMode: "decimal",
+      placeholder: "—",
+      value: entry[m.key] || "",
+      onChange: ev => updateMeasurement(idx, m.key, ev.target.value)
+    }))))));
+  })))), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("howToMeasure"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 0",
+      padding: 4,
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.howToMeasure ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#a855f7"
+  }, "HOW TO MEASURE"))), openSec.howToMeasure && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555",
+      marginBottom: 14
+    }
+  }, "Weekly, same morning, relaxed. Waist is #1."), measureGuide.map(m => /*#__PURE__*/React.createElement("div", {
+    key: m.key,
+    style: {
+      display: "flex",
+      gap: 10,
+      marginBottom: 12,
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: `${m.color}22`,
+      border: `1px solid ${m.color}55`,
+      borderRadius: 8,
+      padding: "4px 10px",
+      fontSize: 11,
+      fontWeight: 700,
+      color: m.color,
+      whiteSpace: "nowrap",
+      marginTop: 1,
+      minWidth: 64,
+      textAlign: "center"
+    }
+  }, m.name, m.primary ? " ⭐" : ""), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      lineHeight: 1.6
+    }
+  }, m.guide))))), /*#__PURE__*/React.createElement(Card, {
+    style: {
+      borderColor: "#a855f733"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("weightsHistory"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 0",
+      padding: 4,
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.weightsHistory ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#a855f7"
+  }, "WEIGHTS HISTORY"))), openSec.weightsHistory && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555",
+      marginBottom: 14
+    }
+  }, "Grouped by day · tap to expand. Benchmark = your heaviest logged set."), dayGroups.map(dg => {
+    const names = (workouts[dg.key]?.exercises || []).filter(ex => (parseInt(ex.sets) || 0) > 0).map(ex => ex.name);
+    const totalLogs = names.reduce((sum, n) => sum + (weightLogs[n] || []).length, 0);
+    const openDay = !!expandedLog[`histday-${dg.key}`];
+    return /*#__PURE__*/React.createElement("div", {
+      key: dg.key,
+      style: {
+        background: "#0d0d18",
+        borderRadius: 10,
+        border: `1px solid ${dg.color}33`,
+        marginBottom: 8,
+        overflow: "hidden"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "hov",
+      onClick: () => setExpandedLog(p => ({
+        ...p,
+        [`histday-${dg.key}`]: !p[`histday-${dg.key}`]
+      })),
+      style: {
+        cursor: "pointer",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "12px 14px"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 10
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "chev",
+      style: {
+        color: "#444",
+        fontSize: 11,
+        transform: openDay ? "rotate(180deg)" : "none"
+      }
+    }, "▾"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 13,
+        fontWeight: 700,
+        color: dg.color
+      }
+    }, dg.label)), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        color: "#555"
+      }
+    }, totalLogs > 0 ? `${totalLogs} logged` : "no logs yet")), openDay && /*#__PURE__*/React.createElement("div", {
+      style: {
+        padding: "0 14px 12px",
+        borderTop: "1px solid #1a1a2a"
+      }
+    }, names.map(name => {
+      const logs = weightLogs[name] || [];
+      const bm = benchmark(name);
+      const openEx = !!expandedLog[`hist-${name}`];
+      return /*#__PURE__*/React.createElement("div", {
+        key: name,
+        style: {
+          background: "#111118",
+          borderRadius: 8,
+          border: "1px solid #1e1e2e",
+          marginTop: 8,
+          overflow: "hidden"
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "hov",
+        onClick: () => setExpandedLog(p => ({
+          ...p,
+          [`hist-${name}`]: !p[`hist-${name}`]
+        })),
+        style: {
+          cursor: "pointer",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "10px 12px"
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          display: "flex",
+          alignItems: "center",
+          gap: 10
+        }
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "chev",
+        style: {
+          color: "#444",
+          fontSize: 10,
+          transform: openEx ? "rotate(180deg)" : "none"
+        }
+      }, "▾"), /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: 13,
+          fontWeight: 500,
+          color: "#e8e8f0"
+        }
+      }, name)), /*#__PURE__*/React.createElement("div", {
+        style: {
+          display: "flex",
+          alignItems: "center",
+          gap: 10
+        }
+      }, bm && /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: 11,
+          fontWeight: 700,
+          color: "#eab308",
+          background: "#eab30818",
+          border: "1px solid #eab30833",
+          borderRadius: 6,
+          padding: "2px 8px"
+        }
+      }, "🏆 ", bm.w, "kg", bm.r != null ? ` ×${bm.r}` : ""), /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: 11,
+          color: "#555"
+        }
+      }, logs.length, "×"))), openEx && (logs.length === 0 ? /*#__PURE__*/React.createElement("div", {
+        style: {
+          padding: "0 12px 12px",
+          fontSize: 12,
+          color: "#555"
+        }
+      }, "No entries yet. Log this in the Exercises tab.") : /*#__PURE__*/React.createElement("div", {
+        style: {
+          padding: "0 12px 12px",
+          borderTop: "1px solid #1a1a2a"
+        }
+      }, [...logs].map((entry, idx) => ({
+        entry,
+        idx
+      })).reverse().map(({
+        entry,
+        idx
+      }) => {
+        const filled = entry.sets.filter(s => s.w !== "" || s.r !== "").length;
+        const topW = entry.sets.map(s => parseFloat(s.w) || 0).reduce((a, b) => Math.max(a, b), 0);
+        const lk = `histentry-${name}-${idx}`;
+        const openE = !!expandedLog[lk];
+        return /*#__PURE__*/React.createElement("div", {
+          key: idx,
+          style: {
+            background: "#0d0d18",
+            borderRadius: 8,
+            border: "1px solid #1e1e2e",
+            overflow: "hidden",
+            marginTop: 8
+          }
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "hov",
+          onClick: () => setExpandedLog(p => ({
+            ...p,
+            [lk]: !p[lk]
+          })),
+          style: {
+            cursor: "pointer",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "9px 11px"
+          }
+        }, /*#__PURE__*/React.createElement("div", {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            gap: 10
+          }
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "chev",
+          style: {
+            color: "#444",
+            fontSize: 10,
+            transform: openE ? "rotate(180deg)" : "none"
+          }
+        }, "▾"), /*#__PURE__*/React.createElement("span", {
+          style: {
+            fontSize: 12,
+            color: "#aaa"
+          }
+        }, entry.date), !openE && filled > 0 && /*#__PURE__*/React.createElement("span", {
+          style: {
+            fontSize: 11,
+            color: "#a855f7"
+          }
+        }, topW > 0 ? `top ${topW}kg · ` : "", filled, "/", entry.sets.length, " sets"), !openE && filled === 0 && /*#__PURE__*/React.createElement("span", {
+          style: {
+            fontSize: 11,
+            color: "#555"
+          }
+        }, "empty")), /*#__PURE__*/React.createElement("button", {
+          className: "del-btn",
+          onClick: e => {
+            e.stopPropagation();
+            deleteWeightEntry(name, idx);
+          }
+        }, "🗑")), openE && /*#__PURE__*/React.createElement("div", {
+          style: {
+            padding: "0 11px 11px",
+            borderTop: "1px solid #1a1a2a"
+          }
+        }, /*#__PURE__*/React.createElement("div", {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            margin: "9px 0"
+          }
+        }, /*#__PURE__*/React.createElement("span", {
+          style: {
+            fontSize: 11,
+            color: "#555"
+          }
+        }, "Date:"), /*#__PURE__*/React.createElement("input", {
+          type: "date",
+          value: entry.date,
+          onChange: e => updateWeightEntry(name, idx, -1, "date", e.target.value),
+          style: {
+            background: "#0a0a0f",
+            border: "1px solid #2a2a3a",
+            borderRadius: 6,
+            color: "#aaa",
+            padding: "4px 8px",
+            fontSize: 11
+          }
+        })), /*#__PURE__*/React.createElement("div", {
+          style: {
+            display: "grid",
+            gridTemplateColumns: "44px 1fr 1fr",
+            gap: 6,
+            alignItems: "center"
+          }
+        }, /*#__PURE__*/React.createElement("div", null), /*#__PURE__*/React.createElement("div", {
+          style: {
+            fontSize: 10,
+            color: "#666",
+            textAlign: "center"
+          }
+        }, "Weight (kg)"), /*#__PURE__*/React.createElement("div", {
+          style: {
+            fontSize: 10,
+            color: "#666",
+            textAlign: "center"
+          }
+        }, "Reps"), entry.sets.map((st, si) => /*#__PURE__*/React.createElement("div", {
+          key: si,
+          style: {
+            display: "contents"
+          }
+        }, /*#__PURE__*/React.createElement("div", {
+          style: {
+            fontSize: 11,
+            color: "#a855f7",
+            fontWeight: 600
+          }
+        }, "Set ", si + 1), /*#__PURE__*/React.createElement("input", {
+          className: "num-input",
+          type: "number",
+          inputMode: "decimal",
+          placeholder: "—",
+          value: st.w,
+          onChange: e => updateWeightEntry(name, idx, si, "w", e.target.value)
+        }), /*#__PURE__*/React.createElement("input", {
+          className: "num-input",
+          type: "number",
+          inputMode: "numeric",
+          placeholder: "—",
+          value: st.r,
+          onChange: e => updateWeightEntry(name, idx, si, "r", e.target.value)
+        }))))));
+      }))));
+    })));
+  }))))));
+}
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(React.createElement(GymDashboard));
+</script>
+</body>
+</html>
