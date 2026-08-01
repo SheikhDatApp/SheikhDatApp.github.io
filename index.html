@@ -408,8 +408,26 @@ const measureGuide = [{
 }];
 const START_W = 90.5,
   GOAL_W = 80;
+
+// ---- Saudi Arabia time (GMT+3) ----
+const RIYADH_OFFSET_MIN = 3 * 60;
+const nowRiyadh = () => {
+  const d = new Date();
+  return new Date(d.getTime() + (d.getTimezoneOffset() + RIYADH_OFFSET_MIN) * 60000);
+};
+const riyadhDateStr = () => {
+  const d = nowRiyadh();
+  const p = n => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+};
+
+// ---- Deload cycle: every 4th week, anchored to the week of Sat 1 Aug 2026 ----
+const DELOAD_ANCHOR = new Date(2026, 7, 1); // Sat 1 Aug 2026 = a deload week
+const DELOAD_CYCLE = 4; // deload every 4 weeks
+const DELOAD_PCT = 0.6; // lift at 60% = 40% lighter
+
 function GymDashboard() {
-  const realDow = new Date().getDay();
+  const realDow = nowRiyadh().getDay();
   const [view, setView] = React.useState("today");
   const [selDow, setSelDow] = React.useState(realDow);
   const [openSec, setOpenSec] = React.useState({}); // collapsible section states, default collapsed
@@ -621,7 +639,7 @@ function GymDashboard() {
       [map[k]]: v
     });
   };
-  const today = () => new Date().toISOString().slice(0, 10);
+  const today = () => riyadhDateStr();
   const wkKey = WEEK[selDow];
   const w = workouts[wkKey];
   const isToday = selDow === realDow;
@@ -798,7 +816,7 @@ function GymDashboard() {
 
   // Week boundaries (Sat-start week to match training split)
   const weekStart = (offset = 0) => {
-    const d = new Date();
+    const d = nowRiyadh();
     const dow = d.getDay(); // 0 Sun..6 Sat
     const daysSinceSat = (dow + 1) % 7; // Sat->0, Sun->1...
     d.setDate(d.getDate() - daysSinceSat - offset * 7);
@@ -812,6 +830,21 @@ function GymDashboard() {
     e.setDate(e.getDate() + 7);
     return d >= s && d < e;
   };
+  // ---- Deload week detection (Riyadh time, Sat-start weeks) ----
+  const weeksSinceAnchor = (offset = 0) => {
+    const ws = weekStart(offset);
+    const a = new Date(DELOAD_ANCHOR);
+    a.setHours(0, 0, 0, 0);
+    return Math.round((ws - a) / (7 * 86400000));
+  };
+  const isDeloadWeek = (weeksSinceAnchor(0) % DELOAD_CYCLE + DELOAD_CYCLE) % DELOAD_CYCLE === 0;
+  const weeksToNextDeload = (() => {
+    const m = (weeksSinceAnchor(0) % DELOAD_CYCLE + DELOAD_CYCLE) % DELOAD_CYCLE;
+    return m === 0 ? 0 : DELOAD_CYCLE - m;
+  })();
+  // Round a load to the nearest practical 2.5 kg
+  const round25 = v => Math.round(v / 2.5) * 2.5;
+
   // Aggregate total volume (sum of weight*reps) per exercise for a given week offset
   const weekVolume = offset => {
     let total = 0;
@@ -879,6 +912,7 @@ function GymDashboard() {
     return names;
   })();
   const latestW = bodyWeight.filter(e => e.kg !== "").slice(-1)[0]?.kg;
+  const latestWaist = measurements.filter(e => e.waist && e.waist !== "").slice(-1)[0]?.waist;
   const lost = latestW ? (START_W - parseFloat(latestW)).toFixed(1) : "0.0";
   const remaining = latestW ? (parseFloat(latestW) - GOAL_W).toFixed(1) : (START_W - GOAL_W).toFixed(1);
   const Card = ({
@@ -1276,7 +1310,64 @@ function GymDashboard() {
         color: active ? "#fff" : "#555"
       }
     }, wk.label));
-  }))), /*#__PURE__*/React.createElement("div", {
+  }))), isDeloadWeek && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "linear-gradient(135deg,#2a1a05,#1a0d18)",
+      border: "1px solid #eab30855",
+      borderRadius: 14,
+      padding: "16px 20px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 10,
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 24
+    }
+  }, "🪫"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Bebas, {
+    size: 24,
+    color: "#eab308"
+  }, "DELOAD WEEK"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#aaa"
+    }
+  }, "Same exercises · same sets & reps · 40% lighter"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#eab30822",
+      border: "1px solid #eab30855",
+      borderRadius: 8,
+      padding: "4px 10px",
+      fontSize: 11,
+      fontWeight: 700,
+      color: "#eab308",
+      whiteSpace: "nowrap"
+    }
+  }, "THIS WEEK")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      lineHeight: 1.7,
+      background: "#0d0d1899",
+      borderRadius: 8,
+      padding: "10px 12px"
+    }
+  }, "It will feel far too easy — that's the point. You're clearing accumulated fatigue so you can add weight again next week. Do ", /*#__PURE__*/React.createElement("strong", {
+    style: {
+      color: "#eab308"
+    }
+  }, "not"), " add extra sets to compensate.")), /*#__PURE__*/React.createElement("div", {
     style: {
       background: `${w.color}18`,
       border: `1px solid ${w.color}40`,
@@ -1300,9 +1391,19 @@ function GymDashboard() {
     }
   }, w.muscles)), /*#__PURE__*/React.createElement("div", {
     style: {
+      textAlign: "right"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
       fontSize: 34
     }
-  }, w.icon)), /*#__PURE__*/React.createElement("div", {
+  }, w.icon), !isDeloadWeek && weeksToNextDeload <= 1 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10,
+      color: "#eab308",
+      marginTop: 2
+    }
+  }, "deload next week"))), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: w.color,
@@ -1369,7 +1470,7 @@ function GymDashboard() {
       style: {
         color: "#eab308"
       }
-    }, " · PR ", bm.w, "kg"))), /*#__PURE__*/React.createElement("div", {
+    }, " · ", isDeloadWeek ? `deload ${round25(bm.w * DELOAD_PCT)}kg` : `PR ${bm.w}kg`))), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         alignItems: "center",
@@ -1493,7 +1594,68 @@ function GymDashboard() {
           fontWeight: 600
         }
       }, dk ? "✓" : si + 1);
-    }))), /*#__PURE__*/React.createElement("div", {
+    }))), isDeloadWeek ? /*#__PURE__*/React.createElement("div", {
+      style: {
+        background: "linear-gradient(135deg,#2a1a05,#0d0d18)",
+        border: "1px solid #eab30855",
+        borderRadius: 10,
+        padding: "12px 14px",
+        marginBottom: 12
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 8
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        fontWeight: 700,
+        letterSpacing: .5,
+        color: "#eab308"
+      }
+    }, "🪫 DELOAD TARGET (40% lighter)"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 10,
+        color: "#666"
+      }
+    }, "same sets & reps")), bm ? /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        gap: 16,
+        alignItems: "baseline",
+        flexWrap: "wrap"
+      }
+    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 26,
+        fontWeight: 700,
+        color: "#eab308"
+      }
+    }, round25(bm.w * DELOAD_PCT)), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12,
+        color: "#888"
+      }
+    }, " kg")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 12,
+        color: "#888"
+      }
+    }, ex.sets, " × ", ex.reps), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        color: "#555",
+        marginLeft: "auto"
+      }
+    }, "from best ", bm.w, " kg")) : /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 12,
+        color: "#555"
+      }
+    }, "No history yet — go light and focus on clean form this week.")) : /*#__PURE__*/React.createElement("div", {
       style: {
         background: "linear-gradient(135deg,#1a1408,#0d0d18)",
         border: "1px solid #eab30833",
@@ -1775,12 +1937,39 @@ function GymDashboard() {
     style: {
       borderColor: "#3b82f633"
     }
-  }, /*#__PURE__*/React.createElement(Bebas, {
-    color: "#3b82f6",
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("cardioPlan"),
     style: {
-      marginBottom: 6
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 6px",
+      padding: 4,
+      borderRadius: 8
     }
-  }, "CARDIO PLAN"), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.cardioPlan ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#3b82f6"
+  }, "CARDIO PLAN")), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: "#555"
+    }
+  }, "3–4× LISS · 40 min")), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "#555",
@@ -1874,7 +2063,7 @@ function GymDashboard() {
       fontSize: 11,
       color: "#666"
     }
-  }, "min logged"))), /*#__PURE__*/React.createElement("div", {
+  }, "min logged"))), openSec.cardioPlan && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 11,
       fontWeight: 700,
@@ -2275,7 +2464,7 @@ function GymDashboard() {
       marginTop: 8,
       fontStyle: "italic"
     }
-  }, "More cardio is not better. You're building muscle in a deficit — protect that first."))), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+  }, "More cardio is not better. You're building muscle in a deficit — protect that first.")))), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
     className: "hov",
     onClick: () => toggleSec("cardioLog"),
     style: {
@@ -2405,7 +2594,7 @@ function GymDashboard() {
     style: {
       marginBottom: 16
     }
-  }, "YOUR TARGETS"), [["🎯 Goal Weight", "80 kg"], ["⚖️ Current Weight", "90.5 kg (lose ~10.5 kg fat)"], ["🔥 Daily Calories", "2,100 kcal (flat, every day)"], ["🍕 Cheat Day Calories", "2,480–2,680 kcal (Friday only)"], ["📊 Approach", "Hold 2,100 · adjust by waist + photos"], ["📉 Target loss", "0.5–0.7 kg/week"], ["🥩 Protein", "180g/day minimum"], ["💧 Water", "3–4 L / day"], ["😴 Sleep", "7–9 hrs"]].map(([l, v]) => /*#__PURE__*/React.createElement("div", {
+  }, "YOUR TARGETS"), [["🎯 Primary Goal", "Waist 82 cm (~15% body fat)"], ["📏 Current Waist", "98 cm (~26.5% body fat)"], ["⚖️ Scale", "Output, not a target — lands ~78–82 kg"], ["🔥 Daily Calories", "2,100 kcal (flat, every day)"], ["🍕 Cheat Day Calories", "2,480–2,680 kcal (Friday only)"], ["📉 Target rate", "0.5–1 cm waist/week · 0.4–0.6 kg/week"], ["🥩 Protein", "180g/day — non-negotiable"], ["🚶 Steps", "10,000/day (your biggest lever)"], ["💧 Water", "3–4 L / day"], ["😴 Sleep", "7–9 hrs"]].map(([l, v]) => /*#__PURE__*/React.createElement("div", {
     key: l,
     style: {
       display: "flex",
@@ -2915,19 +3104,222 @@ function GymDashboard() {
     size: 18,
     color: "#c4b5fd",
     style: {
-      marginBottom: 10
+      marginBottom: 12
     }
-  }, "YOUR SCORECARD"), /*#__PURE__*/React.createElement("p", {
+  }, "YOUR SCORECARD"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 10,
+      flexWrap: "wrap",
+      marginBottom: 14
+    }
+  }, [["WAIST NOW", latestWaist || "—", "cm", "#22c55e"], ["GOAL", "82", "cm", "#c4b5fd"], ["TO GO", latestWaist ? (parseFloat(latestWaist) - 82).toFixed(1) : "—", "cm", "#f97316"]].map(([l, v, u, col]) => /*#__PURE__*/React.createElement("div", {
+    key: l,
+    style: {
+      flex: 1,
+      minWidth: 88,
+      background: "#0d0d18",
+      borderRadius: 10,
+      padding: 12,
+      textAlign: "center",
+      border: `1px solid ${col}33`
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10,
+      color: "#555",
+      letterSpacing: .5
+    }
+  }, l), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 20,
+      fontWeight: 700,
+      color: col
+    }
+  }, v), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#666"
+    }
+  }, u)))), /*#__PURE__*/React.createElement("p", {
     style: {
       fontSize: 13,
       color: "#888",
       lineHeight: 1.7
     }
-  }, "Waist shrinking = fat loss. Weight flat or slowly dropping = normal recomp. Lifts climbing = muscle built. Judge over ", /*#__PURE__*/React.createElement("strong", {
+  }, "Ask one question each week: ", /*#__PURE__*/React.createElement("strong", {
     style: {
       color: "#c4b5fd"
     }
-  }, "2–4 weeks"), ". Data saves automatically.")), /*#__PURE__*/React.createElement(Card, {
+  }, "is my waist down and are my lifts up?"), " If both are yes, change nothing.")), /*#__PURE__*/React.createElement(Card, {
+    style: {
+      borderColor: "#c4b5fd33"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("targets"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 0",
+      padding: 4,
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.targets ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#c4b5fd"
+  }, "TARGETS & MILESTONES")), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: "#555"
+    }
+  }, "waist 82 cm")), openSec.targets && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 14
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555",
+      marginBottom: 12
+    }
+  }, "Waist is the target. The scale is an output — it'll land ~78–82 kg on its own."), [{
+    stage: "Now",
+    waist: "98",
+    bf: "~26.5%",
+    note: "Starting point",
+    color: "#6b7280",
+    done: true
+  }, {
+    stage: "Checkpoint 1",
+    waist: "93",
+    bf: "~23%",
+    note: "Clothes noticeably looser",
+    color: "#3b82f6"
+  }, {
+    stage: "Checkpoint 2",
+    waist: "88",
+    bf: "~20%",
+    note: "Shape visible, waist defined",
+    color: "#a855f7"
+  }, {
+    stage: "Checkpoint 3",
+    waist: "85",
+    bf: "~17%",
+    note: "Athletic, some ab outline",
+    color: "#f97316"
+  }, {
+    stage: "🎯 Goal",
+    waist: "82",
+    bf: "~15%",
+    note: "Lean, abs visible",
+    color: "#22c55e"
+  }].map(m => {
+    const hit = latestWaist && parseFloat(latestWaist) <= parseFloat(m.waist);
+    return /*#__PURE__*/React.createElement("div", {
+      key: m.stage,
+      style: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        background: "#0d0d18",
+        borderRadius: 10,
+        padding: "11px 13px",
+        marginBottom: 8,
+        border: `1px solid ${hit ? "#22c55e44" : "#1e1e2e"}`
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 13,
+        fontWeight: 600,
+        color: m.color
+      }
+    }, hit && "✅ ", m.stage), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        color: "#666",
+        marginTop: 2
+      }
+    }, m.note)), /*#__PURE__*/React.createElement("div", {
+      style: {
+        textAlign: "right",
+        flexShrink: 0,
+        marginLeft: 10
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 16,
+        fontWeight: 700,
+        color: "#e8e8f0"
+      }
+    }, m.waist, " ", /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        color: "#555",
+        fontWeight: 400
+      }
+    }, "cm")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 10,
+        color: "#555"
+      }
+    }, m.bf, " body fat")));
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: .5,
+      color: "#3b82f6",
+      margin: "16px 0 10px"
+    }
+  }, "📊 SUPPORTING TARGETS"), [["Waist loss rate", "0.5–1 cm / week", "Faster means you're losing muscle"], ["Scale rate", "0.4–0.6 kg / week", "Secondary metric only"], ["Chest − waist gap", "Growing", "Your V-taper developing"], ["Arms", "Hold 37 cm or grow", "Proof muscle is being retained"], ["Neck", "Stays ~38 cm", "Sanity check on the body-fat estimate"]].map(([k, v, why]) => /*#__PURE__*/React.createElement("div", {
+    key: k,
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      padding: "9px 0",
+      borderBottom: "1px solid #1a1a2a",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#aaa"
+    }
+  }, k), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#555",
+      marginTop: 1
+    }
+  }, why)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 600,
+      color: "#e8e8f0",
+      textAlign: "right",
+      flexShrink: 0
+    }
+  }, v))))), /*#__PURE__*/React.createElement(Card, {
     style: {
       borderColor: "#22c55e33"
     }
@@ -3367,6 +3759,386 @@ function GymDashboard() {
       lineHeight: 1.6
     }
   }, m.guide))))), /*#__PURE__*/React.createElement(Card, {
+    style: {
+      borderColor: "#3b82f633"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("schedule"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 0",
+      padding: 4,
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.schedule ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#3b82f6"
+  }, "WHEN TO MEASURE")), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: "#555"
+    }
+  }, "Saturday AM")), openSec.schedule && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 14
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555",
+      marginBottom: 12
+    }
+  }, "Saturday works best — the Friday cheat meal has settled and your training week hasn't started."), [{
+    what: "📏 Waist ⭐",
+    freq: "Weekly",
+    when: "Saturday morning",
+    color: "#22c55e"
+  }, {
+    what: "📐 Full measurements",
+    freq: "Every 2 weeks",
+    when: "Saturday morning",
+    color: "#a855f7"
+  }, {
+    what: "⚖️ Body weight",
+    freq: "3× per week",
+    when: "Sat / Mon / Wed AM",
+    color: "#3b82f6"
+  }, {
+    what: "📸 Progress photos",
+    freq: "Every 2 weeks",
+    when: "Saturday morning",
+    color: "#f97316"
+  }, {
+    what: "🏋️ Lifts",
+    freq: "Every session",
+    when: "Logged in Exercises tab",
+    color: "#eab308"
+  }, {
+    what: "🔍 Full review",
+    freq: "Every 4 weeks",
+    when: "Saturday",
+    color: "#c4b5fd"
+  }].map(r => /*#__PURE__*/React.createElement("div", {
+    key: r.what,
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      background: "#0d0d18",
+      borderRadius: 9,
+      padding: "10px 12px",
+      marginBottom: 7
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 600,
+      color: "#e8e8f0"
+    }
+  }, r.what), /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "right",
+      flexShrink: 0,
+      marginLeft: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 700,
+      color: r.color
+    }
+  }, r.freq), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10,
+      color: "#555"
+    }
+  }, r.when)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: .5,
+      color: "#22c55e",
+      margin: "16px 0 10px"
+    }
+  }, "✅ THE EXACT PROTOCOL"), ["First thing in the morning — before eating or drinking", "After using the bathroom", "Wearing underwear only", "Weigh first, then measure", "Waist at navel level, standing relaxed, arms at sides", "Breathe out normally, measure at the end of that exhale", "Tape snug against skin but not compressing it", "Measure twice — if they differ >0.5 cm, do a third and take the middle"].map((s, i) => /*#__PURE__*/React.createElement("div", {
+    key: s,
+    style: {
+      display: "flex",
+      gap: 10,
+      marginBottom: 7,
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#22c55e18",
+      border: "1px solid #22c55e33",
+      borderRadius: 5,
+      minWidth: 20,
+      height: 20,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: 10,
+      fontWeight: 700,
+      color: "#22c55e",
+      marginTop: 1
+    }
+  }, i + 1), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      lineHeight: 1.6
+    }
+  }, s))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#666",
+      lineHeight: 1.6,
+      marginTop: 10,
+      fontStyle: "italic"
+    }
+  }, "Most \"plateaus\" are just measurement error. Same conditions every time or the numbers are noise."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: .5,
+      color: "#f97316",
+      margin: "16px 0 10px"
+    }
+  }, "📸 PHOTOS — DON'T SKIP THESE"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#0d0d18",
+      borderRadius: 10,
+      padding: "12px 14px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      lineHeight: 1.7,
+      marginBottom: 8
+    }
+  }, "Every 2 weeks. Same room, same light, same time of day, same distance, phone at chest height."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      lineHeight: 1.7,
+      marginBottom: 8
+    }
+  }, "Four shots: ", /*#__PURE__*/React.createElement("strong", {
+    style: {
+      color: "#e8e8f0"
+    }
+  }, "front, back, left side, right side"), " — relaxed, not flexed. Add one flexed front if you want."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#f97316",
+      lineHeight: 1.6,
+      fontStyle: "italic"
+    }
+  }, "Photos are the only metric that never lies. Four weeks apart they show what the tape can't.")))), /*#__PURE__*/React.createElement(Card, {
+    style: {
+      borderColor: "#eab30833"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("readData"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 0",
+      padding: 4,
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.readData ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#eab308"
+  }, "HOW TO READ YOUR DATA"))), openSec.readData && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 14
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#555",
+      marginBottom: 12
+    }
+  }, "Never react to a single measurement. Use a 2-week rolling comparison."), [{
+    sig: "Waist down 1–2 cm / 2 weeks",
+    act: "Perfect — change nothing",
+    color: "#22c55e"
+  }, {
+    sig: "Waist down 0–0.5 cm / 2 weeks",
+    act: "Add 2,000 steps/day OR one LISS session",
+    color: "#eab308"
+  }, {
+    sig: "Waist flat 3+ weeks (all else on point)",
+    act: "Then consider ~1,950 kcal or adding HIIT",
+    color: "#f97316"
+  }, {
+    sig: "Waist dropping but lifts falling",
+    act: "Cutting too hard — back off cardio",
+    color: "#ef4444"
+  }].map(r => /*#__PURE__*/React.createElement("div", {
+    key: r.sig,
+    style: {
+      background: "#0d0d18",
+      borderRadius: 10,
+      padding: "11px 13px",
+      marginBottom: 8,
+      borderLeft: `3px solid ${r.color}`
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 600,
+      color: "#e8e8f0",
+      marginBottom: 3
+    }
+  }, r.sig), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: r.color
+    }
+  }, "→ ", r.act))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#0d0d18",
+      borderRadius: 10,
+      padding: "12px 14px",
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: .5,
+      color: "#6b7280",
+      marginBottom: 8
+    }
+  }, "⚖️ ABOUT THE SCALE"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      lineHeight: 1.7
+    }
+  }, "It bounces 1–2 kg day to day from water, sodium and glycogen. Ignore daily numbers entirely. Only check whether the weekly average is drifting down across a month.")))), /*#__PURE__*/React.createElement(Card, {
+    style: {
+      borderColor: "#22c55e33"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("routine"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "-4px -4px 0",
+      padding: 4,
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 12,
+      transform: openSec.routine ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement(Bebas, {
+    color: "#22c55e"
+  }, "YOUR SATURDAY ROUTINE")), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: "#555"
+    }
+  }, "5 steps")), openSec.routine && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 14
+    }
+  }, ["Weigh in → log it", "Measure waist → log it", "Every 2nd week: full measurements + photos", "Open the Weekly tab, check volume vs last week", "Ask: is my waist down and are my lifts up?"].map((s, i) => /*#__PURE__*/React.createElement("div", {
+    key: s,
+    style: {
+      display: "flex",
+      gap: 10,
+      marginBottom: 9,
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#22c55e18",
+      border: "1px solid #22c55e33",
+      borderRadius: "50%",
+      minWidth: 22,
+      height: 22,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: 11,
+      fontWeight: 700,
+      color: "#22c55e"
+    }
+  }, i + 1), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      color: "#888",
+      lineHeight: 1.6,
+      marginTop: 1
+    }
+  }, s))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#0d1a0d",
+      border: "1px solid #22c55e22",
+      borderRadius: 10,
+      padding: "12px 14px",
+      marginTop: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      lineHeight: 1.7
+    }
+  }, "If both answers are ", /*#__PURE__*/React.createElement("strong", {
+    style: {
+      color: "#22c55e"
+    }
+  }, "yes"), " — change nothing. That's the whole system.")))), /*#__PURE__*/React.createElement(Card, {
     style: {
       borderColor: "#a855f733"
     }
