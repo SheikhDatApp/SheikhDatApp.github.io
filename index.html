@@ -1130,7 +1130,7 @@ function GymDashboard() {
         @keyframes sh{0%{background-position:0%}100%{background-position:200%}}
         .chev{transition:transform .2s;display:inline-block}
         input,select{font-family:'DM Sans',sans-serif}
-        .num-input{background:#0a0a0f;border:1px solid #2a2a3a;border-radius:6px;color:#e8e8f0;padding:6px 8px;font-size:13px;width:100%;text-align:center}
+        .num-input{background:#0a0a0f;border:1px solid #2a2a3a;border-radius:6px;color:#e8e8f0;padding:6px 8px;font-size:16px;width:100%;text-align:center;-moz-appearance:textfield;appearance:none}.num-input::-webkit-outer-spin-button,.num-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
         .num-input:focus{outline:none;border-color:#a855f7}
         .add-btn{background:#1e1e3e;border:1px solid #3e3e6e;color:#c4b5fd;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
         .add-btn:hover{background:#2a2a4e}
@@ -1675,15 +1675,17 @@ function GymDashboard() {
       }
     }, "Set ", si + 1), /*#__PURE__*/React.createElement("input", {
       className: "num-input",
-      type: "number",
+      type: "text",
       inputMode: "decimal",
+    pattern: "[0-9]*[.,]?[0-9]*",
       placeholder: "—",
       value: st.w,
       onChange: e => updateWeightEntry(ex.name, tIdx, si, "w", e.target.value)
     }), /*#__PURE__*/React.createElement("input", {
       className: "num-input",
-      type: "number",
+      type: "text",
       inputMode: "numeric",
+    pattern: "[0-9]*",
       placeholder: "—",
       value: st.r,
       onChange: e => updateWeightEntry(ex.name, tIdx, si, "r", e.target.value)
@@ -2020,8 +2022,9 @@ function GymDashboard() {
     value: "Walk"
   }, "Walk")), /*#__PURE__*/React.createElement("input", {
     className: "num-input",
-    type: "number",
+    type: "text",
     inputMode: "numeric",
+    pattern: "[0-9]*",
     placeholder: "min",
     value: e.minutes,
     onChange: ev => updateCardio(idx, "minutes", ev.target.value),
@@ -2764,8 +2767,9 @@ function GymDashboard() {
       }
     }), /*#__PURE__*/React.createElement("input", {
       className: "num-input",
-      type: "number",
+      type: "text",
       inputMode: "decimal",
+    pattern: "[0-9]*[.,]?[0-9]*",
       placeholder: "kg",
       value: e.kg,
       onChange: ev => updateBodyWeight(idx, "kg", ev.target.value),
@@ -2932,8 +2936,9 @@ function GymDashboard() {
       }
     }, "(cm)")), /*#__PURE__*/React.createElement("input", {
       className: "num-input",
-      type: "number",
+      type: "text",
       inputMode: "decimal",
+    pattern: "[0-9]*[.,]?[0-9]*",
       placeholder: "—",
       value: entry[m.key] || "",
       onChange: ev => updateMeasurement(idx, m.key, ev.target.value)
@@ -3304,15 +3309,17 @@ function GymDashboard() {
           }
         }, "Set ", si + 1), /*#__PURE__*/React.createElement("input", {
           className: "num-input",
-          type: "number",
+          type: "text",
           inputMode: "decimal",
+    pattern: "[0-9]*[.,]?[0-9]*",
           placeholder: "—",
           value: st.w,
           onChange: e => updateWeightEntry(name, idx, si, "w", e.target.value)
         }), /*#__PURE__*/React.createElement("input", {
           className: "num-input",
-          type: "number",
+          type: "text",
           inputMode: "numeric",
+    pattern: "[0-9]*",
           placeholder: "—",
           value: st.r,
           onChange: e => updateWeightEntry(name, idx, si, "r", e.target.value)
