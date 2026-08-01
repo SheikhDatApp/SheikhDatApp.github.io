@@ -330,62 +330,6 @@ const workouts = {
     }]
   }
 };
-const cardioByMonth = {
-  "Month 1": [{
-    weeks: "Weeks 1–2",
-    label: "No cardio",
-    detail: "Let your body adapt to 5-day training first. Adding cardio now risks burnout.",
-    color: "#6b7280"
-  }, {
-    weeks: "Weeks 3–4",
-    label: "1–2× LISS",
-    detail: "20–30 min incline treadmill walk or easy bike. HR 100–130 bpm.",
-    color: "#22c55e"
-  }],
-  "Month 2": [{
-    weeks: "Weeks 5–6",
-    label: "2–3× LISS",
-    detail: "25–35 min incline walk or bike. Never before lifting.",
-    color: "#3b82f6"
-  }, {
-    weeks: "Week 7",
-    label: "3× LISS",
-    detail: "35–40 min. Main fat-loss lever alongside diet.",
-    color: "#a855f7"
-  }, {
-    weeks: "Week 8 (Deload)",
-    label: "2× LISS only",
-    detail: "Lifting reduced. 2 easy sessions. Full recovery.",
-    color: "#6b7280"
-  }],
-  "Month 3": [{
-    weeks: "Weeks 9–10",
-    label: "3× LISS",
-    detail: "35–40 min. Incline treadmill walk ideal.",
-    color: "#f97316"
-  }, {
-    weeks: "Weeks 11–12",
-    label: "2× LISS + 1× HIIT",
-    detail: "20 min HIIT: 30s hard / 90s easy × 8 rounds.",
-    color: "#ef4444"
-  }],
-  "Month 4": [{
-    weeks: "Weeks 13–14",
-    label: "3× LISS + 1× HIIT",
-    detail: "Peak cardio. LISS on rest days, HIIT post-session once weekly.",
-    color: "#f97316"
-  }, {
-    weeks: "Week 15 (Deload)",
-    label: "2× LISS only",
-    detail: "Final deload. Easy 25 min walks.",
-    color: "#6b7280"
-  }, {
-    weeks: "Week 16",
-    label: "2× LISS",
-    detail: "Maintain easy cardio. Feel your best.",
-    color: "#22c55e"
-  }]
-};
 const ytLinks = {
   "Barbell Bench Press": "https://www.youtube.com/results?search_query=jeff+nippard+bench+press+tutorial",
   "Incline DB Press": "https://www.youtube.com/results?search_query=jeff+nippard+incline+dumbbell+press",
@@ -468,19 +412,6 @@ function GymDashboard() {
   const realDow = new Date().getDay();
   const [view, setView] = React.useState("today");
   const [selDow, setSelDow] = React.useState(realDow);
-  const [selMonth, setSelMonthRaw] = React.useState(() => {
-    try {
-      return localStorage.getItem("v41:selMonth") || "Month 1";
-    } catch {
-      return "Month 1";
-    }
-  });
-  const setSelMonth = m => {
-    setSelMonthRaw(m);
-    try {
-      localStorage.setItem("v41:selMonth", m);
-    } catch {}
-  };
   const [openSec, setOpenSec] = React.useState({}); // collapsible section states, default collapsed
   const toggleSec = key => setOpenSec(p => ({
     ...p,
@@ -846,8 +777,7 @@ function GymDashboard() {
     const next = [...cardioLog, {
       date: today(),
       type: "LISS",
-      minutes: "",
-      month: selMonth
+      minutes: ""
     }];
     setCardioLog(next);
     persist("v41:cardioLog", next);
@@ -1696,35 +1626,7 @@ function GymDashboard() {
         marginTop: 10
       }
     }, "Full history lives in the Tracker tab.")))));
-  })), view === "weekly" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-    style: {
-      background: "#0d0d18",
-      border: "1px solid #1e1e2e",
-      borderRadius: 12,
-      padding: "14px 16px"
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      flexWrap: "wrap",
-      gap: 8
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      fontWeight: 700,
-      letterSpacing: 1,
-      color: "#3b82f6"
-    }
-  }, "📅 PROGRAM MONTH"), /*#__PURE__*/React.createElement("select", {
-    value: selMonth,
-    onChange: e => setSelMonth(e.target.value)
-  }, Object.keys(cardioByMonth).map(m => /*#__PURE__*/React.createElement("option", {
-    key: m,
-    value: m
-  }, m))))), /*#__PURE__*/React.createElement(Card, {
+  })), view === "weekly" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Card, {
     style: {
       borderColor: "#a855f733"
     }
@@ -1878,46 +1780,502 @@ function GymDashboard() {
     style: {
       marginBottom: 6
     }
-  }, "CARDIO PLAN · ", selMonth.toUpperCase()), /*#__PURE__*/React.createElement("div", {
+  }, "CARDIO PLAN"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "#555",
-      marginBottom: 14
+      marginBottom: 16
     }
-  }, "Your target for this month per the roadmap"), cardioByMonth[selMonth].map((c, ci) => /*#__PURE__*/React.createElement("div", {
-    key: ci,
+  }, "Build up gradually — never at the cost of your lifts"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 10,
+      flexWrap: "wrap",
+      marginBottom: 16
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 100,
+      background: "#0d0d18",
+      borderRadius: 10,
+      padding: 12,
+      textAlign: "center",
+      border: "1px solid #22c55e33"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10,
+      color: "#555",
+      letterSpacing: .5
+    }
+  }, "TARGET"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 19,
+      fontWeight: 700,
+      color: "#22c55e"
+    }
+  }, "3–4×"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#666"
+    }
+  }, "LISS · 40 min")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 100,
+      background: "#0d0d18",
+      borderRadius: 10,
+      padding: 12,
+      textAlign: "center",
+      border: "1px solid #eab30833"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10,
+      color: "#555",
+      letterSpacing: .5
+    }
+  }, "CEILING"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 19,
+      fontWeight: 700,
+      color: "#eab308"
+    }
+  }, "~180"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#666"
+    }
+  }, "min / week")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 100,
+      background: "#0d0d18",
+      borderRadius: 10,
+      padding: 12,
+      textAlign: "center",
+      border: `1px solid ${thisCardio > 180 ? "#ef444433" : "#3b82f633"}`
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10,
+      color: "#555",
+      letterSpacing: .5
+    }
+  }, "THIS WEEK"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 19,
+      fontWeight: 700,
+      color: thisCardio > 180 ? "#ef4444" : "#3b82f6"
+    }
+  }, Math.round(thisCardio)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#666"
+    }
+  }, "min logged"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: .5,
+      color: "#3b82f6",
+      marginBottom: 10
+    }
+  }, "📋 WHAT TO DO"), [{
+    tag: "LISS",
+    color: "#22c55e",
+    title: "3–4× per week · 40 min",
+    hr: "105–130 bpm",
+    detail: "Incline treadmill walk or easy bike. Should feel effortless — you can hold a conversation. Do it on rest days or after lifting, never before."
+  }, {
+    tag: "HIIT",
+    color: "#ef4444",
+    title: "Hold in reserve — 0–1× per week",
+    hr: "work 165–180 · recover 115–135 bpm",
+    detail: "20 min total: 30s hard / 90s easy × 8 rounds. Only add this if waist AND weight both stall for 2+ weeks while everything else is on point."
+  }, {
+    tag: "STEPS",
+    color: "#f97316",
+    title: "10,000 daily — your biggest lever",
+    hr: "any",
+    detail: "Worth ~200–250 kcal/day and costs you nothing in recovery. Get this before adding a 4th cardio session."
+  }].map(r => /*#__PURE__*/React.createElement("div", {
+    key: r.tag,
     style: {
       display: "flex",
       gap: 12,
-      marginBottom: 10,
+      marginBottom: 12,
       alignItems: "flex-start"
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      background: `${c.color}22`,
-      border: `1px solid ${c.color}55`,
+      background: `${r.color}22`,
+      border: `1px solid ${r.color}55`,
       borderRadius: 8,
       padding: "4px 10px",
       fontSize: 10,
       fontWeight: 700,
-      color: c.color,
+      color: r.color,
       whiteSpace: "nowrap",
-      marginTop: 1
+      marginTop: 1,
+      minWidth: 52,
+      textAlign: "center"
     }
-  }, c.weeks), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+  }, r.tag), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 13,
       fontWeight: 600,
       color: "#e8e8f0",
       marginBottom: 2
     }
-  }, c.label), /*#__PURE__*/React.createElement("div", {
+  }, r.title), r.hr !== "any" && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: r.color,
+      fontWeight: 600,
+      marginBottom: 3
+    }
+  }, "❤️ ", r.hr), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "#666",
       lineHeight: 1.5
     }
-  }, c.detail))))), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+  }, r.detail)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#0d0d18",
+      borderRadius: 10,
+      padding: "12px 14px",
+      marginTop: 4,
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: .5,
+      color: "#ef4444"
+    }
+  }, "❤️ YOUR HEART RATE ZONES"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 10,
+      color: "#555"
+    }
+  }, "age 27 · HRmax ≈ 191")), [{
+    z: "Zone 2 · LISS",
+    pct: "55–68%",
+    bpm: "105–130",
+    color: "#22c55e",
+    feel: "Easy — can talk in full sentences"
+  }, {
+    z: "HIIT recovery",
+    pct: "60–70%",
+    bpm: "115–135",
+    color: "#3b82f6",
+    feel: "Catching your breath between rounds"
+  }, {
+    z: "HIIT work",
+    pct: "85–95%",
+    bpm: "165–180",
+    color: "#ef4444",
+    feel: "Hard — can't speak, legs burning"
+  }].map(r => /*#__PURE__*/React.createElement("div", {
+    key: r.z,
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "8px 0",
+      borderBottom: "1px solid #1a1a2a"
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 600,
+      color: r.color
+    }
+  }, r.z), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#555"
+    }
+  }, r.feel)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "right",
+      flexShrink: 0,
+      marginLeft: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 14,
+      fontWeight: 700,
+      color: "#e8e8f0"
+    }
+  }, r.bpm), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10,
+      color: "#555"
+    }
+  }, "bpm · ", r.pct)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#666",
+      lineHeight: 1.6,
+      marginTop: 8,
+      fontStyle: "italic"
+    }
+  }, "If you don't have a HR strap, use the talk test: LISS = full sentences, HIIT work = can't talk at all.")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#0d0d18",
+      borderRadius: 10,
+      marginBottom: 12,
+      overflow: "hidden",
+      border: "1px solid #ef444422"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hov",
+    onClick: () => toggleSec("hiitGuide"),
+    style: {
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "12px 14px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "chev",
+    style: {
+      color: "#444",
+      fontSize: 11,
+      transform: openSec.hiitGuide ? "rotate(180deg)" : "none"
+    }
+  }, "▾"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: .5,
+      color: "#ef4444"
+    }
+  }, "🔥 HOW TO DO HIIT PROPERLY")), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 10,
+      color: "#555"
+    }
+  }, "20 min")), openSec.hiitGuide && /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "0 14px 14px",
+      borderTop: "1px solid #1a1a2a"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: .5,
+      color: "#a855f7",
+      margin: "12px 0 8px"
+    }
+  }, "THE SESSION"), [{
+    step: "Warm-up",
+    time: "3 min",
+    detail: "Easy pace, HR drifts to ~120 bpm. Never start intervals cold."
+  }, {
+    step: "Work",
+    time: "30 sec",
+    detail: "All-out effort → HR climbs to 165–180 bpm. Should feel genuinely hard by second 20."
+  }, {
+    step: "Recover",
+    time: "90 sec",
+    detail: "Slow walk or easy spin → let HR fall back to 115–135 bpm before the next round."
+  }, {
+    step: "Repeat",
+    time: "× 8 rounds",
+    detail: "That's 16 min of intervals. If round 8 feels easy, you went too soft on the work intervals."
+  }, {
+    step: "Cool-down",
+    time: "2 min",
+    detail: "Easy pace until HR is under 120 bpm."
+  }].map(s => /*#__PURE__*/React.createElement("div", {
+    key: s.step,
+    style: {
+      display: "flex",
+      gap: 10,
+      marginBottom: 9,
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#ef444418",
+      border: "1px solid #ef444433",
+      borderRadius: 6,
+      padding: "3px 8px",
+      fontSize: 10,
+      fontWeight: 700,
+      color: "#ef4444",
+      whiteSpace: "nowrap",
+      minWidth: 62,
+      textAlign: "center",
+      marginTop: 1
+    }
+  }, s.time), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 600,
+      color: "#e8e8f0"
+    }
+  }, s.step), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#666",
+      lineHeight: 1.5
+    }
+  }, s.detail)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: .5,
+      color: "#22c55e",
+      margin: "14px 0 8px"
+    }
+  }, "✅ RULES"), ["Bike or incline treadmill — lowest joint impact. Avoid sprinting on flat ground.", "Never on a leg day. Put it after an upper day or on a rest day.", "Never before lifting — it wrecks your strength for the session.", "Max 1× per week while in a deficit. This is a fat-loss tool, not a fitness goal.", "If your HR won't climb to 165+, you're not working hard enough on the intervals."].map(r => /*#__PURE__*/React.createElement("div", {
+    key: r,
+    style: {
+      display: "flex",
+      gap: 8,
+      marginBottom: 6,
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "#22c55e",
+      fontSize: 10,
+      marginTop: 3
+    }
+  }, "▸"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      lineHeight: 1.6
+    }
+  }, r))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: .5,
+      color: "#ef4444",
+      margin: "14px 0 8px"
+    }
+  }, "🛑 STOP THE SESSION IF"), ["Chest pain, dizziness, or you feel faint", "HR won't drop below 140 during the recovery intervals", "Form breaks down badly or you feel a joint tweak"].map(r => /*#__PURE__*/React.createElement("div", {
+    key: r,
+    style: {
+      display: "flex",
+      gap: 8,
+      marginBottom: 6,
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "#ef4444",
+      fontSize: 10,
+      marginTop: 3
+    }
+  }, "▸"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      lineHeight: 1.6
+    }
+  }, r))))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#0d0d18",
+      borderRadius: 10,
+      padding: "12px 14px",
+      marginTop: 4,
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: .5,
+      color: "#a855f7",
+      marginBottom: 8
+    }
+  }, "📈 HOW TO PROGRESS"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      lineHeight: 1.7
+    }
+  }, "Add ", /*#__PURE__*/React.createElement("strong", {
+    style: {
+      color: "#e8e8f0"
+    }
+  }, "one session per week"), ", then hold it for two weeks before adding another. Don't jump straight to the ceiling — your body needs time to absorb the extra load while you're in a deficit.")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#1a0d0d",
+      border: "1px solid #ef444433",
+      borderRadius: 10,
+      padding: "12px 14px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: .5,
+      color: "#ef4444",
+      marginBottom: 8
+    }
+  }, "🛑 BACK OFF IF"), ["Your lifts drop two sessions in a row", "Sleep quality gets worse", "Waist stops moving despite more cardio"].map(s => /*#__PURE__*/React.createElement("div", {
+    key: s,
+    style: {
+      display: "flex",
+      gap: 8,
+      marginBottom: 6,
+      alignItems: "flex-start"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "#ef4444",
+      fontSize: 10,
+      marginTop: 3
+    }
+  }, "▸"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      lineHeight: 1.6
+    }
+  }, s))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#666",
+      lineHeight: 1.6,
+      marginTop: 8,
+      fontStyle: "italic"
+    }
+  }, "More cardio is not better. You're building muscle in a deficit — protect that first."))), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
     className: "hov",
     onClick: () => toggleSec("cardioLog"),
     style: {
