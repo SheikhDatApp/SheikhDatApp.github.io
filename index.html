@@ -56,11 +56,11 @@ const fmtD = s => {
   return d.getUTCDate() + " " + MON[d.getUTCMonth()];
 };
 const fmtDL = s => DAY_SHORT[dowOf(s)] + " " + fmtD(s);
-const PLAN_V = 2;
+const PLAN_V = 3;
 const DEFAULT_SETTINGS = {
   planV: PLAN_V,
   phase: "cut",
-  start: "2026-11-02",
+  start: "2026-11-03",
   startWeight: 88.2,
   goalWeight: 80,
   waistBase: 100,
@@ -437,9 +437,14 @@ const loadLocal = () => {
   });
   return d;
 };
-const pruneSets = (sbd, today) => sbd && sbd[today] ? {
-  [today]: sbd[today]
-} : {};
+const pruneSets = (sbd, today) => {
+  const out = {};
+  const from = addDays(today, -8);
+  Object.keys(sbd || {}).forEach(d => {
+    if (d >= from && d <= today) out[d] = sbd[d];
+  });
+  return out;
+};
 const dailyWeights = D => {
   const m = {};
   (D.bodyWeight || []).forEach(b => {
@@ -522,6 +527,10 @@ function App() {
   const Dref = useRef(D);
   const [view, setView] = useState("today");
   const [selDate, setSelDate] = useState(null);
+  const [editDate, setEditDate] = useState(null);
+  const logDate = editDate && editDate < today ? editDate : today;
+  const logRef = useRef(logDate);
+  logRef.current = logDate;
   const [openSec, setOpenSec] = useState({});
   const toggleSec = (id, cur) => setOpenSec(p => ({
     ...p,
@@ -772,10 +781,9 @@ function App() {
   const dws = dailyWeights(D);
   const recentW = dws.filter(p => p.date >= addDays(S.start, -14));
   const latestKg = recentW.length ? recentW[recentW.length - 1].kg : S.startWeight;
-  const todayEntry = exName => (Dref.current.weightLogs[exName] || []).findIndex(e => e.date === riyadhDateStr());
   const setCells = (exName, n, si, obj) => {
     const c = Dref.current;
-    const t = riyadhDateStr();
+    const t = logRef.current;
     const arr = [...(c.weightLogs[exName] || [])];
     let idx = arr.findIndex(e => e.date === t);
     if (idx < 0) {
@@ -811,7 +819,7 @@ function App() {
     });
   };
   const toggleSet = (key, on) => {
-    const t = riyadhDateStr();
+    const t = logRef.current;
     const c = Dref.current;
     const day = {
       ...((c.setsByDay || {})[t] || {})
@@ -819,14 +827,15 @@ function App() {
     if (on) day[key] = true;else delete day[key];
     update({
       setsByDay: {
+        ...(c.setsByDay || {}),
         [t]: day
       }
     });
   };
-  const isSetDone = key => !!((D.setsByDay || {})[today] || {})[key];
+  const isSetDone = key => !!((D.setsByDay || {})[logDate] || {})[key];
   const setTodayWeight = val => {
     const c = Dref.current;
-    const t = riyadhDateStr();
+    const t = logRef.current;
     const arr = [...c.bodyWeight];
     const idx = arr.findIndex(b => b.date === t);
     if (val === "") {
@@ -844,7 +853,7 @@ function App() {
   };
   const setDaily = (field, val) => {
     const c = Dref.current;
-    const t = riyadhDateStr();
+    const t = logRef.current;
     update({
       daily: {
         ...c.daily,
@@ -902,6 +911,9 @@ function App() {
   const A = {
     D,
     today,
+    logDate,
+    editDate,
+    setEditDate,
     view,
     setView,
     selDate,
@@ -1138,6 +1150,10 @@ function App() {
     className: "tab" + (view === k ? " on" : ""),
     onClick: () => {
       setView(k);
+      if (k === "today") {
+        setSelDate(null);
+        setEditDate(null);
+      }
       window.scrollTo(0, 0);
     }
   }, React.createElement("span", {
@@ -1408,25 +1424,35 @@ function TodayScreen() {
     phaseDone,
     cardioPlan,
     selDate,
-    setSelDate
+    setSelDate,
+    editDate,
+    setEditDate,
+    logDate
   } = A;
+  const [wOff, setWOff] = useState(0);
   const date = selDate || today;
-  const preview = date !== today;
+  const editing = date !== today && editDate === date && date < today;
+  const preview = date !== today && !editing;
+  const pick = d => {
+    setSelDate(d === today ? null : d);
+    setEditDate(null);
+  };
   const dow = dowOf(date);
   const dayKey = schedFor(date);
   const day = DAYS[dayKey];
   const isLift = day.kind === "lift";
-  const sat = addDays(today, -((dowOf(today) + 1) % 7));
+  const sat = addDays(today, -((dowOf(today) + 1) % 7) - 7 * wOff);
   const strip = Array.from({
     length: 7
   }, (_, i) => addDays(sat, i));
-  const todayW = (D.bodyWeight.find(b => b.date === today) || {}).kg || "";
-  const dl = D.daily[today] || {};
-  const targetKcal = A.kcalFor(today);
+  const ld = editing ? date : today;
+  const todayW = (D.bodyWeight.find(b => b.date === ld) || {}).kg || "";
+  const dl = D.daily[ld] || {};
+  const targetKcal = A.kcalFor(ld);
   const walks = D.cardioLog.map((c, i) => ({
     ...c,
     i
-  })).filter(c => c.date === today);
+  })).filter(c => c.date === ld);
   const walkMin = walks.reduce((a, c) => a + (num(c.minutes) || 0), 0);
   const walkTarget = dayKey === "WALK" ? cardioPlan.park : dayKey === "REFEED" ? 0 : cardioPlan.lift;
   const totalSets = isLift ? day.ex.reduce((a, e) => a + A.setsFor(e), 0) : 0;
@@ -1482,6 +1508,27 @@ function TodayScreen() {
     b: "Still rebuilding after the break. Full loads from next week."
   } : null;
   return React.createElement(React.Fragment, null, React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: -6
+    }
+  }, React.createElement("button", {
+    className: "ghost",
+    onClick: () => setWOff(wOff + 1)
+  }, "‹ Earlier week"), React.createElement("span", {
+    className: "dim",
+    style: {
+      fontSize: 11
+    }
+  }, wOff === 0 ? "This week" : wOff === 1 ? "Last week" : wOff + " weeks ago"), React.createElement("button", {
+    className: "ghost",
+    style: {
+      visibility: wOff > 0 ? "visible" : "hidden"
+    },
+    onClick: () => setWOff(Math.max(0, wOff - 1))
+  }, "Later week ›")), React.createElement("div", {
     className: "daystrip"
   }, strip.map(d => {
     const k = schedFor(d);
@@ -1491,7 +1538,7 @@ function TodayScreen() {
     return React.createElement("button", {
       key: d,
       className: "daybtn",
-      onClick: () => setSelDate(d === today ? null : d),
+      onClick: () => pick(d),
       style: {
         borderColor: act ? dd.color : "var(--line)",
         background: act ? dd.color + "22" : "var(--card)"
@@ -1550,9 +1597,10 @@ function TodayScreen() {
     style: {
       fontSize: 11,
       fontWeight: 700,
-      letterSpacing: 1
+      letterSpacing: 1,
+      color: editing ? "var(--lo)" : undefined
     }
-  }, preview ? "PREVIEW" : "TODAY", " · ", DAY_NAMES[dow].toUpperCase(), " ", fmtD(date).toUpperCase()), React.createElement("div", {
+  }, editing ? "✎ LOGGING PAST DAY" : preview ? "PREVIEW" : "TODAY", " · ", DAY_NAMES[dow].toUpperCase(), " ", fmtD(date).toUpperCase()), React.createElement("div", {
     className: "h",
     style: {
       fontSize: 34,
@@ -1565,10 +1613,28 @@ function TodayScreen() {
       fontSize: 12,
       marginTop: 4
     }
-  }, day.focus)), preview && React.createElement("button", {
+  }, day.focus)), date !== today && React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 6,
+      alignItems: "stretch",
+      flexShrink: 0
+    }
+  }, React.createElement("button", {
     className: "btn sm",
-    onClick: () => setSelDate(null)
-  }, "↩ Today")), React.createElement("div", {
+    onClick: () => {
+      setSelDate(null);
+      setEditDate(null);
+      setWOff(0);
+    }
+  }, "↩ Today"), date < today && !editing && React.createElement("button", {
+    className: "btn sm primary",
+    onClick: () => setEditDate(date)
+  }, "✎ Log this day"), editing && React.createElement("button", {
+    className: "btn sm",
+    onClick: () => setEditDate(null)
+  }, "✓ Done"))), React.createElement("div", {
     style: {
       display: "flex",
       gap: 8,
@@ -1591,7 +1657,7 @@ function TodayScreen() {
       alignItems: "center",
       marginBottom: 6
     }
-  }, React.createElement(H, null, "CHECKLIST"), React.createElement("span", {
+  }, React.createElement(H, null, editing ? "CHECKLIST · " + fmtDL(ld).toUpperCase() : "CHECKLIST"), React.createElement("span", {
     className: "mu",
     style: {
       fontSize: 12
@@ -1666,7 +1732,8 @@ function TodayScreen() {
   })))))), isLift && React.createElement(LiftList, {
     dayKey: dayKey,
     day: day,
-    readOnly: preview
+    readOnly: preview,
+    viewDate: date
   }), !isLift && React.createElement(Card, null, React.createElement(H, {
     color: day.color
   }, dayKey === "REFEED" ? "REST DAY" : "NO LIFTING TODAY"), React.createElement("div", {
@@ -1677,6 +1744,7 @@ function TodayScreen() {
       lineHeight: 1.7
     }
   }, dayKey === "REFEED" ? "Weekend rest day — no workout. Eat your refeed calories, enjoy one free meal tonight (800–1,000 kcal, ~40 g protein), keep your steps normal, sleep well. Back to the plan tomorrow." : "Recovery day. The park walk is the session — keep it brisk but conversational.")), !preview && React.createElement(WalkCard, {
+    key: ld,
     walks: walks,
     dayKey: dayKey
   }), preview && walkTarget > 0 && React.createElement(Card, null, React.createElement(H, {
@@ -1692,15 +1760,17 @@ function TodayScreen() {
 function LiftList({
   dayKey,
   day,
-  readOnly
+  readOnly,
+  viewDate
 }) {
   const A = useContext(Ctx);
   const {
     D,
-    today,
     mult,
     isDeload
   } = A;
+  const today = A.logDate;
+  const setOn = key => !!((D.setsByDay || {})[readOnly ? viewDate : today] || {})[key];
   const [openEx, setOpenEx] = useState(null);
   return React.createElement(React.Fragment, null, React.createElement("div", {
     style: {
@@ -1732,7 +1802,7 @@ function LiftList({
     const todayEn = entries.find(e => e.date === today);
     const done = Array.from({
       length: nS
-    }).filter((_, si) => A.isSetDone(`${dayKey}-${ei}-${si}`)).length;
+    }).filter((_, si) => setOn(`${dayKey}-${ei}-${si}`)).length;
     const open = openEx === ei;
     const lastTop = last ? Math.max(...last.sets.map(s => num(s.w) || 0)) : 0;
     const hitTop = last && !bw && last.sets.filter(s => num(s.w) === lastTop).every(s => (num(s.r) || 0) >= rmax) && lastTop > 0;
@@ -1822,7 +1892,7 @@ function LiftList({
       length: nS
     }).map((_, si) => {
       const key = `${dayKey}-${ei}-${si}`;
-      const on = A.isSetDone(key);
+      const on = setOn(key);
       const st = todayEn && todayEn.sets[si] || {
         w: "",
         r: ""
@@ -1917,11 +1987,11 @@ function WalkCard({
   const A = useContext(Ctx);
   const {
     D,
-    today,
     cardioPlan,
     latestKg,
     phaseWeek
   } = A;
+  const today = A.logDate;
   const lift = DAYS[dayKey].kind === "lift";
   const [type, setType] = useState(lift ? "Gym treadmill" : "Park walk");
   const [min, setMin] = useState(String(lift ? cardioPlan.lift : cardioPlan.park));
@@ -2348,7 +2418,7 @@ function WeekScreen() {
       marginTop: 10,
       lineHeight: 1.6
     }
-  }, "Weeks run Monday → Sunday from the phase start date (", fmtDL(S.start), "). Times are Riyadh (GMT+3).")), React.createElement(Sec, {
+  }, "Weeks run ", DAY_NAMES[dowOf(S.start)], " → ", DAY_NAMES[(dowOf(S.start) + 6) % 7], " from the phase start date (", fmtDL(S.start), "). Times are Riyadh (GMT+3).")), React.createElement(Sec, {
     id: "walkhist",
     title: "WALK LOG",
     right: `${D.cardioLog.length} sessions`,
