@@ -77,6 +77,7 @@ const PHASES = {
     kcalFri: 2250,
     protein: 180,
     fat: 60,
+    fiber: 30,
     steps: 12000,
     stepsMin: 10000,
     rate: {
@@ -102,16 +103,17 @@ const PHASES = {
     color: "#fb923c",
     weeks: 16,
     deload: [5, 10, 15],
-    kcalBase: 2650,
-    kcalFri: 2900,
+    kcalBase: 2600,
+    kcalFri: 2800,
     protein: 170,
     fat: 80,
+    fiber: 30,
     steps: 8000,
     stepsMin: 7000,
     rate: {
       lo: 0.15,
-      hi: 0.5,
-      ideal: "+0.25 to +0.4"
+      hi: 0.3,
+      ideal: "+0.15 to +0.3"
     },
     mult: w => w === 1 ? 0.9 : 1,
     cardio: () => ({
@@ -119,11 +121,11 @@ const PHASES = {
       lift: 0,
       tag: "Maintenance"
     }),
-    blurb: "Lean gain. About +300 over maintenance, same 4-day split, light walking."
+    blurb: "Lean gain at +0.15–0.3 kg/week (RP: 0.125–0.5% of body weight). About +200–250 kcal over maintenance, same 4-day split, 8–16 weeks."
   }
 };
 const T = {
-  squat: "FORM: Start light. Feet shoulder-width, toes out 15–30°. Brace core, push knees out over toes, hit parallel or below, drive through mid-foot. RED FLAGS: heels rising, knees caving, butt wink.",
+  squat: "FORM: First squat since August — start at 40–45 kg and own the form before adding weight. Start light. Feet shoulder-width, toes out 15–30°. Brace core, push knees out over toes, hit parallel or below, drive through mid-foot. RED FLAGS: heels rising, knees caving, butt wink.",
   rdl: "FORM: Soft knee bend, push hips BACK not down, bar drags close to legs, flat back. Lower to a strong hamstring stretch. Feeling it in the lower back = rounding, go lighter.",
   bulg: "FORM: Bodyweight until solid. Rear foot on bench, front foot far enough forward that the knee stays behind the toes. Torso upright, lower straight down, don't let the front knee cave. Hold something for balance for 2 weeks.",
   thrust: "Best direct glute builder. Upper back on bench, chin tucked, drive hips up, squeeze glutes hard at the top, full lockout. Swap: cable pull-through if setup is awkward."
@@ -141,14 +143,14 @@ const DAYS = {
       n: "Barbell Bench Press",
       s: 4,
       r: "6–8",
-      rest: "90s",
+      rest: "2–3 min",
       tip: "Retract shoulder blades, feet planted, 3-second controlled descent."
     }, {
       id: "pulldown",
       n: "Weighted Pull-ups / Lat Pulldown",
       s: 4,
       r: "8–10",
-      rest: "90s",
+      rest: "2–3 min",
       tip: "Full stretch at the bottom, drive elbows to hips."
     }, {
       id: "db_shoulder_press",
@@ -167,7 +169,7 @@ const DAYS = {
     }, {
       id: "lateral_raise",
       n: "Cable Lateral Raise",
-      s: 3,
+      s: 4,
       r: "12–15",
       rest: "60s",
       tip: "Lead with the elbow, slight bend. Side delts drive width."
@@ -192,7 +194,7 @@ const DAYS = {
       n: "Barbell Back Squat",
       s: 4,
       r: "6–8",
-      rest: "2 min",
+      rest: "2–3 min",
       tip: T.squat
     }, {
       id: "leg_press",
@@ -249,7 +251,7 @@ const DAYS = {
     }, {
       id: "lateral_raise",
       n: "Cable Lateral Raise",
-      s: 3,
+      s: 4,
       r: "12–15",
       rest: "60s",
       tip: "Lead with the elbow, slight bend, stop at shoulder height. Second weekly hit for side delts = shoulder width."
@@ -288,22 +290,22 @@ const DAYS = {
       n: "Romanian Deadlift",
       s: 4,
       r: "8–10",
-      rest: "90s",
+      rest: "2–3 min",
       tip: T.rdl
     }, {
       id: "hip_thrust",
       n: "Hip Thrust",
       s: 3,
       r: "8–12",
-      rest: "90s",
-      tip: T.thrust
+      rest: "2 min",
+      tip: "Use ONE working weight for all 3 sets — if the reps drop a lot, fix setup, not the weight. " + T.thrust
     }, {
       id: "hack_goblet_squat",
       n: "Hack Squat or Goblet Squat",
       s: 3,
       r: "10–12",
       rest: "75s",
-      tip: "Goblet is great for form work."
+      tip: "Pick a weight you can do for 10–12 on EVERY set. If set 1 is under 10 reps, it's too heavy — drop it. Goblet is great for form work."
     }, {
       id: "calf_seated",
       n: "Seated Calf Raise",
@@ -315,10 +317,10 @@ const DAYS = {
       id: "plank",
       n: "Plank",
       s: 3,
-      r: "45–60 sec",
+      r: "45 sec",
       rest: "45s",
       bw: true,
-      tip: "Ribs down, glutes tight, straight line head to heels."
+      tip: "Hold 45 sec on EVERY set — better 3 × 45 than 60/30/20. Ribs down, glutes squeezed, straight line head to heels."
     }]
   },
   WALK: {
@@ -1031,6 +1033,15 @@ function App() {
     });
     apply(d => putMeasurement(d, "m-" + Date.now().toString(36), m));
   };
+  const setWaistOn = (date, val) => apply(d => {
+    const ex = measurementList(d).find(m => m.date === date);
+    return putMeasurement(d, ex ? ex.id : "m-" + date, ex ? {
+      waist: val
+    } : {
+      date,
+      waist: val
+    });
+  });
   const editMeasurement = (id, field, val) => apply(d => putMeasurement(d, id, {
     [field]: val
   }));
@@ -1067,6 +1078,7 @@ function App() {
     });
   });
   const A = {
+    setWaistOn,
     swapDays,
     resetDay,
     setSet,
@@ -1615,6 +1627,7 @@ function TodayScreen() {
   }, (_, i) => addDays(sat, i));
   const ld = editing ? date : today;
   const dl = dayOf(D, ld);
+  const waistToday = (measurementList(D).find(m => m.date === ld) || {}).waist;
   const todayW = dl.weight;
   const targetKcal = A.kcalFor(ld);
   const walks = (dl.walks || []).map((w, i) => ({
@@ -1657,7 +1670,22 @@ function TodayScreen() {
     label: "Protein",
     done: (num(dl.protein) || 0) >= ph.protein - 10,
     sub: `${num(dl.protein) || 0}/${ph.protein} g`
-  }];
+  }, {
+    k: "f",
+    label: "Fibre",
+    done: (dl.fiber || 0) >= ph.fiber,
+    sub: `${dl.fiber || 0}/${ph.fiber}–38 g`
+  }, {
+    k: "z",
+    label: "Sleep 7 h+",
+    done: (dl.sleep || 0) >= 7,
+    sub: dl.sleep ? `${dl.sleep} h last night` : "hours slept last night"
+  }, ...(dowOf(ld) === 6 ? [{
+    k: "m",
+    label: "Waist measurement (Saturday)",
+    done: waistToday != null,
+    sub: phaseWeek && (phaseWeek - 1) % 4 === 0 ? "Photo week too: front, side, back" : "Navel level, relaxed, end of exhale"
+  }] : [])];
   const doneCount = todos.filter(t => t.done).length;
   const banner = phaseDone ? {
     c: "var(--lo)",
@@ -1961,6 +1989,34 @@ function TodayScreen() {
     placeholder: "g",
     dec: false,
     small: true
+  })), t.k === "f" && React.createElement("div", {
+    style: {
+      width: 92
+    }
+  }, React.createElement(Num, {
+    value: dl.fiber,
+    onChange: v => A.setDaily("fiber", v),
+    placeholder: "g",
+    dec: false,
+    small: true
+  })), t.k === "z" && React.createElement("div", {
+    style: {
+      width: 92
+    }
+  }, React.createElement(Num, {
+    value: dl.sleep,
+    onChange: v => A.setDaily("sleep", v),
+    placeholder: "h",
+    small: true
+  })), t.k === "m" && React.createElement("div", {
+    style: {
+      width: 92
+    }
+  }, React.createElement(Num, {
+    value: waistToday,
+    onChange: v => A.setWaistOn(ld, v),
+    placeholder: "cm",
+    small: true
   })))))), isLift && React.createElement(LiftList, {
     dayKey: dayKey,
     day: day,
@@ -1987,7 +2043,7 @@ function TodayScreen() {
       fontSize: 13,
       marginTop: 8
     }
-  }, walkTarget, " min — ", isLift ? "treadmill after lifting, 5–5.5 km/h at 3–4% incline" : "park, brisk 5–5.5 km/h")));
+  }, walkTarget, " min — ", isLift ? "treadmill after lifting, 5–5.5 km/h at 2–3% incline, HR ≤ 140" : "park, brisk 5–5.5 km/h")));
 }
 function LiftList({
   dayKey,
@@ -2228,10 +2284,10 @@ function WalkCard({
   const [type, setType] = useState(lift ? "Gym treadmill" : "Park walk");
   const [min, setMin] = useState(lift ? cardioPlan.lift : cardioPlan.park);
   const [speed, setSpeed] = useState(5.5);
-  const [incl, setIncl] = useState(lift ? 4 : 0);
+  const [incl, setIncl] = useState(lift ? 2.5 : 0);
   const [hr, setHr] = useState(null);
   const target = dayKey === "REFEED" ? 0 : lift ? cardioPlan.lift : cardioPlan.park;
-  const rx = lift ? `${cardioPlan.lift} min on the treadmill after lifting · 5–5.5 km/h · incline 3–4% · HR 105–135` : `${cardioPlan.park} min brisk park walk · 5–5.5 km/h · HR 105–135`;
+  const rx = lift ? `${cardioPlan.lift} min on the treadmill after lifting · 5–5.5 km/h · incline 2–3% · keep HR ≤ 140 (raise incline only once HR stays under 140)` : `${cardioPlan.park} min brisk park walk · 5–5.5 km/h · HR 105–135`;
   const est = walkKcal(latestKg, speed, incl, min);
   if (target === 0 && walks.length === 0) return null;
   return React.createElement(Card, {
@@ -2259,7 +2315,12 @@ function WalkCard({
     style: {
       fontSize: 11
     }
-  }, w.speed ? `${w.speed} km/h` : "", w.incline ? ` · ${w.incline}%` : "", w.hr ? ` · ${w.hr} bpm` : "", w.kcal ? ` · ~${w.kcal} kcal` : "")), React.createElement("button", {
+  }, w.speed ? `${w.speed} km/h` : "", w.incline ? ` · ${w.incline}%` : "", w.hr ? ` · ${w.hr} bpm` : "", w.kcal ? ` · ~${w.kcal} kcal` : ""), w.hr > 140 && React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "var(--lo)"
+    }
+  }, "HR above 140 — next time drop the incline or speed a notch")), React.createElement("button", {
     className: "ghost",
     onClick: () => A.removeWalk(w.date, w.i)
   }, "✕"))), React.createElement("div", {
@@ -2383,15 +2444,15 @@ function coachVerdict(A) {
       b: "Two weeks flat. Check the waist first — if it's also flat, go to 1,750 kcal on Sat–Thu AND add 15 min to each park walk. Re-check in 14 days."
     };
   }
-  if (rate >= 0.6) return {
+  if (rate > 0.35) return {
     c: "var(--lo)",
     t: `Gaining fast: +${r} kg/wk`,
-    b: "Too fast means extra fat. Drop 150–200 kcal."
+    b: "Faster than ~0.3 kg/week mostly adds fat. Drop 150–200 kcal."
   };
   if (rate >= 0.15) return {
     c: "var(--ok)",
     t: `On track: +${r} kg/wk`,
-    b: "Lean-gain zone. Keep pushing progressive overload."
+    b: "Lean-gain zone (+0.15 to +0.3). Keep pushing progressive overload."
   };
   return {
     c: "var(--lo)",
@@ -3095,7 +3156,7 @@ function PlanScreen() {
       margin: "6px 0 10px",
       lineHeight: 1.6
     }
-  }, ph.blurb), [["Started", fmtDL(S.start)], ["Length", ph.weeks + " weeks"], ["Start weight", fmtKg(S.startWeight) + " kg"], ["Goal weight", f ? fmtKg(S.goalWeight) + " kg by " + fmtDL(addDays(S.start, ph.weeks * 7 - 1)) : "slow lean gain"], ["Waist goal", f ? "~" + S.waistGoal + " cm (long-term 82)" : "hold waist, grow arms/chest/thighs"], ["Calories", `${k.toLocaleString()} (Sat–Thu) · ${ph.kcalFri.toLocaleString()} (Fri)`], ["Weekly average", Math.round((k * 6 + ph.kcalFri) / 7).toLocaleString() + " kcal"], ["Protein", ph.protein + " g / day"], ["Steps", ph.stepsMin / 1000 + "k minimum · " + ph.steps / 1000 + "k target"], ["Walking", f ? "~260 min / week from week 3" : "light"], ["Water", "3–4 L"], ["Sleep", "7–9 h"], ["Rate", ph.rate.ideal + " kg / week"]].map(([l, v]) => React.createElement("div", {
+  }, ph.blurb), [["Started", fmtDL(S.start)], ["Length", ph.weeks + " weeks"], ["Start weight", fmtKg(S.startWeight) + " kg"], ["Goal weight", f ? fmtKg(S.goalWeight) + " kg by " + fmtDL(addDays(S.start, ph.weeks * 7 - 1)) : "slow lean gain"], ["Waist goal", f ? "~" + S.waistGoal + " cm (long-term 82)" : "hold waist, grow arms/chest/thighs"], ["Calories", `${k.toLocaleString()} (Sat–Thu) · ${ph.kcalFri.toLocaleString()} (Fri)`], ["Weekly average", Math.round((k * 6 + ph.kcalFri) / 7).toLocaleString() + " kcal"], ["Protein", ph.protein + " g / day"], ["Steps", ph.stepsMin / 1000 + "k minimum · " + ph.steps / 1000 + "k target"], ["Walking", f ? "~260 min / week from week 3" : "light"], ["Fibre", ph.fiber + "–38 g / day (veg, oats, legumes, fruit)"], ["Water", "3–4 L"], ["Sleep", "7–9 h (logged daily)"], ["Rate", ph.rate.ideal + " kg / week"]].map(([l, v]) => React.createElement("div", {
     className: "row",
     key: l
   }, React.createElement("span", {
@@ -3138,7 +3199,7 @@ function PlanScreen() {
       lineHeight: 1.7,
       marginTop: 10
     }
-  }, "Progression: when you hit the top of the rep range on every set, add 2.5 kg (1.25 kg for small lifts) next time. Week 1 loads at 90% of your best. Deload weeks (5 and 9): half the sets at normal weights. Rest 60–120 s as listed. Compounds: stop 1–3 reps short of failure; isolation: 0–1 rep short. Weekly hard sets ≈ chest 8 · back 10 · side delts 6 · biceps 6 · quads 10 · hamstrings 7 · calves 6 · abs 6."), ["UA", "LA", "UB", "LB"].map(kk => React.createElement("div", {
+  }, "Progression: when you hit the top of the rep range on every set, add 2.5 kg (1.25 kg for small lifts) next time. Week 1 loads at 90% of your best. Deload weeks (5 and 9): half the sets at normal weights. Rest 2–3 min on the big lifts (bench, pulldown, squat, RDL; hip thrust 2 min), 60–75 s on isolation. Compounds: stop 1–3 reps short of failure; isolation: 0–1 rep short. Weekly hard sets ≈ chest 8 · back 10 · side delts 8 · biceps 6 · quads 10 · hamstrings 7 · calves 6 · abs 6."), ["UA", "LA", "UB", "LB"].map(kk => React.createElement("div", {
     key: kk,
     style: {
       marginTop: 12
@@ -3178,7 +3239,7 @@ function PlanScreen() {
     style: {
       fontSize: 13
     }
-  }, "3 × 30 min easy walks. Steps 8k."), [["Park walk", "Mon and Wed, 5–5.5 km/h, brisk but conversational.", "105–135 bpm"], ["Post-lift treadmill", "5–5.5 km/h at 3–4% incline (up to 6 km/h when it feels easy). Never before lifting. Short on time? Do it outside later the same day instead.", "105–140 bpm"], ["Progress it", "Add pace or incline first, then minutes. Never add all three in the same week.", ""]].map(([a, b, c]) => React.createElement("div", {
+  }, "3 × 30 min easy walks. Steps 8k."), [["Park walk", "Mon and Wed, 5–5.5 km/h, brisk but conversational.", "105–135 bpm"], ["Post-lift treadmill", "5–5.5 km/h at 2–3% incline. Keep HR ≤ 140; only raise the incline (up to 4%) once HR stays under 140. Never before lifting. Short on time? Do it outside later the same day instead.", "105–140 bpm"], ["Progress it", "Add pace or incline first, then minutes. Never add all three in the same week.", ""]].map(([a, b, c]) => React.createElement("div", {
     className: "row",
     key: a,
     style: {
@@ -3208,11 +3269,11 @@ function PlanScreen() {
       lineHeight: 1.7,
       marginTop: 10
     }
-  }, "Heart rate zones (age 27, max ≈ 191): easy zone 105–130, comfortable ceiling for incline walking ≈ 140. No strap? Talk test: full sentences. Estimated burn: flat 5.5 km/h ≈ 245 kcal/hour net, 5.5 km/h at 4% ≈ 400 kcal/hour net at your weight.")), React.createElement(Sec, {
+  }, "Heart rate zones (age 27, max ≈ 191): easy zone 105–130, comfortable ceiling for incline walking ≈ 140. No strap? Talk test: full sentences. Estimated burn: flat 5.5 km/h ≈ 245 kcal/hour net, 5.5 km/h at 2.5% ≈ 350, at 4% ≈ 400 kcal/hour net at your weight. Your first treadmill walks hit 152–161 bpm — that's why the incline starts lower now.")), React.createElement(Sec, {
     id: "macros",
     title: `MACROS · ${k.toLocaleString()} KCAL`,
     color: "#60a5fa"
-  }, [["Protein", prot + " g", prot * 4, "#fb923c", "4 meals of ~45 g (≈0.4 g/kg each)"], ["Carbs", carb + " g", carb * 4, "#60a5fa", "Around training — rice, oats, potato, fruit"], ["Fat", fat + " g", fat * 9, "#34d399", "Never below 55 g — eggs, olive oil, nuts"]].map(([n, g, kc, c, note]) => React.createElement("div", {
+  }, [["Protein", prot + " g", prot * 4, "#fb923c", "4 meals of ~45 g (≈0.4 g/kg each)"], ["Carbs", carb + " g", carb * 4, "#60a5fa", "Around training — rice, oats, potato, fruit. Pick high-fibre sources to reach 30–38 g fibre."], ["Fat", fat + " g", fat * 9, "#34d399", "Never below 55 g — eggs, olive oil, nuts"]].map(([n, g, kc, c, note]) => React.createElement("div", {
     key: n,
     style: {
       marginBottom: 14
