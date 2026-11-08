@@ -1645,6 +1645,11 @@ function TodayScreen() {
     k: "w",
     label: "Morning weigh-in",
     done: !!num(todayW)
+  }, {
+    k: "z",
+    label: "Sleep 7 h+",
+    done: (dl.sleep || 0) >= 7,
+    sub: dl.sleep ? `${fmtSleep(dl.sleep)} last night` : "last night · hours + minutes"
   }, ...(isLift ? [{
     k: "l",
     label: `Lift — ${day.name}`,
@@ -1675,11 +1680,6 @@ function TodayScreen() {
     label: "Fibre",
     done: (dl.fiber || 0) >= ph.fiber,
     sub: `${dl.fiber || 0}/${ph.fiber}–38 g`
-  }, {
-    k: "z",
-    label: "Sleep 7 h+",
-    done: (dl.sleep || 0) >= 7,
-    sub: dl.sleep ? `${dl.sleep} h last night` : "hours slept last night"
   }, ...(dowOf(ld) === 6 ? [{
     k: "m",
     label: "Waist measurement (Saturday)",
@@ -1999,16 +1999,10 @@ function TodayScreen() {
     placeholder: "g",
     dec: false,
     small: true
-  })), t.k === "z" && React.createElement("div", {
-    style: {
-      width: 92
-    }
-  }, React.createElement(Num, {
+  })), t.k === "z" && React.createElement(SleepInput, {
     value: dl.sleep,
-    onChange: v => A.setDaily("sleep", v),
-    placeholder: "h",
-    small: true
-  })), t.k === "m" && React.createElement("div", {
+    onChange: v => A.setDaily("sleep", v)
+  }), t.k === "m" && React.createElement("div", {
     style: {
       width: 92
     }
@@ -2397,6 +2391,43 @@ function WalkCard({
       kcal: est
     }))
   }, "+ Log walk"))));
+}
+const fmtSleep = v => {
+  const h = Math.floor(v),
+    m = Math.round((v - h) * 60);
+  return h + " h" + (m ? " " + m + " min" : "");
+};
+function SleepInput({
+  value,
+  onChange
+}) {
+  const h = value == null ? null : Math.floor(value);
+  const m = value == null ? null : Math.round((value - Math.floor(value)) * 60);
+  const set = (hh, mm) => {
+    if (hh == null && mm == null) return onChange(null);
+    const t = (hh || 0) + Math.min(mm || 0, 59) / 60;
+    onChange(Math.round(t * 100) / 100);
+  };
+  return React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 4,
+      alignItems: "center",
+      width: 128
+    }
+  }, React.createElement(Num, {
+    value: h,
+    onChange: v => set(v, m),
+    placeholder: "h",
+    dec: false,
+    small: true
+  }), React.createElement(Num, {
+    value: m,
+    onChange: v => set(h, v),
+    placeholder: "min",
+    dec: false,
+    small: true
+  }));
 }
 function coachVerdict(A) {
   const {
