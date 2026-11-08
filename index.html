@@ -137,36 +137,42 @@ const DAYS = {
     icon: "▲",
     focus: "Chest · back · shoulders — the heavy upper day",
     ex: [{
+      id: "bench",
       n: "Barbell Bench Press",
       s: 4,
       r: "6–8",
       rest: "90s",
       tip: "Retract shoulder blades, feet planted, 3-second controlled descent."
     }, {
+      id: "pulldown",
       n: "Weighted Pull-ups / Lat Pulldown",
       s: 4,
       r: "8–10",
       rest: "90s",
       tip: "Full stretch at the bottom, drive elbows to hips."
     }, {
+      id: "db_shoulder_press",
       n: "Seated DB Shoulder Press",
       s: 3,
       r: "8–10",
       rest: "75s",
       tip: "Do it fresh. Don't flare elbows too wide."
     }, {
+      id: "cable_row_wide",
       n: "Seated Cable Row (wide grip)",
       s: 3,
       r: "10–12",
       rest: "75s",
       tip: "Chest proud, no rounding, squeeze at the end."
     }, {
+      id: "lateral_raise",
       n: "Cable Lateral Raise",
       s: 3,
       r: "12–15",
       rest: "60s",
       tip: "Lead with the elbow, slight bend. Side delts drive width."
     }, {
+      id: "ez_curl",
       n: "Barbell or EZ Curl",
       s: 3,
       r: "10–12",
@@ -182,31 +188,35 @@ const DAYS = {
     icon: "▼",
     focus: "Quads-led — squat day",
     ex: [{
+      id: "squat",
       n: "Barbell Back Squat",
       s: 4,
       r: "6–8",
       rest: "2 min",
       tip: T.squat
     }, {
+      id: "leg_press",
       n: "Leg Press",
       s: 3,
       r: "10–12",
       rest: "75s",
       tip: "High foot placement = more glutes. Don't lock out hard."
     }, {
+      id: "leg_curl",
       n: "Seated Leg Curl",
-      alias: "Leg Curl (seated or lying)",
       s: 3,
       r: "10–12",
       rest: "60s",
       tip: "Seated, not lying: sitting puts the hamstrings on a stretch, and seated curls grew them more in research. Lean slightly forward, control the way up."
     }, {
+      id: "calf_standing",
       n: "Calf Raise (standing)",
       s: 3,
       r: "15–20",
       rest: "60s",
       tip: "Pause 2 sec in the bottom stretch every rep. When full reps fail, finish with a few bottom-half reps — the stretched position is what grows calves."
     }, {
+      id: "ab_wheel",
       n: "Ab Wheel / Hanging Knee Raise",
       s: 3,
       r: "10–15",
@@ -223,36 +233,42 @@ const DAYS = {
     icon: "▲",
     focus: "Incline, rows, side + rear delts, arms",
     ex: [{
+      id: "incline_db_press",
       n: "Incline DB Press",
       s: 4,
       r: "8–12",
       rest: "75s",
       tip: "30–45° incline, squeeze at the top."
     }, {
+      id: "chest_supported_row",
       n: "Chest-Supported DB Row",
       s: 3,
       r: "10–12",
       rest: "75s",
       tip: "Takes lower-back fatigue out of the row."
     }, {
+      id: "lateral_raise",
       n: "Cable Lateral Raise",
       s: 3,
       r: "12–15",
       rest: "60s",
       tip: "Lead with the elbow, slight bend, stop at shoulder height. Second weekly hit for side delts = shoulder width."
     }, {
+      id: "rear_delt_fly",
       n: "Rear Delt Machine Fly",
       s: 3,
       r: "15–20",
       rest: "60s",
       tip: "Lead with the elbows. The machine keeps your form consistent."
     }, {
+      id: "incline_curl",
       n: "DB Incline Curl",
       s: 3,
       r: "10–12",
       rest: "60s",
       tip: "Full stretch at the bottom = more biceps."
     }, {
+      id: "overhead_tricep_ext",
       n: "Overhead DB Tricep Extension",
       s: 3,
       r: "10–12",
@@ -268,30 +284,35 @@ const DAYS = {
     icon: "▼",
     focus: "Hinge + glutes — posterior chain day",
     ex: [{
+      id: "rdl",
       n: "Romanian Deadlift",
       s: 4,
       r: "8–10",
       rest: "90s",
       tip: T.rdl
     }, {
+      id: "hip_thrust",
       n: "Hip Thrust",
       s: 3,
       r: "8–12",
       rest: "90s",
       tip: T.thrust
     }, {
+      id: "hack_goblet_squat",
       n: "Hack Squat or Goblet Squat",
       s: 3,
       r: "10–12",
       rest: "75s",
       tip: "Goblet is great for form work."
     }, {
+      id: "calf_seated",
       n: "Seated Calf Raise",
       s: 3,
       r: "15–20",
       rest: "60s",
       tip: "Pause 2 sec in the bottom stretch every rep. When full reps fail, finish with a few bottom-half reps."
     }, {
+      id: "plank",
       n: "Plank",
       s: 3,
       r: "45–60 sec",
@@ -395,6 +416,67 @@ const MEASURES = [{
   base: 38,
   guide: "Middle of the neck, just below the Adam's apple. Snug, not tight, look straight ahead."
 }];
+const RETIRED_EX = [{
+  id: "face_pull",
+  n: "Face Pulls"
+}, {
+  id: "hammer_curl",
+  n: "Hammer Curl"
+}, {
+  id: "arnold_press",
+  n: "Arnold Press"
+}, {
+  id: "db_flat_press",
+  n: "DB Flat Press"
+}, {
+  id: "leg_extension",
+  n: "Leg Extension"
+}, {
+  id: "walking_lunge",
+  n: "Walking Lunges"
+}, {
+  id: "rope_pushdown",
+  n: "Tricep Rope Pushdown"
+}, {
+  id: "bb_row",
+  n: "Barbell Bent-Over Row"
+}, {
+  id: "bulgarian_split_squat",
+  n: "Bulgarian Split Squat"
+}, {
+  id: "cable_row_close",
+  n: "Cable Row (close grip)"
+}, {
+  id: "deadlift",
+  n: "Deadlift (conventional)"
+}];
+const EX_ALIASES = {
+  leg_curl: ["Leg Curl (seated or lying)"]
+};
+const EXERCISES = (() => {
+  const m = {};
+  ["UA", "LA", "UB", "LB"].forEach(k => DAYS[k].ex.forEach(e => {
+    m[e.id] = {
+      id: e.id,
+      n: e.n,
+      active: true
+    };
+  }));
+  RETIRED_EX.forEach(e => {
+    if (!m[e.id]) m[e.id] = {
+      id: e.id,
+      n: e.n,
+      active: false
+    };
+  });
+  return m;
+})();
+const exName = id => EXERCISES[id] ? EXERCISES[id].n : String(id).replace(/^x:/, "");
+const exIdForName = name => {
+  for (const id in EXERCISES) if (EXERCISES[id].n === name) return id;
+  for (const id in EX_ALIASES) if (EX_ALIASES[id].includes(name)) return id;
+  return "x:" + name;
+};
 const num = v => {
   const x = parseFloat(String(v).replace(",", "."));
   return isNaN(x) ? null : x;
@@ -409,7 +491,9 @@ const walkKcal = (kg, speed, incl, min) => {
   const vo2 = 0.1 * sp + 1.8 * sp * g;
   return Math.round(vo2 * kg / 1000 * 5 * (num(min) || 0));
 };
-const LS = {
+const SCHEMA_VERSION = 6;
+const LOCAL_KEY = "recomp:data:v6";
+const OLD_LOCAL_KEYS = {
   weightLogs: "v41:weightLogs",
   bodyWeight: "v41:bodyWeight",
   measurements: "v41:measurements",
@@ -419,47 +503,282 @@ const LS = {
   settings: "v50:settings",
   overrides: "v51:overrides"
 };
-const EMPTY = {
-  weightLogs: {},
-  bodyWeight: [],
-  measurements: [],
-  cardioLog: [],
-  setsByDay: {},
-  daily: {},
-  settings: {},
-  overrides: {}
+const emptyDoc = () => ({
+  schemaVersion: SCHEMA_VERSION,
+  days: {},
+  measurements: {},
+  settings: {}
+});
+const toNum = v => v === "" || v == null ? null : num(v);
+const clean = o => {
+  const r = {};
+  Object.keys(o).forEach(k => {
+    if (o[k] !== null && o[k] !== undefined) r[k] = o[k];
+  });
+  return r;
 };
-const loadLocal = () => {
-  const d = {
-    ...EMPTY
+function migrateV5(p) {
+  const doc = emptyDoc();
+  const day = d => doc.days[d] = doc.days[d] || {
+    _t: 0
   };
-  Object.keys(LS).forEach(k => {
+  const bw = {};
+  (p.bodyWeight || []).forEach(b => {
+    const k = toNum(b.kg);
+    if (k && b.date) (bw[b.date] = bw[b.date] || []).push(k);
+  });
+  Object.keys(bw).forEach(d => {
+    day(d).weight = Math.round(avg(bw[d]) * 100) / 100;
+  });
+  Object.keys(p.daily || {}).forEach(d => {
+    const x = p.daily[d] || {};
+    ["steps", "kcal", "protein"].forEach(f => {
+      const v = toNum(x[f]);
+      if (v != null) day(d)[f] = v;
+    });
+  });
+  Object.keys(p.weightLogs || {}).forEach(name => {
+    const id = exIdForName(name);
+    (p.weightLogs[name] || []).forEach(en => {
+      const sets = (en.sets || []).map(s => ({
+        w: toNum(s.w),
+        r: toNum(s.r),
+        done: false
+      }));
+      if (!sets.some(s => s.w != null || s.r != null)) return;
+      const D = day(en.date);
+      D.lifts = D.lifts || {};
+      D.lifts[id] = sets;
+    });
+  });
+  Object.keys(p.setsByDay || {}).forEach(d => Object.keys(p.setsByDay[d] || {}).forEach(key => {
+    const [dk, ei, si] = key.split("-");
+    const ex = DAYS[dk] && DAYS[dk].ex[+ei];
+    if (!ex) return;
+    const D = day(d);
+    D.lifts = D.lifts || {};
+    const arr = D.lifts[ex.id] = D.lifts[ex.id] || [];
+    while (arr.length <= +si) arr.push({
+      w: null,
+      r: null,
+      done: false
+    });
+    arr[+si].done = true;
+  }));
+  (p.cardioLog || []).forEach(c => {
+    if (!c.date) return;
+    const D = day(c.date);
+    D.walks = D.walks || [];
+    D.walks.push(clean({
+      type: c.type || "Walk",
+      min: toNum(c.minutes),
+      speed: toNum(c.speed),
+      incline: toNum(c.incline),
+      hr: toNum(c.hr),
+      kcal: toNum(c.kcal)
+    }));
+  });
+  Object.keys(p.overrides || {}).forEach(d => {
+    const o = p.overrides[d];
+    if (o && o.k) day(d).swap = {
+      k: o.k,
+      with: o.with
+    };
+  });
+  (p.measurements || []).forEach((m, i) => {
+    const id = "m-" + m.date + "-" + i;
+    const r = {
+      date: m.date,
+      _t: 0
+    };
+    MEASURES.forEach(ms => {
+      const v = toNum(m[ms.key]);
+      if (v != null) r[ms.key] = v;
+    });
+    doc.measurements[id] = r;
+  });
+  doc.settings = {
+    ...(p.settings || {}),
+    _t: 0
+  };
+  doc.legacy = p;
+  return doc;
+}
+const upgrade = p => !p ? emptyDoc() : p.schemaVersion === SCHEMA_VERSION ? {
+  ...emptyDoc(),
+  ...p
+} : migrateV5(p);
+function mergeDocs(local, cloud) {
+  const out = emptyDoc();
+  const pick = (a, b) => !a ? b : !b ? a : (a._t || 0) > (b._t || 0) ? a : b;
+  new Set([...Object.keys(local.days || {}), ...Object.keys(cloud.days || {})]).forEach(d => {
+    out.days[d] = pick((local.days || {})[d], (cloud.days || {})[d]);
+  });
+  new Set([...Object.keys(local.measurements || {}), ...Object.keys(cloud.measurements || {})]).forEach(id => {
+    out.measurements[id] = pick((local.measurements || {})[id], (cloud.measurements || {})[id]);
+  });
+  out.settings = pick(local.settings, cloud.settings) || {};
+  const legacy = cloud.legacy || local.legacy;
+  if (legacy) out.legacy = legacy;
+  return out;
+}
+function loadLocal() {
+  try {
+    const v = localStorage.getItem(LOCAL_KEY);
+    if (v) return upgrade(JSON.parse(v));
+  } catch (e) {}
+  const old = {};
+  let any = false;
+  Object.keys(OLD_LOCAL_KEYS).forEach(k => {
     try {
-      const v = localStorage.getItem(LS[k]);
-      if (v) d[k] = JSON.parse(v);
+      const v = localStorage.getItem(OLD_LOCAL_KEYS[k]);
+      if (v) {
+        old[k] = JSON.parse(v);
+        any = true;
+      }
     } catch (e) {}
   });
-  return d;
-};
-const pruneSets = (sbd, today) => {
-  const out = {};
-  const from = addDays(today, -8);
-  Object.keys(sbd || {}).forEach(d => {
-    if (d >= from && d <= today) out[d] = sbd[d];
+  return any ? migrateV5(old) : emptyDoc();
+}
+function saveLocal(doc) {
+  try {
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(doc));
+  } catch (e) {}
+}
+function clearOldLocal() {
+  Object.values(OLD_LOCAL_KEYS).forEach(k => {
+    try {
+      localStorage.removeItem(k);
+    } catch (e) {}
   });
-  return out;
+  try {
+    localStorage.removeItem("v50:dirty");
+  } catch (e) {}
+}
+const editDay = (doc, date, fn) => {
+  const prev = doc.days[date] || {};
+  const next = fn({
+    ...prev,
+    lifts: prev.lifts ? {
+      ...prev.lifts
+    } : undefined,
+    walks: prev.walks ? [...prev.walks] : undefined
+  });
+  next._t = Date.now();
+  if (next.lifts && !Object.keys(next.lifts).length) delete next.lifts;
+  if (next.walks && !next.walks.length) delete next.walks;
+  return {
+    ...doc,
+    days: {
+      ...doc.days,
+      [date]: clean(next)
+    }
+  };
 };
-const dailyWeights = D => {
+const setDayField = (doc, date, field, val) => editDay(doc, date, d => ({
+  ...d,
+  [field]: val
+}));
+const setLiftSet = (doc, date, exId, nSets, si, patch) => editDay(doc, date, d => {
+  const lifts = d.lifts || {};
+  const arr = [...(lifts[exId] || [])];
+  while (arr.length < Math.max(nSets, si + 1)) arr.push({
+    w: null,
+    r: null,
+    done: false
+  });
+  arr[si] = {
+    ...arr[si],
+    ...patch
+  };
+  return {
+    ...d,
+    lifts: {
+      ...lifts,
+      [exId]: arr
+    }
+  };
+});
+const addWalk = (doc, date, w) => editDay(doc, date, d => ({
+  ...d,
+  walks: [...(d.walks || []), w]
+}));
+const delWalk = (doc, date, i) => editDay(doc, date, d => ({
+  ...d,
+  walks: (d.walks || []).filter((_, k) => k !== i)
+}));
+const setSwap = (doc, date, swap) => editDay(doc, date, d => ({
+  ...d,
+  swap: swap || undefined
+}));
+const putMeasurement = (doc, id, patch) => ({
+  ...doc,
+  measurements: {
+    ...doc.measurements,
+    [id]: {
+      ...(doc.measurements[id] || {}),
+      ...patch,
+      _t: Date.now()
+    }
+  }
+});
+const putSettings = (doc, patch) => ({
+  ...doc,
+  settings: {
+    ...(doc.settings || {}),
+    ...patch,
+    _t: Date.now()
+  }
+});
+const dayOf = (D, date) => D.days && D.days[date] || {};
+const swapMap = D => {
   const m = {};
-  (D.bodyWeight || []).forEach(b => {
-    const k = num(b.kg);
-    if (k && b.date) (m[b.date] = m[b.date] || []).push(k);
+  Object.keys(D.days || {}).forEach(d => {
+    if (D.days[d].swap) m[d] = D.days[d].swap;
   });
-  return Object.keys(m).sort().map(d => ({
-    date: d,
-    kg: avg(m[d])
-  }));
+  return m;
 };
+const dailyWeights = D => Object.keys(D.days || {}).filter(d => D.days[d].weight).sort().map(d => ({
+  date: d,
+  kg: D.days[d].weight
+}));
+const exHistory = (D, id) => Object.keys(D.days || {}).filter(d => D.days[d].lifts && D.days[d].lifts[id]).sort().map(d => ({
+  date: d,
+  sets: D.days[d].lifts[id]
+}));
+const setFilled = s => s && (s.w != null || s.r != null);
+const workingBest = (hist, repMin) => {
+  let best = null;
+  (hist || []).forEach(en => en.sets.forEach(s => {
+    if (s.w > 0 && s.r != null && s.r >= repMin && (!best || s.w > best.w)) best = {
+      w: s.w,
+      r: s.r,
+      date: en.date
+    };
+  }));
+  return best;
+};
+const lastSession = (hist, before) => {
+  const h = (hist || []).filter(e => e.date < before && e.sets.some(setFilled));
+  return h.length ? h[h.length - 1] : null;
+};
+const sessionText = en => en.sets.filter(setFilled).map(s => (s.w != null ? s.w : "BW") + "×" + (s.r != null ? s.r : "?")).join("  ·  ");
+const daysIn = (D, from, to) => Object.keys(D.days || {}).filter(d => d >= from && d <= to);
+const liftedOn = (D, d) => Object.values(dayOf(D, d).lifts || {}).some(arr => arr.some(setFilled));
+const sessionsIn = (D, from, to) => daysIn(D, from, to).filter(d => liftedOn(D, d)).length;
+const volumeIn = (D, from, to) => daysIn(D, from, to).reduce((t, d) => t + Object.values(D.days[d].lifts || {}).reduce((a, arr) => a + arr.reduce((b, s) => b + (s.w || 0) * (s.r || 0), 0), 0), 0);
+const walkMinIn = (D, from, to) => daysIn(D, from, to).reduce((t, d) => t + (D.days[d].walks || []).reduce((a, w) => a + (w.min || 0), 0), 0);
+const dailyAvg = (D, field, from, to) => avg(daysIn(D, from, to).map(d => D.days[d][field]).filter(v => v));
+const weightAvgIn = (D, from, to) => dailyAvg(D, "weight", from, to);
+const allWalks = D => Object.keys(D.days || {}).sort().reverse().flatMap(d => (D.days[d].walks || []).map((w, i) => ({
+  ...w,
+  date: d,
+  i
+})));
+const measurementList = D => Object.keys(D.measurements || {}).map(id => ({
+  ...D.measurements[id],
+  id
+})).filter(m => !m.deleted).sort((a, b) => a.date < b.date ? -1 : 1);
 const slopePerWeek = pts => {
   if (pts.length < 2) return null;
   const x0 = pts[0].date;
@@ -475,51 +794,6 @@ const slopePerWeek = pts => {
   });
   return d === 0 ? null : n / d * 7;
 };
-const workingBest = (entries, repMin) => {
-  let best = null;
-  (entries || []).forEach(en => (en.sets || []).forEach(s => {
-    const w = num(s.w),
-      r = num(s.r);
-    if (w && w > 0 && r != null && r >= repMin && (!best || w > best.w)) best = {
-      w,
-      r,
-      date: en.date
-    };
-  }));
-  return best;
-};
-const lastSession = (entries, before) => {
-  const done = (entries || []).filter(e => e.date < before && (e.sets || []).some(s => num(s.w) || num(s.r)));
-  return done.length ? done.sort((a, b) => a.date < b.date ? -1 : 1)[done.length - 1] : null;
-};
-const exEntries = (D, ex) => [...(ex.alias && D.weightLogs[ex.alias] || []), ...(D.weightLogs[ex.n] || [])];
-const sessionText = en => (en.sets || []).filter(s => s.w !== "" || s.r !== "").map(s => (s.w !== "" ? s.w : "BW") + "×" + (s.r || "?")).join("  ·  ");
-const volumeIn = (D, from, to) => {
-  let t = 0;
-  Object.values(D.weightLogs || {}).forEach(es => (es || []).forEach(e => {
-    if (e.date >= from && e.date <= to) (e.sets || []).forEach(s => {
-      t += (num(s.w) || 0) * (num(s.r) || 0);
-    });
-  }));
-  return t;
-};
-const sessionsIn = (D, from, to) => {
-  const ds = new Set();
-  Object.values(D.weightLogs || {}).forEach(es => (es || []).forEach(e => {
-    if (e.date >= from && e.date <= to && (e.sets || []).some(s => num(s.w) || num(s.r))) ds.add(e.date);
-  }));
-  return ds.size;
-};
-const cardioIn = (D, from, to) => (D.cardioLog || []).filter(c => c.date >= from && c.date <= to).reduce((a, c) => a + (num(c.minutes) || 0), 0);
-const dailyAvg = (D, key, from, to) => {
-  const v = [];
-  for (let d = from; d <= to; d = addDays(d, 1)) {
-    const x = num((D.daily[d] || {})[key]);
-    if (x) v.push(x);
-  }
-  return avg(v);
-};
-const weightAvgIn = (D, from, to) => avg(dailyWeights(D).filter(p => p.date >= from && p.date <= to).map(p => p.kg));
 function App() {
   const [tick, setTick] = useState(0);
   useEffect(() => {
@@ -529,7 +803,7 @@ function App() {
   const today = riyadhDateStr();
   const [D, setD] = useState(() => loadLocal());
   const Dref = useRef(D);
-  OVERRIDES = D.overrides || {};
+  OVERRIDES = swapMap(D);
   const [view, setView] = useState("today");
   const [selDate, setSelDate] = useState(null);
   const [editDate, setEditDate] = useState(null);
@@ -658,116 +932,66 @@ function App() {
     await window._sb.auth.signOut();
     setUser(null);
   };
-  const dirty = () => {
-    try {
-      return localStorage.getItem("v50:dirty") === "1";
-    } catch (e) {
-      return false;
-    }
-  };
-  const setDirty = v => {
-    try {
-      localStorage.setItem("v50:dirty", v ? "1" : "0");
-    } catch (e) {}
-  };
   const timer = useRef(null);
-  const pushNow = async () => {
+  const busy = useRef(false);
+  const commit = doc => {
+    Dref.current = doc;
+    setD(doc);
+    saveLocal(doc);
+  };
+  const sync = async () => {
     if (!window._sb || !window._SB_ROW_ID) return;
-    setSyncState("syncing");
-    const c = Dref.current;
-    const payload = {
-      v: 5,
-      weightLogs: c.weightLogs,
-      bodyWeight: c.bodyWeight,
-      measurements: c.measurements,
-      cardioLog: c.cardioLog,
-      setsByDay: c.setsByDay,
-      daily: c.daily,
-      settings: c.settings,
-      overrides: c.overrides
-    };
-    try {
-      const {
-        error
-      } = await window._sb.from("logs").upsert({
-        user_id: window._SB_ROW_ID,
-        payload,
-        updated_at: new Date().toISOString()
-      });
-      if (error) throw error;
-      setDirty(false);
-      setSyncState("synced");
-      setLastSync(new Date());
-    } catch (e) {
-      setSyncState("error");
-    }
-  };
-  const schedulePush = () => {
-    setDirty(true);
-    if (!window._sb || !user) return;
-    clearTimeout(timer.current);
-    timer.current = setTimeout(pushNow, 800);
-  };
-  const pullCloud = async () => {
-    if (!window._sb || !user) return;
-    if (dirty()) {
-      pushNow();
+    if (busy.current) {
+      clearTimeout(timer.current);
+      timer.current = setTimeout(sync, 600);
       return;
     }
+    busy.current = true;
     setSyncState("syncing");
     try {
       const {
         data,
         error
-      } = await window._sb.from("logs").select("payload,updated_at").eq("user_id", user.id).maybeSingle();
+      } = await window._sb.from("logs").select("payload,updated_at").eq("user_id", window._SB_ROW_ID).maybeSingle();
       if (error) throw error;
-      if (data && data.payload) {
-        const p = data.payload;
-        const next = {
-          ...Dref.current
-        };
-        Object.keys(EMPTY).forEach(k => {
-          if (p[k] !== undefined && p[k] !== null) next[k] = p[k];
+      const cloudRaw = data && data.payload;
+      const cloud = upgrade(cloudRaw);
+      const merged = mergeDocs(Dref.current, cloud);
+      commit(merged);
+      clearOldLocal();
+      if (!cloudRaw || JSON.stringify(cloudRaw) !== JSON.stringify(merged)) {
+        const {
+          error: e2
+        } = await window._sb.from("logs").upsert({
+          user_id: window._SB_ROW_ID,
+          payload: merged,
+          updated_at: new Date().toISOString()
         });
-        next.setsByDay = pruneSets(next.setsByDay, today);
-        Dref.current = next;
-        setD(next);
-        Object.keys(LS).forEach(k => {
-          try {
-            localStorage.setItem(LS[k], JSON.stringify(next[k]));
-          } catch (e) {}
-        });
-        setLastSync(data.updated_at ? new Date(data.updated_at) : new Date());
+        if (e2) throw e2;
       }
       setSyncState("synced");
+      setLastSync(new Date());
     } catch (e) {
       setSyncState("error");
     }
+    busy.current = false;
   };
   useEffect(() => {
-    pullCloud();
+    if (user) sync();
   }, [user]);
   useEffect(() => {
     const onVis = () => {
-      if (document.visibilityState === "visible") pullCloud();
+      if (document.visibilityState === "visible" && user) sync();
     };
     document.addEventListener("visibilitychange", onVis);
     return () => document.removeEventListener("visibilitychange", onVis);
   }, [user]);
-  const update = patch => {
-    const next = {
-      ...Dref.current,
-      ...patch
-    };
-    if (patch.setsByDay) next.setsByDay = pruneSets(patch.setsByDay, riyadhDateStr());
-    Dref.current = next;
-    setD(next);
-    Object.keys(patch).forEach(k => {
-      try {
-        localStorage.setItem(LS[k], JSON.stringify(next[k]));
-      } catch (e) {}
-    });
-    schedulePush();
+  const apply = fn => {
+    commit(fn(Dref.current));
+    if (window._sb && user) {
+      clearTimeout(timer.current);
+      timer.current = setTimeout(sync, 800);
+    }
   };
   const S = {
     ...DEFAULT_SETTINGS,
@@ -787,169 +1011,74 @@ function App() {
   const dws = dailyWeights(D);
   const recentW = dws.filter(p => p.date >= addDays(S.start, -14));
   const latestKg = recentW.length ? recentW[recentW.length - 1].kg : S.startWeight;
-  const setCells = (exName, n, si, obj) => {
-    const c = Dref.current;
-    const t = logRef.current;
-    const arr = [...(c.weightLogs[exName] || [])];
-    let idx = arr.findIndex(e => e.date === t);
-    if (idx < 0) {
-      arr.push({
-        date: t,
-        sets: Array.from({
-          length: n
-        }, () => ({
-          w: "",
-          r: ""
-        }))
-      });
-      idx = arr.length - 1;
-    }
-    const sets = arr[idx].sets.slice();
-    while (sets.length < n) sets.push({
-      w: "",
-      r: ""
-    });
-    sets[si] = {
-      ...sets[si],
-      ...obj
-    };
-    arr[idx] = {
-      ...arr[idx],
-      sets
-    };
-    update({
-      weightLogs: {
-        ...c.weightLogs,
-        [exName]: arr
-      }
-    });
-  };
-  const toggleSet = (key, on) => {
-    const t = logRef.current;
-    const c = Dref.current;
-    const day = {
-      ...((c.setsByDay || {})[t] || {})
-    };
-    if (on) day[key] = true;else delete day[key];
-    update({
-      setsByDay: {
-        ...(c.setsByDay || {}),
-        [t]: day
-      }
-    });
-  };
-  const isSetDone = key => !!((D.setsByDay || {})[logDate] || {})[key];
-  const setTodayWeight = val => {
-    const c = Dref.current;
-    const t = logRef.current;
-    const arr = [...c.bodyWeight];
-    const idx = arr.findIndex(b => b.date === t);
-    if (val === "") {
-      if (idx >= 0) arr.splice(idx, 1);
-    } else if (idx >= 0) arr[idx] = {
-      ...arr[idx],
-      kg: val
-    };else arr.push({
-      date: t,
-      kg: val
-    });
-    update({
-      bodyWeight: arr
-    });
-  };
-  const setDaily = (field, val) => {
-    const c = Dref.current;
-    const t = logRef.current;
-    update({
-      daily: {
-        ...c.daily,
-        [t]: {
-          ...(c.daily[t] || {}),
-          [field]: val
-        }
-      }
-    });
-  };
-  const addCardio = e => update({
-    cardioLog: [...Dref.current.cardioLog, e]
+  const setSet = (exId, nSets, si, patch) => apply(d => setLiftSet(d, logRef.current, exId, nSets, si, patch));
+  const setsOn = (date, exId) => (dayOf(D, date).lifts || {})[exId] || [];
+  const setDaily = (field, val) => apply(d => setDayField(d, logRef.current, field, val));
+  const logWalk = w => apply(d => addWalk(d, logRef.current, w));
+  const removeWalk = (date, i) => apply(d => delWalk(d, date, i));
+  const setWeightOn = (date, kg) => apply(d => setDayField(d, date, "weight", kg));
+  const moveWeight = (from, to) => apply(d => {
+    const kg = dayOf(d, from).weight;
+    return setDayField(setDayField(d, from, "weight", null), to, "weight", kg);
   });
-  const delCardio = i => update({
-    cardioLog: Dref.current.cardioLog.filter((_, k) => k !== i)
-  });
-  const editRow = (key, i, field, val) => update({
-    [key]: Dref.current[key].map((r, k) => k === i ? {
-      ...r,
-      [field]: val
-    } : r)
-  });
-  const delRow = (key, i) => update({
-    [key]: Dref.current[key].filter((_, k) => k !== i)
-  });
-  const addWeightRow = () => update({
-    bodyWeight: [...Dref.current.bodyWeight, {
-      date: riyadhDateStr(),
-      kg: ""
-    }]
-  });
-  const addMeasureRow = () => {
-    const last = Dref.current.measurements.slice(-1)[0];
-    const b = {
+  const newMeasurement = () => {
+    const last = measurementList(Dref.current).slice(-1)[0];
+    const m = {
       date: riyadhDateStr()
     };
-    MEASURES.forEach(m => {
-      b[m.key] = last && last[m.key] ? last[m.key] : "";
+    MEASURES.forEach(ms => {
+      m[ms.key] = last && last[ms.key] != null ? last[ms.key] : null;
     });
-    update({
-      measurements: [...Dref.current.measurements, b]
-    });
+    apply(d => putMeasurement(d, "m-" + Date.now().toString(36), m));
   };
-  const swapDays = (d1, d2) => {
-    const ov = {
-      ...(Dref.current.overrides || {})
-    };
-    OVERRIDES = ov;
+  const editMeasurement = (id, field, val) => apply(d => putMeasurement(d, id, {
+    [field]: val
+  }));
+  const deleteMeasurement = id => apply(d => putMeasurement(d, id, {
+    deleted: true
+  }));
+  const swapDays = (d1, d2) => apply(d => {
+    OVERRIDES = swapMap(d);
     const k1 = schedFor(d1),
       k2 = schedFor(d2);
-    ov[d1] = {
-      k: k2,
-      with: d2
-    };
-    ov[d2] = {
-      k: k1,
-      with: d1
-    };
-    [d1, d2].forEach(d => {
-      if (ov[d].k === baseSched(d)) delete ov[d];
+    const s1 = k2 === baseSched(d1) ? null : {
+        k: k2,
+        with: d2
+      },
+      s2 = k1 === baseSched(d2) ? null : {
+        k: k1,
+        with: d1
+      };
+    return setSwap(setSwap(d, d1, s1), d2, s2);
+  });
+  const resetDay = date => apply(d => {
+    const o = dayOf(d, date).swap;
+    let n = setSwap(d, date, null);
+    if (o && (dayOf(n, o.with).swap || {}).with === date) n = setSwap(n, o.with, null);
+    return n;
+  });
+  const saveSettings = patch => apply(d => {
+    const cur = d.settings || {};
+    return putSettings(d, {
+      ...DEFAULT_SETTINGS,
+      ...(cur.planV === PLAN_V ? cur : {}),
+      ...patch,
+      planV: PLAN_V
     });
-    update({
-      overrides: ov
-    });
-  };
-  const resetDay = d => {
-    const ov = {
-      ...(Dref.current.overrides || {})
-    };
-    const o = ov[d];
-    delete ov[d];
-    if (o && ov[o.with] && ov[o.with].with === d) delete ov[o.with];
-    update({
-      overrides: ov
-    });
-  };
-  const saveSettings = patch => {
-    const cur = Dref.current.settings || {};
-    update({
-      settings: {
-        ...DEFAULT_SETTINGS,
-        ...(cur.planV === PLAN_V ? cur : {}),
-        ...patch,
-        planV: PLAN_V
-      }
-    });
-  };
+  });
   const A = {
     swapDays,
     resetDay,
+    setSet,
+    setsOn,
+    setDaily,
+    logWalk,
+    removeWalk,
+    setWeightOn,
+    moveWeight,
+    newMeasurement,
+    editMeasurement,
+    deleteMeasurement,
     D,
     today,
     logDate,
@@ -975,19 +1104,7 @@ function App() {
     weekCardioTarget,
     dws,
     latestKg,
-    setCells,
-    toggleSet,
-    isSetDone,
-    setTodayWeight,
-    setDaily,
-    addCardio,
-    delCardio,
-    editRow,
-    delRow,
-    addWeightRow,
-    addMeasureRow,
     saveSettings,
-    update,
     syncState,
     lastSync,
     user,
@@ -1317,14 +1434,22 @@ function Num({
   small,
   style
 }) {
+  const [txt, setTxt] = useState(value == null ? "" : String(value));
+  useEffect(() => {
+    if (num(txt) !== (value == null ? null : value)) setTxt(value == null ? "" : String(value));
+  }, [value]);
   return React.createElement("input", {
     className: "num-input" + (small ? " sm" : ""),
     type: "text",
     inputMode: dec === false ? "numeric" : "decimal",
     pattern: dec === false ? "[0-9]*" : "[0-9]*[.,]?[0-9]*",
     placeholder: placeholder == null ? "—" : placeholder,
-    value: value == null ? "" : value,
-    onChange: e => onChange(e.target.value.replace(",", ".")),
+    value: txt,
+    onChange: e => {
+      const t = e.target.value.replace(",", ".");
+      setTxt(t);
+      onChange(t.trim() === "" ? null : num(t));
+    },
     style: style
   });
 }
@@ -1489,19 +1614,20 @@ function TodayScreen() {
     length: 7
   }, (_, i) => addDays(sat, i));
   const ld = editing ? date : today;
-  const todayW = (D.bodyWeight.find(b => b.date === ld) || {}).kg || "";
-  const dl = D.daily[ld] || {};
+  const dl = dayOf(D, ld);
+  const todayW = dl.weight;
   const targetKcal = A.kcalFor(ld);
-  const walks = D.cardioLog.map((c, i) => ({
-    ...c,
-    i
-  })).filter(c => c.date === ld);
-  const walkMin = walks.reduce((a, c) => a + (num(c.minutes) || 0), 0);
+  const walks = (dl.walks || []).map((w, i) => ({
+    ...w,
+    i,
+    date: ld
+  }));
+  const walkMin = walks.reduce((a, w) => a + (w.min || 0), 0);
   const walkTarget = dayKey === "WALK" ? cardioPlan.park : dayKey === "REFEED" ? 0 : cardioPlan.lift;
   const totalSets = isLift ? day.ex.reduce((a, e) => a + A.setsFor(e), 0) : 0;
   const doneSets = isLift ? day.ex.reduce((a, e, ei) => a + Array.from({
     length: A.setsFor(e)
-  }).filter((_, si) => A.isSetDone(`${dayKey}-${ei}-${si}`)).length, 0) : 0;
+  }).filter((_, si) => (A.setsOn(ld, e.id)[si] || {}).done).length, 0) : 0;
   const todos = [{
     k: "w",
     label: "Morning weigh-in",
@@ -1802,7 +1928,7 @@ function TodayScreen() {
     }
   }, React.createElement(Num, {
     value: todayW,
-    onChange: A.setTodayWeight,
+    onChange: v => A.setDaily("weight", v),
     placeholder: "kg",
     small: true
   })), t.k === "s" && React.createElement("div", {
@@ -1876,7 +2002,7 @@ function LiftList({
     isDeload
   } = A;
   const today = A.logDate;
-  const setOn = key => !!((D.setsByDay || {})[readOnly ? viewDate : today] || {})[key];
+  const showDate = readOnly ? viewDate : today;
   const [openEx, setOpenEx] = useState(null);
   return React.createElement(React.Fragment, null, React.createElement("div", {
     style: {
@@ -1900,21 +2026,21 @@ function LiftList({
   }, "Compounds: stop 1–3 reps short of failure · isolation: 0–1 rep short"), day.ex.map((ex, ei) => {
     const nS = A.setsFor(ex);
     const [rmin, rmax] = parseReps(ex.r);
-    const entries = exEntries(D, ex);
+    const entries = exHistory(D, ex.id);
     const bw = !!ex.bw;
     const best = bw ? null : workingBest(entries, rmin);
     const target = best ? roundTo(best.w * mult, stepFor(best.w)) : null;
     const last = lastSession(entries, today);
-    const todayEn = entries.find(e => e.date === today);
+    const todaySets = A.setsOn(showDate, ex.id);
     const done = Array.from({
       length: nS
-    }).filter((_, si) => setOn(`${dayKey}-${ei}-${si}`)).length;
+    }).filter((_, si) => (todaySets[si] || {}).done).length;
     const open = openEx === ei;
     const lastTop = last ? Math.max(...last.sets.map(s => num(s.w) || 0)) : 0;
     const hitTop = last && !bw && last.sets.filter(s => num(s.w) === lastTop).every(s => (num(s.r) || 0) >= rmax) && lastTop > 0;
     return React.createElement("div", {
       className: "card flat",
-      key: ex.n,
+      key: ex.id,
       style: {
         borderColor: done === nS ? "var(--ok)55" : "var(--line)"
       }
@@ -1997,11 +2123,10 @@ function LiftList({
     }, ex.n === "Plank" ? "SEC" : "REPS"), React.createElement("span", null)), Array.from({
       length: nS
     }).map((_, si) => {
-      const key = `${dayKey}-${ei}-${si}`;
-      const on = setOn(key);
-      const st = todayEn && todayEn.sets[si] || {
-        w: "",
-        r: ""
+      const on = !!(todaySets[si] || {}).done;
+      const st = todaySets[si] || {
+        w: null,
+        r: null
       };
       const phW = target != null ? fmtKg(target) : "";
       return React.createElement("div", {
@@ -2024,26 +2149,27 @@ function LiftList({
       }, "BW") : React.createElement(Num, {
         value: st.w,
         placeholder: phW,
-        onChange: v => A.setCells(ex.n, nS, si, {
+        onChange: v => A.setSet(ex.id, nS, si, {
           w: v
         })
       }), React.createElement(Num, {
         value: st.r,
         placeholder: String(rmin),
         dec: false,
-        onChange: v => A.setCells(ex.n, nS, si, {
+        onChange: v => A.setSet(ex.id, nS, si, {
           r: v
         })
       }), React.createElement("button", {
         className: "chk" + (on ? " on" : ""),
         onClick: () => {
+          const patch = {
+            done: !on
+          };
           if (!on) {
-            const fill = {};
-            if (!bw && st.w === "" && phW) fill.w = phW;
-            if (st.r === "") fill.r = String(rmin);
-            if (Object.keys(fill).length) A.setCells(ex.n, nS, si, fill);
+            if (!bw && st.w == null && target != null) patch.w = target;
+            if (st.r == null) patch.r = rmin;
           }
-          A.toggleSet(key, !on);
+          A.setSet(ex.id, nS, si, patch);
         }
       }, "✓"));
     }), React.createElement("div", {
@@ -2100,10 +2226,10 @@ function WalkCard({
   const today = A.logDate;
   const lift = DAYS[dayKey].kind === "lift";
   const [type, setType] = useState(lift ? "Gym treadmill" : "Park walk");
-  const [min, setMin] = useState(String(lift ? cardioPlan.lift : cardioPlan.park));
-  const [speed, setSpeed] = useState(lift ? "5.5" : "5.5");
-  const [incl, setIncl] = useState(lift ? "4" : "0");
-  const [hr, setHr] = useState("");
+  const [min, setMin] = useState(lift ? cardioPlan.lift : cardioPlan.park);
+  const [speed, setSpeed] = useState(5.5);
+  const [incl, setIncl] = useState(lift ? 4 : 0);
+  const [hr, setHr] = useState(null);
   const target = dayKey === "REFEED" ? 0 : lift ? cardioPlan.lift : cardioPlan.park;
   const rx = lift ? `${cardioPlan.lift} min on the treadmill after lifting · 5–5.5 km/h · incline 3–4% · HR 105–135` : `${cardioPlan.park} min brisk park walk · 5–5.5 km/h · HR 105–135`;
   const est = walkKcal(latestKg, speed, incl, min);
@@ -2128,14 +2254,14 @@ function WalkCard({
     style: {
       fontWeight: 600
     }
-  }, w.type, " · ", w.minutes, " min"), React.createElement("div", {
+  }, w.type, " · ", w.min, " min"), React.createElement("div", {
     className: "dim",
     style: {
       fontSize: 11
     }
   }, w.speed ? `${w.speed} km/h` : "", w.incline ? ` · ${w.incline}%` : "", w.hr ? ` · ${w.hr} bpm` : "", w.kcal ? ` · ~${w.kcal} kcal` : "")), React.createElement("button", {
     className: "ghost",
-    onClick: () => A.delCardio(w.i)
+    onClick: () => A.removeWalk(w.date, w.i)
   }, "✕"))), React.createElement("div", {
     style: {
       marginTop: 12,
@@ -2154,7 +2280,7 @@ function WalkCard({
     className: "btn sm",
     onClick: () => {
       setType(t);
-      if (t === "Park walk") setIncl("0");
+      if (t === "Park walk") setIncl(0);
     },
     style: {
       borderColor: type === t ? "var(--wk)" : "var(--line)",
@@ -2201,15 +2327,14 @@ function WalkCard({
   }, est), " kcal net"), React.createElement("button", {
     className: "btn primary sm",
     disabled: !num(min),
-    onClick: () => A.addCardio({
-      date: today,
+    onClick: () => A.logWalk(clean({
       type,
-      minutes: min,
+      min,
       speed,
       incline: incl,
       hr,
       kcal: est
-    })
+    }))
   }, "+ Log walk"))));
 }
 function coachVerdict(A) {
@@ -2312,8 +2437,8 @@ function WeekScreen() {
   }, {
     label: "Walking",
     unit: `min / ${weekCardioTarget}`,
-    now: cardioIn(D, from, to),
-    last: hasLast ? cardioIn(D, lf, lt) : null,
+    now: walkMinIn(D, from, to),
+    last: hasLast ? walkMinIn(D, lf, lt) : null,
     up: true,
     fmt: v => Math.round(v)
   }, {
@@ -2403,7 +2528,7 @@ function WeekScreen() {
     const k = schedFor(d);
     const dd = DAYS[k];
     const lifted = sessionsIn(D, d, d) > 0;
-    const walked = cardioIn(D, d, d) > 0;
+    const walked = walkMinIn(D, d, d) > 0;
     const fut = d > today;
     const ok = dd.kind === "lift" ? lifted : walked;
     return React.createElement("div", {
@@ -2527,19 +2652,16 @@ function WeekScreen() {
   }, "Weeks run ", DAY_NAMES[dowOf(S.start)], " → ", DAY_NAMES[(dowOf(S.start) + 6) % 7], " from the phase start date (", fmtDL(S.start), "). Times are Riyadh (GMT+3).")), React.createElement(Sec, {
     id: "walkhist",
     title: "WALK LOG",
-    right: `${D.cardioLog.length} sessions`,
+    right: `${allWalks(D).length} sessions`,
     color: "var(--wk)"
-  }, D.cardioLog.length === 0 && React.createElement("div", {
+  }, allWalks(D).length === 0 && React.createElement("div", {
     className: "mu",
     style: {
       fontSize: 13
     }
-  }, "Nothing logged yet. Log walks in the Today tab."), D.cardioLog.map((c, i) => ({
-    ...c,
-    i
-  })).sort((a, b) => a.date < b.date ? 1 : -1).slice(0, 40).map(c => React.createElement("div", {
+  }, "Nothing logged yet. Log walks in the Today tab."), allWalks(D).slice(0, 40).map(c => React.createElement("div", {
     className: "row",
-    key: c.i
+    key: c.date + "-" + c.i
   }, React.createElement("div", null, React.createElement("div", {
     style: {
       fontWeight: 600
@@ -2549,9 +2671,9 @@ function WeekScreen() {
     style: {
       fontSize: 11
     }
-  }, c.minutes, " min", c.speed ? ` · ${c.speed} km/h` : "", c.incline ? ` · ${c.incline}%` : "", c.hr ? ` · ${c.hr} bpm` : "", c.kcal ? ` · ~${c.kcal} kcal` : "")), React.createElement("button", {
+  }, c.min, " min", c.speed ? ` · ${c.speed} km/h` : "", c.incline ? ` · ${c.incline}%` : "", c.hr ? ` · ${c.hr} bpm` : "", c.kcal ? ` · ~${c.kcal} kcal` : "")), React.createElement("button", {
     className: "ghost",
-    onClick: () => A.delCardio(c.i)
+    onClick: () => A.removeWalk(c.date, c.i)
   }, "✕")))));
 }
 function ProgressScreen() {
@@ -2570,7 +2692,8 @@ function ProgressScreen() {
   const toGo = latestKg - S.goalWeight;
   const totalTarget = Math.abs(S.startWeight - S.goalWeight) || 1;
   const pct = ph.id === "cut" ? lost / totalTarget * 100 : (latestKg - S.startWeight) / totalTarget * 100;
-  const waists = D.measurements.filter(m => num(m.waist) && m.date >= addDays(S.start, -14)).sort((a, b) => a.date < b.date ? -1 : 1);
+  const meas = measurementList(D);
+  const waists = meas.filter(m => m.waist && m.date >= addDays(S.start, -14));
   const waistNow = waists.length ? num(waists[waists.length - 1].waist) : S.waistBase;
   const endDate = addDays(S.start, ph.weeks * 7 - 1);
   const x0 = diffDays(S.start, addDays(S.start, -7));
@@ -2721,21 +2844,15 @@ function ProgressScreen() {
   }, "wk ", wk, ": ≤ ", cm, " cm")))), React.createElement(Sec, {
     id: "weightlog",
     title: "WEIGHT LOG",
-    right: `${D.bodyWeight.length} entries`,
+    right: `${dws.length} days`,
     color: "var(--acc)"
-  }, React.createElement("button", {
-    className: "btn sm primary",
-    onClick: A.addWeightRow
-  }, "+ Add entry"), React.createElement("div", {
+  }, React.createElement(WeightAdd, null), React.createElement("div", {
     style: {
       marginTop: 8
     }
-  }, D.bodyWeight.map((b, i) => ({
-    ...b,
-    i
-  })).sort((a, b) => a.date < b.date ? 1 : -1).slice(0, 60).map(b => React.createElement("div", {
+  }, dws.slice().reverse().slice(0, 60).map(b => React.createElement("div", {
     className: "row",
-    key: b.i
+    key: b.date
   }, React.createElement("input", {
     className: "field",
     style: {
@@ -2745,23 +2862,23 @@ function ProgressScreen() {
     },
     type: "date",
     value: b.date,
-    onChange: e => A.editRow("bodyWeight", b.i, "date", e.target.value)
+    onChange: e => e.target.value && e.target.value !== b.date && A.moveWeight(b.date, e.target.value)
   }), React.createElement("div", {
     style: {
       width: 90
     }
   }, React.createElement(Num, {
     value: b.kg,
-    onChange: v => A.editRow("bodyWeight", b.i, "kg", v),
+    onChange: v => A.setWeightOn(b.date, v),
     placeholder: "kg",
     small: true
   })), React.createElement("button", {
     className: "ghost",
-    onClick: () => A.delRow("bodyWeight", b.i)
+    onClick: () => A.setWeightOn(b.date, null)
   }, "✕"))))), React.createElement(Sec, {
     id: "measlog",
     title: "MEASUREMENT LOG",
-    right: `${D.measurements.length} entries`,
+    right: `${meas.length} entries`,
     color: "var(--lo)"
   }, React.createElement("div", {
     className: "mu",
@@ -2770,17 +2887,14 @@ function ProgressScreen() {
       marginBottom: 10,
       lineHeight: 1.6
     }
-  }, "Full set at weeks 1, 5, 9, 13. Waist every Saturday morning. Photos (front, side, back) at weeks 1, 5, 9, 13. Your start baseline is the average of your past entries."), React.createElement("button", {
+  }, "Full set at weeks 1, 5, 9, 13. Waist every Saturday morning. Photos (front, side, back) at weeks 1, 5, 9, 13."), React.createElement("button", {
     className: "btn sm primary",
-    onClick: A.addMeasureRow
-  }, "+ New entry"), D.measurements.map((m, i) => ({
-    ...m,
-    i
-  })).sort((a, b) => a.date < b.date ? 1 : -1).map(m => {
-    const id = "m-" + m.i;
+    onClick: A.newMeasurement
+  }, "+ New entry"), meas.slice().reverse().map(m => {
+    const id = "m-" + m.id;
     const open = !!A.openSec[id];
     return React.createElement("div", {
-      key: m.i,
+      key: m.id,
       style: {
         borderBottom: "1px solid var(--line)"
       }
@@ -2797,7 +2911,7 @@ function ProgressScreen() {
       }
     }, open ? "▾" : "▸", " ", fmtDL(m.date)), React.createElement("span", {
       className: "mu"
-    }, "waist ", m.waist || "—", " cm")), open && React.createElement("div", {
+    }, "waist ", m.waist != null ? m.waist : "—", " cm")), open && React.createElement("div", {
       style: {
         paddingBottom: 12
       }
@@ -2809,7 +2923,7 @@ function ProgressScreen() {
       },
       type: "date",
       value: m.date,
-      onChange: e => A.editRow("measurements", m.i, "date", e.target.value)
+      onChange: e => e.target.value && A.editMeasurement(m.id, "date", e.target.value)
     }), React.createElement("div", {
       style: {
         display: "grid",
@@ -2828,14 +2942,14 @@ function ProgressScreen() {
       }
     }, ms.name.toUpperCase()), React.createElement(Num, {
       value: m[ms.key],
-      onChange: v => A.editRow("measurements", m.i, ms.key, v),
+      onChange: v => A.editMeasurement(m.id, ms.key, v),
       small: true
     })))), React.createElement("button", {
       className: "ghost",
       style: {
         marginTop: 10
       },
-      onClick: () => A.delRow("measurements", m.i)
+      onClick: () => A.deleteMeasurement(m.id)
     }, "Delete entry")));
   })), React.createElement(Sec, {
     id: "howmeasure",
@@ -2887,12 +3001,12 @@ function ProgressScreen() {
       margin: "12px 0 2px"
     }
   }, DAYS[k].name.toUpperCase()), DAYS[k].ex.filter(e => !e.bw).map(e => {
-    const en = exEntries(D, e);
+    const en = exHistory(D, e.id);
     const b = workingBest(en, parseReps(e.r)[0]);
     const l = lastSession(en, "9999-12-31");
     return React.createElement("div", {
       className: "row",
-      key: e.n
+      key: e.id
     }, React.createElement("span", {
       style: {
         flex: 1
@@ -2911,6 +3025,45 @@ function ProgressScreen() {
       className: "dim"
     }, " · last ", fmtD(l.date)) : ""));
   })))));
+}
+function WeightAdd() {
+  const A = useContext(Ctx);
+  const [date, setDate] = useState(A.today);
+  const [kg, setKg] = useState(null);
+  return React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 8,
+      alignItems: "center"
+    }
+  }, React.createElement("input", {
+    className: "field",
+    style: {
+      margin: 0,
+      width: 150,
+      padding: "8px 10px"
+    },
+    type: "date",
+    value: date,
+    max: A.today,
+    onChange: e => setDate(e.target.value)
+  }), React.createElement("div", {
+    style: {
+      width: 90
+    }
+  }, React.createElement(Num, {
+    value: kg,
+    onChange: setKg,
+    placeholder: "kg",
+    small: true
+  })), React.createElement("button", {
+    className: "btn sm primary",
+    disabled: !kg || !date,
+    onClick: () => {
+      A.setWeightOn(date, kg);
+      setKg(null);
+    }
+  }, "+ Add"));
 }
 function PlanScreen() {
   const A = useContext(Ctx);
@@ -2998,7 +3151,7 @@ function PlanScreen() {
       color: DAYS[kk].color
     }
   }, DAYS[kk].name.toUpperCase()), DAYS[kk].ex.map(e => React.createElement("div", {
-    key: e.n,
+    key: e.id,
     className: "mu",
     style: {
       fontSize: 12,
@@ -3203,8 +3356,8 @@ function PlanScreen() {
     }
   }, "START WEIGHT (kg)"), React.createElement(Num, {
     value: S.startWeight,
-    onChange: v => saveSettings({
-      startWeight: num(v) || ""
+    onChange: v => v != null && saveSettings({
+      startWeight: v
     })
   })), React.createElement("div", null, React.createElement("div", {
     className: "dim",
@@ -3215,8 +3368,8 @@ function PlanScreen() {
     }
   }, "GOAL WEIGHT (kg)"), React.createElement(Num, {
     value: S.goalWeight,
-    onChange: v => saveSettings({
-      goalWeight: num(v) || ""
+    onChange: v => v != null && saveSettings({
+      goalWeight: v
     })
   })), React.createElement("div", null, React.createElement("div", {
     className: "dim",
@@ -3227,8 +3380,8 @@ function PlanScreen() {
     }
   }, "WAIST GOAL (cm)"), React.createElement(Num, {
     value: S.waistGoal,
-    onChange: v => saveSettings({
-      waistGoal: num(v) || ""
+    onChange: v => v != null && saveSettings({
+      waistGoal: v
     })
   }))), React.createElement("div", {
     style: {
