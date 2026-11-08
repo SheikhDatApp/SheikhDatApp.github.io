@@ -328,7 +328,9 @@ const SCHEDULE = {
   4: "LB",
   5: "REFEED"
 };
-const schedFor = date => SCHEDULE[dowOf(date)];
+let OVERRIDES = {};
+const baseSched = date => SCHEDULE[dowOf(date)];
+const schedFor = date => OVERRIDES[date] && DAYS[OVERRIDES[date].k] ? OVERRIDES[date].k : baseSched(date);
 const WEEK_ORDER = [6, 0, 1, 2, 3, 4, 5];
 const parseReps = r => {
   const m = String(r).match(/(\d+)\D+(\d+)/);
@@ -414,7 +416,8 @@ const LS = {
   cardioLog: "v41:cardioLog",
   setsByDay: "v41:setsByDay",
   daily: "v50:daily",
-  settings: "v50:settings"
+  settings: "v50:settings",
+  overrides: "v51:overrides"
 };
 const EMPTY = {
   weightLogs: {},
@@ -423,7 +426,8 @@ const EMPTY = {
   cardioLog: [],
   setsByDay: {},
   daily: {},
-  settings: {}
+  settings: {},
+  overrides: {}
 };
 const loadLocal = () => {
   const d = {
@@ -525,6 +529,7 @@ function App() {
   const today = riyadhDateStr();
   const [D, setD] = useState(() => loadLocal());
   const Dref = useRef(D);
+  OVERRIDES = D.overrides || {};
   const [view, setView] = useState("today");
   const [selDate, setSelDate] = useState(null);
   const [editDate, setEditDate] = useState(null);
@@ -678,7 +683,8 @@ function App() {
       cardioLog: c.cardioLog,
       setsByDay: c.setsByDay,
       daily: c.daily,
-      settings: c.settings
+      settings: c.settings,
+      overrides: c.overrides
     };
     try {
       const {
@@ -776,7 +782,7 @@ function App() {
   const cardioPlan = ph.cardio(Math.max(1, Math.min(phaseWeek, ph.weeks)));
   const weekStart = w => addDays(S.start, (w - 1) * 7);
   const weekEnd = w => addDays(S.start, w * 7 - 1);
-  const kcalFor = date => dowOf(date) === 5 ? ph.kcalFri : ph.kcalBase;
+  const kcalFor = date => schedFor(date) === "REFEED" ? ph.kcalFri : ph.kcalBase;
   const weekCardioTarget = Math.round(cardioPlan.park * 2 + cardioPlan.lift * 4);
   const dws = dailyWeights(D);
   const recentW = dws.filter(p => p.date >= addDays(S.start, -14));
@@ -897,6 +903,39 @@ function App() {
       measurements: [...Dref.current.measurements, b]
     });
   };
+  const swapDays = (d1, d2) => {
+    const ov = {
+      ...(Dref.current.overrides || {})
+    };
+    OVERRIDES = ov;
+    const k1 = schedFor(d1),
+      k2 = schedFor(d2);
+    ov[d1] = {
+      k: k2,
+      with: d2
+    };
+    ov[d2] = {
+      k: k1,
+      with: d1
+    };
+    [d1, d2].forEach(d => {
+      if (ov[d].k === baseSched(d)) delete ov[d];
+    });
+    update({
+      overrides: ov
+    });
+  };
+  const resetDay = d => {
+    const ov = {
+      ...(Dref.current.overrides || {})
+    };
+    const o = ov[d];
+    delete ov[d];
+    if (o && ov[o.with] && ov[o.with].with === d) delete ov[o.with];
+    update({
+      overrides: ov
+    });
+  };
   const saveSettings = patch => {
     const cur = Dref.current.settings || {};
     update({
@@ -909,6 +948,8 @@ function App() {
     });
   };
   const A = {
+    swapDays,
+    resetDay,
     D,
     today,
     logDate,
@@ -1436,7 +1477,9 @@ function TodayScreen() {
   const pick = d => {
     setSelDate(d === today ? null : d);
     setEditDate(null);
+    setSwapOpen(false);
   };
+  const [swapOpen, setSwapOpen] = useState(false);
   const dow = dowOf(date);
   const dayKey = schedFor(date);
   const day = DAYS[dayKey];
@@ -1557,7 +1600,15 @@ function TodayScreen() {
       className: "dn"
     }, DAY_SHORT[dowOf(d)]), React.createElement("span", {
       className: "dd"
-    }, U(d).getUTCDate()), React.createElement("span", {
+    }, U(d).getUTCDate()), OVERRIDES[d] && React.createElement("span", {
+      style: {
+        position: "absolute",
+        top: 3,
+        left: 5,
+        fontSize: 9,
+        color: dd.color
+      }
+    }, "⇄"), React.createElement("span", {
       className: "dk",
       style: {
         color: act ? dd.color : "var(--dim)"
@@ -1613,7 +1664,16 @@ function TodayScreen() {
       fontSize: 12,
       marginTop: 4
     }
-  }, day.focus)), date !== today && React.createElement("div", {
+  }, day.focus), OVERRIDES[date] && React.createElement("div", {
+    style: {
+      fontSize: 12,
+      marginTop: 6,
+      color: "var(--lo)"
+    }
+  }, "⇄ Switched with ", fmtDL(OVERRIDES[date].with), " · ", React.createElement("a", {
+    className: "lnk",
+    onClick: () => A.resetDay(date)
+  }, "undo"))), date !== today && React.createElement("div", {
     style: {
       display: "flex",
       flexDirection: "column",
@@ -1634,7 +1694,53 @@ function TodayScreen() {
   }, "✎ Log this day"), editing && React.createElement("button", {
     className: "btn sm",
     onClick: () => setEditDate(null)
-  }, "✓ Done"))), React.createElement("div", {
+  }, "✓ Done"))), date >= addDays(today, -7) && React.createElement("div", {
+    style: {
+      marginTop: 12
+    }
+  }, React.createElement("button", {
+    className: "ghost",
+    style: {
+      fontSize: 12,
+      padding: "6px 10px"
+    },
+    onClick: () => setSwapOpen(!swapOpen)
+  }, "⇄ Switch with another day"), swapOpen && React.createElement("div", {
+    style: {
+      marginTop: 10
+    }
+  }, React.createElement("div", {
+    className: "dim",
+    style: {
+      fontSize: 11,
+      marginBottom: 6
+    }
+  }, "Pick the day to swap ", fmtDL(date), " (", day.name, ") with:"), React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(5,1fr)",
+      gap: 6
+    }
+  }, Array.from({
+    length: 11
+  }, (_, i) => addDays(date, i - 3)).filter(d => d !== date).map(d => {
+    const dd = DAYS[schedFor(d)];
+    return React.createElement("button", {
+      key: d,
+      className: "daybtn",
+      onClick: () => {
+        A.swapDays(date, d);
+        setSwapOpen(false);
+      }
+    }, React.createElement("span", {
+      className: "dn"
+    }, DAY_SHORT[dowOf(d)], " ", U(d).getUTCDate()), React.createElement("span", {
+      className: "dk",
+      style: {
+        color: dd.color
+      }
+    }, dd.short));
+  })))), React.createElement("div", {
     style: {
       display: "flex",
       gap: 8,
