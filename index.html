@@ -64,7 +64,8 @@ const DEFAULT_SETTINGS = {
   startWeight: 88.2,
   goalWeight: 80,
   waistBase: 100,
-  waistGoal: 91
+  waistGoal: 91,
+  refeedDow: 5
 };
 const PHASES = {
   cut: {
@@ -333,12 +334,12 @@ const DAYS = {
     ex: []
   },
   REFEED: {
-    name: "Refeed Day",
-    short: "REFEED",
+    name: "Rest Day",
+    short: "REST",
     kind: "walk",
     color: "#fb7185",
     icon: "◉",
-    focus: "No workout. Higher calories + one free meal.",
+    focus: "No workout. Full rest — steps only.",
     ex: []
   }
 };
@@ -1008,7 +1009,19 @@ function App() {
   const cardioPlan = ph.cardio(Math.max(1, Math.min(phaseWeek, ph.weeks)));
   const weekStart = w => addDays(S.start, (w - 1) * 7);
   const weekEnd = w => addDays(S.start, w * 7 - 1);
-  const kcalFor = date => schedFor(date) === "REFEED" ? ph.kcalFri : ph.kcalBase;
+  const weekDates = date => {
+    const sat = addDays(date, -((dowOf(date) + 1) % 7));
+    return Array.from({
+      length: 7
+    }, (_, i) => addDays(sat, i));
+  };
+  const refeedOf = date => {
+    const wk = weekDates(date);
+    return wk.find(d => dayOf(D, d).refeed) || wk.find(d => dowOf(d) === S.refeedDow);
+  };
+  const isRefeed = date => refeedOf(date) === date;
+  const refeedMoved = date => !!dayOf(D, date).refeed;
+  const kcalFor = date => isRefeed(date) ? ph.kcalFri : ph.kcalBase;
   const weekCardioTarget = Math.round(cardioPlan.park * 2 + cardioPlan.lift * 4);
   const dws = dailyWeights(D);
   const recentW = dws.filter(p => p.date >= addDays(S.start, -14));
@@ -1068,6 +1081,20 @@ function App() {
     if (o && (dayOf(n, o.with).swap || {}).with === date) n = setSwap(n, o.with, null);
     return n;
   });
+  const setRefeed = date => apply(d => {
+    let n = d;
+    weekDates(date).forEach(x => {
+      if (dayOf(n, x).refeed) n = setDayField(n, x, "refeed", undefined);
+    });
+    return dowOf(date) === S.refeedDow ? n : setDayField(n, date, "refeed", true);
+  });
+  const resetRefeed = date => apply(d => {
+    let n = d;
+    weekDates(date).forEach(x => {
+      if (dayOf(n, x).refeed) n = setDayField(n, x, "refeed", undefined);
+    });
+    return n;
+  });
   const saveSettings = patch => apply(d => {
     const cur = d.settings || {};
     return putSettings(d, {
@@ -1078,6 +1105,11 @@ function App() {
     });
   });
   const A = {
+    resetRefeed,
+    isRefeed,
+    refeedOf,
+    refeedMoved,
+    setRefeed,
     setWaistOn,
     swapDays,
     resetDay,
@@ -1754,7 +1786,14 @@ function TodayScreen() {
       className: "dn"
     }, DAY_SHORT[dowOf(d)]), React.createElement("span", {
       className: "dd"
-    }, U(d).getUTCDate()), OVERRIDES[d] && React.createElement("span", {
+    }, U(d).getUTCDate()), A.isRefeed(d) && React.createElement("span", {
+      style: {
+        position: "absolute",
+        top: 2,
+        right: 3,
+        fontSize: 9
+      }
+    }, "🍕"), OVERRIDES[d] && React.createElement("span", {
       style: {
         position: "absolute",
         top: 3,
@@ -1848,9 +1887,21 @@ function TodayScreen() {
   }, "✎ Log this day"), editing && React.createElement("button", {
     className: "btn sm",
     onClick: () => setEditDate(null)
-  }, "✓ Done"))), date >= addDays(today, -7) && React.createElement("div", {
+  }, "✓ Done"))), A.isRefeed(date) && React.createElement("div", {
     style: {
-      marginTop: 12
+      fontSize: 12,
+      marginTop: 6,
+      color: "var(--rf)"
+    }
+  }, "🍕 Refeed day · ", ph.kcalFri.toLocaleString(), " kcal", A.refeedMoved(date) && React.createElement("span", null, " · ", React.createElement("a", {
+    className: "lnk",
+    onClick: () => A.resetRefeed(date)
+  }, "move back to ", DAY_NAMES[S.refeedDow]))), date >= addDays(today, -7) && React.createElement("div", {
+    style: {
+      marginTop: 12,
+      display: "flex",
+      gap: 6,
+      flexWrap: "wrap"
     }
   }, React.createElement("button", {
     className: "ghost",
@@ -1859,9 +1910,17 @@ function TodayScreen() {
       padding: "6px 10px"
     },
     onClick: () => setSwapOpen(!swapOpen)
-  }, "⇄ Switch with another day"), swapOpen && React.createElement("div", {
+  }, "⇄ Switch with another day"), !A.isRefeed(date) && React.createElement("button", {
+    className: "ghost",
     style: {
-      marginTop: 10
+      fontSize: 12,
+      padding: "6px 10px"
+    },
+    onClick: () => A.setRefeed(date)
+  }, "🍕 Make this my refeed day"), swapOpen && React.createElement("div", {
+    style: {
+      marginTop: 10,
+      width: "100%"
     }
   }, React.createElement("div", {
     className: "dim",
@@ -2016,7 +2075,20 @@ function TodayScreen() {
     day: day,
     readOnly: preview,
     viewDate: date
-  }), !isLift && React.createElement(Card, null, React.createElement(H, {
+  }), A.isRefeed(date) && React.createElement(Card, {
+    style: {
+      borderColor: "var(--rf)55"
+    }
+  }, React.createElement(H, {
+    color: "var(--rf)"
+  }, "🍕 REFEED DAY"), React.createElement("div", {
+    className: "mu",
+    style: {
+      fontSize: 13,
+      marginTop: 8,
+      lineHeight: 1.7
+    }
+  }, ph.kcalFri.toLocaleString(), " kcal today. Eat normally, with one free meal (800–1,000 kcal, ~40 g protein)", isLift ? " — after training" : "", ". No extra cardio to earn it. Back to ", ph.kcalBase.toLocaleString(), " tomorrow.")), !isLift && React.createElement(Card, null, React.createElement(H, {
     color: day.color
   }, dayKey === "REFEED" ? "REST DAY" : "NO LIFTING TODAY"), React.createElement("div", {
     className: "mu",
@@ -2025,7 +2097,7 @@ function TodayScreen() {
       marginTop: 8,
       lineHeight: 1.7
     }
-  }, dayKey === "REFEED" ? "Weekend rest day — no workout. Eat your refeed calories, enjoy one free meal tonight (800–1,000 kcal, ~40 g protein), keep your steps normal, sleep well. Back to the plan tomorrow." : "Recovery day. The park walk is the session — keep it brisk but conversational.")), !preview && React.createElement(WalkCard, {
+  }, dayKey === "REFEED" ? "Weekend rest day — no workout. Keep your steps normal and sleep well." : "Recovery day. The park walk is the session — keep it brisk but conversational.")), !preview && React.createElement(WalkCard, {
     key: ld,
     walks: walks,
     dayKey: dayKey
@@ -3187,7 +3259,7 @@ function PlanScreen() {
       margin: "6px 0 10px",
       lineHeight: 1.6
     }
-  }, ph.blurb), [["Started", fmtDL(S.start)], ["Length", ph.weeks + " weeks"], ["Start weight", fmtKg(S.startWeight) + " kg"], ["Goal weight", f ? fmtKg(S.goalWeight) + " kg by " + fmtDL(addDays(S.start, ph.weeks * 7 - 1)) : "slow lean gain"], ["Waist goal", f ? "~" + S.waistGoal + " cm (long-term 82)" : "hold waist, grow arms/chest/thighs"], ["Calories", `${k.toLocaleString()} (Sat–Thu) · ${ph.kcalFri.toLocaleString()} (Fri)`], ["Weekly average", Math.round((k * 6 + ph.kcalFri) / 7).toLocaleString() + " kcal"], ["Protein", ph.protein + " g / day"], ["Steps", ph.stepsMin / 1000 + "k minimum · " + ph.steps / 1000 + "k target"], ["Walking", f ? "~260 min / week from week 3" : "light"], ["Fibre", ph.fiber + "–38 g / day (veg, oats, legumes, fruit)"], ["Water", "3–4 L"], ["Sleep", "7–9 h (logged daily)"], ["Rate", ph.rate.ideal + " kg / week"]].map(([l, v]) => React.createElement("div", {
+  }, ph.blurb), [["Started", fmtDL(S.start)], ["Length", ph.weeks + " weeks"], ["Start weight", fmtKg(S.startWeight) + " kg"], ["Goal weight", f ? fmtKg(S.goalWeight) + " kg by " + fmtDL(addDays(S.start, ph.weeks * 7 - 1)) : "slow lean gain"], ["Waist goal", f ? "~" + S.waistGoal + " cm (long-term 82)" : "hold waist, grow arms/chest/thighs"], ["Calories", `${k.toLocaleString()} · refeed ${ph.kcalFri.toLocaleString()} (${DAY_NAMES[S.refeedDow]} by default)`], ["Weekly average", Math.round((k * 6 + ph.kcalFri) / 7).toLocaleString() + " kcal"], ["Protein", ph.protein + " g / day"], ["Steps", ph.stepsMin / 1000 + "k minimum · " + ph.steps / 1000 + "k target"], ["Walking", f ? "~260 min / week from week 3" : "light"], ["Fibre", ph.fiber + "–38 g / day (veg, oats, legumes, fruit)"], ["Water", "3–4 L"], ["Sleep", "7–9 h (logged daily)"], ["Rate", ph.rate.ideal + " kg / week"]].map(([l, v]) => React.createElement("div", {
     className: "row",
     key: l
   }, React.createElement("span", {
@@ -3359,10 +3431,10 @@ function PlanScreen() {
     }
   }, "P ", f ? 45 : Math.round(prot * p / 100), " g · C ", Math.round(carb * p / 100), " g · F ", Math.round(fat * p / 100), " g")))), React.createElement(Sec, {
     id: "refeed",
-    title: "FRIDAY REFEED",
+    title: "REFEED DAY",
     color: "var(--rf)",
     right: `${ph.kcalFri.toLocaleString()} kcal`
-  }, [["✅", "Eat normally all day — 2 solid meals + 1 free meal (800–1,000 kcal, dinner)."], ["✅", "Still hit ~40 g protein in the free meal and 160 g+ for the day."], ["✅", "No workout today — Friday is your full rest day. Keep steps normal; no extra cardio to 'earn' it."], ["❌", "Don't turn it into a free-for-all day — one meal, not one day."], ["↩", "Saturday: straight back to plan."]].map(([i, t]) => React.createElement("div", {
+  }, [["✅", "Eat normally all day — 2 solid meals + 1 free meal (800–1,000 kcal, dinner)."], ["✅", "Still hit ~40 g protein in the free meal and 160 g+ for the day."], ["✅", `Default: ${DAY_NAMES[S.refeedDow]}. Move it for any week from the Today tab (🍕 Make this my refeed day) — your training days don't change. No extra cardio to 'earn' it.`], ["❌", "Don't turn it into a free-for-all day — one meal, not one day."], ["↩", "Saturday: straight back to plan."]].map(([i, t]) => React.createElement("div", {
     key: t,
     style: {
       display: "flex",
@@ -3476,6 +3548,29 @@ function PlanScreen() {
       waistGoal: v
     })
   }))), React.createElement("div", {
+    style: {
+      marginTop: 12
+    }
+  }, React.createElement("div", {
+    className: "dim",
+    style: {
+      fontSize: 10,
+      fontWeight: 700,
+      marginBottom: 4
+    }
+  }, "DEFAULT REFEED DAY"), React.createElement("select", {
+    className: "sel",
+    style: {
+      width: "100%"
+    },
+    value: S.refeedDow,
+    onChange: e => saveSettings({
+      refeedDow: +e.target.value
+    })
+  }, WEEK_ORDER.map(dw => React.createElement("option", {
+    key: dw,
+    value: dw
+  }, DAY_NAMES[dw])))), React.createElement("div", {
     style: {
       marginTop: 14
     }
