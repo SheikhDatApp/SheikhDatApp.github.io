@@ -1707,11 +1707,6 @@ function TodayScreen() {
     label: "Protein",
     done: (num(dl.protein) || 0) >= ph.protein - 10,
     sub: `${num(dl.protein) || 0}/${ph.protein} g`
-  }, {
-    k: "f",
-    label: "Fibre",
-    done: (dl.fiber || 0) >= ph.fiber,
-    sub: `${dl.fiber || 0}/${ph.fiber}–38 g`
   }, ...(dowOf(ld) === 6 ? [{
     k: "m",
     label: "Waist measurement (Saturday)",
@@ -2045,16 +2040,6 @@ function TodayScreen() {
   }, React.createElement(Num, {
     value: dl.protein,
     onChange: v => A.setDaily("protein", v),
-    placeholder: "g",
-    dec: false,
-    small: true
-  })), t.k === "f" && React.createElement("div", {
-    style: {
-      width: 92
-    }
-  }, React.createElement(Num, {
-    value: dl.fiber,
-    onChange: v => A.setDaily("fiber", v),
     placeholder: "g",
     dec: false,
     small: true
@@ -3259,7 +3244,7 @@ function PlanScreen() {
       margin: "6px 0 10px",
       lineHeight: 1.6
     }
-  }, ph.blurb), [["Started", fmtDL(S.start)], ["Length", ph.weeks + " weeks"], ["Start weight", fmtKg(S.startWeight) + " kg"], ["Goal weight", f ? fmtKg(S.goalWeight) + " kg by " + fmtDL(addDays(S.start, ph.weeks * 7 - 1)) : "slow lean gain"], ["Waist goal", f ? "~" + S.waistGoal + " cm (long-term 82)" : "hold waist, grow arms/chest/thighs"], ["Calories", `${k.toLocaleString()} · refeed ${ph.kcalFri.toLocaleString()} (${DAY_NAMES[S.refeedDow]} by default)`], ["Weekly average", Math.round((k * 6 + ph.kcalFri) / 7).toLocaleString() + " kcal"], ["Protein", ph.protein + " g / day"], ["Steps", ph.stepsMin / 1000 + "k minimum · " + ph.steps / 1000 + "k target"], ["Walking", f ? "~260 min / week from week 3" : "light"], ["Fibre", ph.fiber + "–38 g / day (veg, oats, legumes, fruit)"], ["Water", "3–4 L"], ["Sleep", "7–9 h (logged daily)"], ["Rate", ph.rate.ideal + " kg / week"]].map(([l, v]) => React.createElement("div", {
+  }, ph.blurb), [["Started", fmtDL(S.start)], ["Length", ph.weeks + " weeks"], ["Start weight", fmtKg(S.startWeight) + " kg"], ["Goal weight", f ? fmtKg(S.goalWeight) + " kg by " + fmtDL(addDays(S.start, ph.weeks * 7 - 1)) : "slow lean gain"], ["Waist goal", f ? "~" + S.waistGoal + " cm (long-term 82)" : "hold waist, grow arms/chest/thighs"], ["Calories", `${k.toLocaleString()} · refeed ${ph.kcalFri.toLocaleString()} (${DAY_NAMES[S.refeedDow]} by default)`], ["Weekly average", Math.round((k * 6 + ph.kcalFri) / 7).toLocaleString() + " kcal"], ["Protein", ph.protein + " g / day"], ["Steps", ph.stepsMin / 1000 + "k minimum · " + ph.steps / 1000 + "k target"], ["Walking", f ? "~260 min / week from week 3" : "light"], ["Fibre (not tracked)", "Veg with 2 meals + oats, legumes or fruit daily"], ["Water", "3–4 L"], ["Sleep", "7–9 h (logged daily)"], ["Rate", ph.rate.ideal + " kg / week"]].map(([l, v]) => React.createElement("div", {
     className: "row",
     key: l
   }, React.createElement("span", {
