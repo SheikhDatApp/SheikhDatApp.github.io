@@ -59,7 +59,9 @@ const fmtDL = s => DAY_SHORT[dowOf(s)] + " " + fmtD(s);
 const PLAN_V = 3;
 const DEFAULT_SETTINGS = {
   planV: PLAN_V,
-  phase: "cut",
+  cutWeeks: 13,
+  bridgeWeeks: 2,
+  bulkWeeks: 16,
   start: "2026-11-03",
   startWeight: 88.2,
   goalWeight: 80,
@@ -98,16 +100,42 @@ const PHASES = {
     },
     blurb: "88.2 → 80 kg by 1 Feb 2027 (~0.63 kg/week). 1,850 kcal, 180 g protein, ~260 min walking a week, 4 lifts."
   },
+  bridge: {
+    id: "bridge",
+    name: "MAINTAIN",
+    color: "#60a5fa",
+    weeks: 2,
+    deload: [],
+    kcalBase: 2300,
+    kcalFri: 2300,
+    protein: 170,
+    fat: 70,
+    fiber: 30,
+    steps: 10000,
+    stepsMin: 8000,
+    rate: {
+      lo: -0.3,
+      hi: 0.3,
+      ideal: "±0.3 (hold steady)"
+    },
+    mult: () => 1,
+    cardio: () => ({
+      park: 45,
+      lift: 20,
+      tag: "Maintain"
+    }),
+    blurb: "2 weeks at maintenance between cut and bulk. Expect +0.5–1 kg of water/glycogen in week 1 — that's not fat. No refeed day needed."
+  },
   bulk: {
     id: "bulk",
     name: "BULK",
     color: "#fb923c",
     weeks: 16,
     deload: [5, 10, 15],
-    kcalBase: 2600,
-    kcalFri: 2800,
+    kcalBase: 2550,
+    kcalFri: 2750,
     protein: 170,
-    fat: 80,
+    fat: 75,
     fiber: 30,
     steps: 8000,
     stepsMin: 7000,
@@ -118,9 +146,9 @@ const PHASES = {
     },
     mult: w => w === 1 ? 0.9 : 1,
     cardio: () => ({
-      park: 30,
+      park: 40,
       lift: 0,
-      tag: "Maintenance"
+      tag: "Health"
     }),
     blurb: "Lean gain at +0.15–0.3 kg/week (RP: 0.125–0.5% of body weight). About +200–250 kcal over maintenance, same 4-day split, 8–16 weeks."
   }
@@ -181,6 +209,14 @@ const DAYS = {
       r: "10–12",
       rest: "60s",
       tip: "Elbows pinned to your sides, no swinging. Lower slowly, squeeze at the top."
+    }, {
+      id: "pec_deck",
+      n: "Pec Deck / Machine Fly",
+      s: 3,
+      r: "12–15",
+      rest: "60s",
+      only: "bulk",
+      tip: "Bulk only: third chest exercise. Big stretch at the open position, squeeze 1 sec at the close. Elbows slightly bent and fixed."
     }]
   },
   LA: {
@@ -214,7 +250,7 @@ const DAYS = {
     }, {
       id: "calf_standing",
       n: "Calf Raise (standing)",
-      s: 3,
+      s: 4,
       r: "15–20",
       rest: "60s",
       tip: "Pause 2 sec in the bottom stretch every rep. When full reps fail, finish with a few bottom-half reps — the stretched position is what grows calves."
@@ -310,18 +346,25 @@ const DAYS = {
     }, {
       id: "calf_seated",
       n: "Seated Calf Raise",
-      s: 3,
+      s: 4,
       r: "15–20",
       rest: "60s",
       tip: "Pause 2 sec in the bottom stretch every rep. When full reps fail, finish with a few bottom-half reps."
     }, {
-      id: "plank",
-      n: "Plank",
+      id: "cable_crunch",
+      n: "Cable Crunch",
       s: 3,
-      r: "45 sec",
-      rest: "45s",
-      bw: true,
-      tip: "Hold 45 sec on EVERY set — better 3 × 45 than 60/30/20. Ribs down, glutes squeezed, straight line head to heels."
+      r: "10–15",
+      rest: "60s",
+      tip: "Kneel facing the cable, rope by your head. Curl your ribs down toward your hips — round the spine, don't just bend at the hips. Hold 1 sec squeezed, return slowly to a full stretch. Hips stay still."
+    }, {
+      id: "lying_leg_curl",
+      n: "Lying Leg Curl",
+      s: 3,
+      r: "10–12",
+      rest: "60s",
+      only: "bulk",
+      tip: "Bulk only: second hamstring curl of the week. Hips pressed into the pad, slow 3-sec lowering."
     }]
   },
   WALK: {
@@ -345,13 +388,14 @@ const DAYS = {
 };
 const SCHEDULE = {
   6: "UA",
-  0: "LA",
-  1: "WALK",
+  0: "WALK",
+  1: "LA",
   2: "UB",
   3: "WALK",
   4: "LB",
   5: "REFEED"
 };
+const exFor = (dayKey, phaseId) => DAYS[dayKey].ex.filter(e => !e.only || e.only === phaseId);
 let OVERRIDES = {};
 const baseSched = date => SCHEDULE[dowOf(date)];
 const schedFor = date => OVERRIDES[date] && DAYS[OVERRIDES[date].k] ? OVERRIDES[date].k : baseSched(date);
@@ -452,6 +496,9 @@ const RETIRED_EX = [{
 }, {
   id: "deadlift",
   n: "Deadlift (conventional)"
+}, {
+  id: "plank",
+  n: "Plank"
 }];
 const EX_ALIASES = {
   leg_curl: ["Leg Curl (seated or lying)"]
@@ -462,7 +509,8 @@ const EXERCISES = (() => {
     m[e.id] = {
       id: e.id,
       n: e.n,
-      active: true
+      active: true,
+      only: e.only
     };
   }));
   RETIRED_EX.forEach(e => {
@@ -556,7 +604,9 @@ function migrateV5(p) {
   });
   Object.keys(p.setsByDay || {}).forEach(d => Object.keys(p.setsByDay[d] || {}).forEach(key => {
     const [dk, ei, si] = key.split("-");
-    const ex = DAYS[dk] && DAYS[dk].ex[+ei];
+    const ex = dk === "LB" && ei === "4" ? {
+      id: "plank"
+    } : DAYS[dk] && DAYS[dk].ex[+ei];
     if (!ex) return;
     const D = day(d);
     D.lifts = D.lifts || {};
@@ -1000,15 +1050,86 @@ function App() {
     ...DEFAULT_SETTINGS,
     ...((D.settings || {}).planV === PLAN_V ? D.settings : {})
   };
-  const ph = PHASES[S.phase] || PHASES.cut;
-  const phaseWeek = today < S.start ? 0 : Math.floor(diffDays(S.start, today) / 7) + 1;
+  const dws = dailyWeights(D);
+  const avgW = (from, to) => {
+    const v = dws.filter(p => p.date >= from && p.date <= to).map(p => p.kg);
+    return v.length ? Math.round(avg(v) * 10) / 10 : null;
+  };
+  const lastWaist = before => {
+    const m = measurementList(D).filter(x => x.waist && x.date <= before);
+    return m.length ? m[m.length - 1].waist : null;
+  };
+  const cutEnd = addDays(S.start, S.cutWeeks * 7 - 1);
+  const bridgeStart = addDays(cutEnd, 1),
+    bridgeEnd = addDays(bridgeStart, S.bridgeWeeks * 7 - 1);
+  const bulkStart = addDays(bridgeEnd, 1),
+    bulkEnd = addDays(bulkStart, S.bulkWeeks * 7 - 1);
+  const measuredTDEE = (() => {
+    const to = today < cutEnd ? today : cutEnd,
+      from = addDays(to, -27);
+    const kc = daysIn(D, from, to).map(d => D.days[d].kcal).filter(v => v > 800);
+    const pts = dws.filter(p => p.date >= from && p.date <= to);
+    if (kc.length < 14 || pts.length < 10) return null;
+    const t = avg(kc) - slopePerWeek(pts) * 7700 / 7;
+    return Math.round(Math.min(3400, Math.max(1800, t)) / 50) * 50;
+  })();
+  const TL = {
+    cutStart: S.start,
+    cutEnd,
+    bridgeStart,
+    bridgeEnd,
+    bulkStart,
+    bulkEnd,
+    measuredTDEE
+  };
+  const phaseId = today <= cutEnd ? "cut" : today <= bridgeEnd ? "bridge" : "bulk";
+  const maint = measuredTDEE || PHASES.bridge.kcalBase;
+  const ph = phaseId === "cut" ? {
+    ...PHASES.cut,
+    weeks: S.cutWeeks
+  } : phaseId === "bridge" ? {
+    ...PHASES.bridge,
+    weeks: S.bridgeWeeks,
+    kcalBase: maint,
+    kcalFri: maint
+  } : {
+    ...PHASES.bulk,
+    weeks: S.bulkWeeks,
+    kcalBase: maint + 225,
+    kcalFri: maint + 425
+  };
+  const P = phaseId === "cut" ? {
+    start: S.start,
+    startWeight: S.startWeight,
+    goalWeight: S.goalWeight,
+    waistBase: S.waistBase,
+    waistGoal: S.waistGoal
+  } : (() => {
+    const start = phaseId === "bridge" ? bridgeStart : bulkStart;
+    const sw = avgW(addDays(start, -7), addDays(start, -1)) || (dws.length ? dws[dws.length - 1].kg : S.goalWeight);
+    const wb = lastWaist(start) || S.waistGoal;
+    return phaseId === "bridge" ? {
+      start,
+      startWeight: sw,
+      goalWeight: sw,
+      waistBase: wb,
+      waistGoal: wb
+    } : {
+      start,
+      startWeight: sw,
+      goalWeight: Math.round((sw + S.bulkWeeks * 0.22) * 10) / 10,
+      waistBase: wb,
+      waistGoal: Math.round((wb + 2) * 10) / 10
+    };
+  })();
+  const phaseWeek = today < P.start ? 0 : Math.floor(diffDays(P.start, today) / 7) + 1;
   const isDeload = ph.deload.includes(phaseWeek);
   const mult = phaseWeek < 1 ? 1 : ph.mult(phaseWeek);
   const setsFor = ex => isDeload ? Math.ceil(ex.s / 2) : ex.s;
-  const phaseDone = phaseWeek > ph.weeks;
+  const phaseDone = phaseId === "bulk" && phaseWeek > ph.weeks;
   const cardioPlan = ph.cardio(Math.max(1, Math.min(phaseWeek, ph.weeks)));
-  const weekStart = w => addDays(S.start, (w - 1) * 7);
-  const weekEnd = w => addDays(S.start, w * 7 - 1);
+  const weekStart = w => addDays(P.start, (w - 1) * 7);
+  const weekEnd = w => addDays(P.start, w * 7 - 1);
   const weekDates = date => {
     const sat = addDays(date, -((dowOf(date) + 1) % 7));
     return Array.from({
@@ -1019,13 +1140,12 @@ function App() {
     const wk = weekDates(date);
     return wk.find(d => dayOf(D, d).refeed) || wk.find(d => dowOf(d) === S.refeedDow);
   };
-  const isRefeed = date => refeedOf(date) === date;
+  const isRefeed = date => ph.kcalFri !== ph.kcalBase && refeedOf(date) === date;
   const refeedMoved = date => !!dayOf(D, date).refeed;
   const kcalFor = date => isRefeed(date) ? ph.kcalFri : ph.kcalBase;
   const weekCardioTarget = Math.round(cardioPlan.park * 2 + cardioPlan.lift * 4);
-  const dws = dailyWeights(D);
-  const recentW = dws.filter(p => p.date >= addDays(S.start, -14));
-  const latestKg = recentW.length ? recentW[recentW.length - 1].kg : S.startWeight;
+  const recentW = dws.filter(p => p.date >= addDays(P.start, -14));
+  const latestKg = recentW.length ? recentW[recentW.length - 1].kg : P.startWeight;
   const setSet = (exId, nSets, si, patch) => apply(d => setLiftSet(d, logRef.current, exId, nSets, si, patch));
   const setsOn = (date, exId) => (dayOf(D, date).lifts || {})[exId] || [];
   const setDaily = (field, val) => apply(d => setDayField(d, logRef.current, field, val));
@@ -1105,6 +1225,9 @@ function App() {
     });
   });
   const A = {
+    P,
+    TL,
+    phaseId,
     resetRefeed,
     isRefeed,
     refeedOf,
@@ -1326,7 +1449,7 @@ function App() {
     className: "logo sm"
   }, "RECOMP"), React.createElement("span", {
     className: "phasechip"
-  }, ph.name, phaseWeek >= 1 && !phaseDone ? ` · WK ${phaseWeek}/${ph.weeks}` : phaseWeek === 0 ? " · STARTS " + fmtD(S.start).toUpperCase() : " · DONE"), React.createElement("span", {
+  }, ph.name, phaseWeek >= 1 && !phaseDone ? ` · WK ${phaseWeek}/${ph.weeks}` : phaseWeek === 0 ? " · STARTS " + fmtD(P.start).toUpperCase() : " · DONE"), React.createElement("span", {
     style: {
       marginLeft: "auto",
       fontSize: 10,
@@ -1653,6 +1776,7 @@ function TodayScreen() {
   const dayKey = schedFor(date);
   const day = DAYS[dayKey];
   const isLift = day.kind === "lift";
+  const dayEx = isLift ? exFor(dayKey, A.phaseId) : [];
   const sat = addDays(today, -((dowOf(today) + 1) % 7) - 7 * wOff);
   const strip = Array.from({
     length: 7
@@ -1669,8 +1793,8 @@ function TodayScreen() {
   }));
   const walkMin = walks.reduce((a, w) => a + (w.min || 0), 0);
   const walkTarget = dayKey === "WALK" ? cardioPlan.park : dayKey === "REFEED" ? 0 : cardioPlan.lift;
-  const totalSets = isLift ? day.ex.reduce((a, e) => a + A.setsFor(e), 0) : 0;
-  const doneSets = isLift ? day.ex.reduce((a, e, ei) => a + Array.from({
+  const totalSets = isLift ? dayEx.reduce((a, e) => a + A.setsFor(e), 0) : 0;
+  const doneSets = isLift ? dayEx.reduce((a, e, ei) => a + Array.from({
     length: A.setsFor(e)
   }).filter((_, si) => (A.setsOn(ld, e.id)[si] || {}).done).length, 0) : 0;
   const todos = [{
@@ -1720,8 +1844,8 @@ function TodayScreen() {
     b: phaseWeek > ph.weeks ? "Time for the final measurements, then decide: extend or start the next phase (Plan tab)." : ""
   } : phaseWeek === 0 ? {
     c: "var(--acc)",
-    t: `${ph.name} starts ${fmtDL(S.start)}`,
-    b: `${DAYS[schedFor(S.start)].name} is day 1: 1,850 kcal and 180 g protein start that morning. Week 1 lifts at 90% of your best.`
+    t: `${ph.name} starts ${fmtDL(A.P.start)}`,
+    b: `${DAYS[schedFor(A.P.start)].name} is day 1: 1,850 kcal and 180 g protein start that morning. Week 1 lifts at 90% of your best.`
   } : isDeload ? {
     c: "var(--lo)",
     t: "DELOAD WEEK — half the sets",
@@ -2130,7 +2254,7 @@ function LiftList({
       marginTop: -6,
       padding: "0 2px"
     }
-  }, "Compounds: stop 1–3 reps short of failure · isolation: 0–1 rep short"), day.ex.map((ex, ei) => {
+  }, "Compounds: stop 1–3 reps short of failure · isolation: 0–1 rep short"), exFor(dayKey, A.phaseId).map((ex, ei) => {
     const nS = A.setsFor(ex);
     const [rmin, rmax] = parseReps(ex.r);
     const entries = exHistory(D, ex.id);
@@ -2493,11 +2617,12 @@ function coachVerdict(A) {
     S,
     ph,
     phaseWeek,
-    dws
+    dws,
+    P
   } = A;
   if (phaseWeek === 0) return {
     c: "var(--acc)",
-    t: "Starts " + fmtDL(S.start),
+    t: "Starts " + fmtDL(P.start),
     b: "Weigh in every morning from day 1 — same time, after the toilet, before food or water. The trend matters, not any single day."
   };
   const from = addDays(today, -13);
@@ -2510,6 +2635,23 @@ function coachVerdict(A) {
   };
   const rate = slopePerWeek(pts);
   const r = rate.toFixed(2);
+  if (ph.id === "bridge") {
+    if (rate > 0.3) return {
+      c: "var(--lo)",
+      t: `Rising: +${r} kg/wk`,
+      b: "A +0.5–1 kg rebound in the first week is water and glycogen, not fat. If it's still climbing in week 2, drop 150 kcal."
+    };
+    if (rate < -0.3) return {
+      c: "var(--lo)",
+      t: `Still losing: ${r} kg/wk`,
+      b: "Maintenance is set too low — add 150 kcal a day."
+    };
+    return {
+      c: "var(--ok)",
+      t: `Holding steady: ${r} kg/wk`,
+      b: "This is your real maintenance. The bulk will add ~225 kcal on top of it."
+    };
+  }
   if (ph.id === "cut") {
     if (rate <= -1.0) return {
       c: "var(--lo)",
@@ -2554,6 +2696,7 @@ function WeekScreen() {
     D,
     today,
     S,
+    P,
     ph,
     phaseWeek,
     weekStart,
@@ -2777,7 +2920,7 @@ function WeekScreen() {
     const dl = ph.deload.includes(n);
     const m = ph.mult(n);
     const c = ph.cardio(n);
-    const note = n === 1 ? "Start · measurements + photos" : dl ? "Deload (½ sets)" + ((n - 1) % 4 === 0 ? " · measure + photos" : "") : n === ph.weeks ? "Final · measurements + photos" : n === 3 ? "Walks → 70 / 30 min" : n === 2 ? "Full loads" : "";
+    const note = n === 1 ? "Start · measurements + photos" : dl ? "Deload (½ sets)" + ((n - 1) % 4 === 0 ? " · measure + photos" : "") : n === ph.weeks ? "Final · measurements + photos" : n === 3 && ph.id === "cut" ? "Walks → 70 / 30 min" : n === 2 ? "Full loads" : "";
     return React.createElement("tr", {
       key: n,
       style: {
@@ -2798,7 +2941,7 @@ function WeekScreen() {
       marginTop: 10,
       lineHeight: 1.6
     }
-  }, "Weeks run ", DAY_NAMES[dowOf(S.start)], " → ", DAY_NAMES[(dowOf(S.start) + 6) % 7], " from the phase start date (", fmtDL(S.start), "). Times are Riyadh (GMT+3).")), React.createElement(Sec, {
+  }, "Weeks run ", DAY_NAMES[dowOf(P.start)], " → ", DAY_NAMES[(dowOf(P.start) + 6) % 7], " from the phase start date (", fmtDL(P.start), "). Times are Riyadh (GMT+3).")), React.createElement(Sec, {
     id: "walkhist",
     title: "WALK LOG",
     right: `${allWalks(D).length} sessions`,
@@ -2830,13 +2973,13 @@ function ProgressScreen() {
   const {
     D,
     today,
-    S,
     ph,
     phaseWeek,
     dws,
     latestKg,
     weekStart
   } = A;
+  const S = A.P;
   const lost = S.startWeight - latestKg;
   const toGo = latestKg - S.goalWeight;
   const totalTarget = Math.abs(S.startWeight - S.goalWeight) || 1;
@@ -3149,7 +3292,7 @@ function ProgressScreen() {
       color: DAYS[k].color,
       margin: "12px 0 2px"
     }
-  }, DAYS[k].name.toUpperCase()), DAYS[k].ex.filter(e => !e.bw).map(e => {
+  }, DAYS[k].name.toUpperCase()), exFor(k, A.phaseId).filter(e => !e.bw).map(e => {
     const en = exHistory(D, e.id);
     const b = workingBest(en, parseReps(e.r)[0]);
     const l = lastSession(en, "9999-12-31");
@@ -3222,7 +3365,9 @@ function PlanScreen() {
     ph,
     today,
     saveSettings,
-    latestKg
+    latestKg,
+    P,
+    TL
   } = A;
   const f = ph.id === "cut";
   const prot = ph.protein,
@@ -3230,7 +3375,6 @@ function PlanScreen() {
   const fat = ph.fat,
     carb = Math.round((k - prot * 4 - fat * 9) / 4);
   const meals = f ? [["🌅 Breakfast", 25, "#fb923c"], ["☀️ Lunch", 30, "#60a5fa"], ["🌙 Dinner", 25, "#a78bfa"], ["🍎 Snack / shake", 20, "#34d399"]] : [["🌅 Breakfast", 25, "#fb923c"], ["☀️ Lunch", 30, "#60a5fa"], ["🌙 Dinner", 30, "#a78bfa"], ["🍎 Snack / shake", 15, "#34d399"]];
-  const [confirmSw, setConfirmSw] = useState(false);
   return React.createElement(React.Fragment, null, React.createElement(Card, {
     style: {
       borderColor: "var(--acc)55"
@@ -3244,7 +3388,7 @@ function PlanScreen() {
       margin: "6px 0 10px",
       lineHeight: 1.6
     }
-  }, ph.blurb), [["Started", fmtDL(S.start)], ["Length", ph.weeks + " weeks"], ["Start weight", fmtKg(S.startWeight) + " kg"], ["Goal weight", f ? fmtKg(S.goalWeight) + " kg by " + fmtDL(addDays(S.start, ph.weeks * 7 - 1)) : "slow lean gain"], ["Waist goal", f ? "~" + S.waistGoal + " cm (long-term 82)" : "hold waist, grow arms/chest/thighs"], ["Calories", `${k.toLocaleString()} · refeed ${ph.kcalFri.toLocaleString()} (${DAY_NAMES[S.refeedDow]} by default)`], ["Weekly average", Math.round((k * 6 + ph.kcalFri) / 7).toLocaleString() + " kcal"], ["Protein", ph.protein + " g / day"], ["Steps", ph.stepsMin / 1000 + "k minimum · " + ph.steps / 1000 + "k target"], ["Walking", f ? "~260 min / week from week 3" : "light"], ["Fibre (not tracked)", "Veg with 2 meals + oats, legumes or fruit daily"], ["Water", "3–4 L"], ["Sleep", "7–9 h (logged daily)"], ["Rate", ph.rate.ideal + " kg / week"]].map(([l, v]) => React.createElement("div", {
+  }, ph.blurb), [["Started", fmtDL(P.start)], ["Length", ph.weeks + " weeks"], ["Start weight", fmtKg(P.startWeight) + " kg"], ["Goal weight", f ? fmtKg(P.goalWeight) + " kg by " + fmtDL(addDays(P.start, ph.weeks * 7 - 1)) : ph.id === "bridge" ? "hold " + fmtKg(P.startWeight) + " kg (±0.5)" : "~" + fmtKg(P.goalWeight) + " kg by " + fmtDL(TL.bulkEnd)], ["Waist goal", f ? "~" + P.waistGoal + " cm (long-term 82)" : "rise ≤ 2 cm (" + P.waistGoal + " cm max)"], ["Calories", `${k.toLocaleString()} · refeed ${ph.kcalFri.toLocaleString()} (${DAY_NAMES[S.refeedDow]} by default)`], ["Weekly average", Math.round((k * 6 + ph.kcalFri) / 7).toLocaleString() + " kcal"], ["Protein", ph.protein + " g / day"], ["Steps", ph.stepsMin / 1000 + "k minimum · " + ph.steps / 1000 + "k target"], ["Walking", f ? "~260 min / week from week 3" : "light"], ["Fibre (not tracked)", "Veg with 2 meals + oats, legumes or fruit daily"], ["Water", "3–4 L"], ["Sleep", "7–9 h (logged daily)"], ["Rate", ph.rate.ideal + " kg / week"]].map(([l, v]) => React.createElement("div", {
     className: "row",
     key: l
   }, React.createElement("span", {
@@ -3301,12 +3445,12 @@ function PlanScreen() {
     }
   }, DAYS[kk].name.toUpperCase()), DAYS[kk].ex.map(e => React.createElement("div", {
     key: e.id,
-    className: "mu",
+    className: e.only ? "dim" : "mu",
     style: {
       fontSize: 12,
       padding: "3px 0"
     }
-  }, e.n, " — ", e.s, " × ", e.r))))), React.createElement(Sec, {
+  }, e.n, " — ", e.s, " × ", e.r, e.only ? " · bulk only" : ""))))), React.createElement(Sec, {
     id: "cardioplan",
     title: "WALKING PLAN",
     right: f ? "main fat-loss tool" : "light",
@@ -3432,7 +3576,7 @@ function PlanScreen() {
       fontSize: 13,
       lineHeight: 1.6
     }
-  }, t)))), React.createElement(Sec, {
+  }, t)))), React.createElement(BulkPlan, null), React.createElement(Sec, {
     id: "supps",
     title: "SUPPLEMENT STACK",
     right: "5",
@@ -3559,58 +3703,196 @@ function PlanScreen() {
     style: {
       marginTop: 14
     }
-  }, f ? !confirmSw ? React.createElement("button", {
-    className: "btn",
-    onClick: () => setConfirmSw(true),
+  }, React.createElement("div", {
+    className: "dim",
     style: {
-      width: "100%"
+      fontSize: 10,
+      fontWeight: 700,
+      marginBottom: 6
     }
-  }, "Cut finished → start BULK phase…") : React.createElement("div", {
+  }, "PHASE TIMELINE (switches automatically)"), [["CUT", "#2dd4bf", TL.cutStart, TL.cutEnd, A.phaseId === "cut"], ["MAINTAIN", "#60a5fa", TL.bridgeStart, TL.bridgeEnd, A.phaseId === "bridge"], ["BULK", "#fb923c", TL.bulkStart, TL.bulkEnd, A.phaseId === "bulk"]].map(([n, c, a, b, on]) => React.createElement("div", {
+    className: "row",
+    key: n,
     style: {
-      background: "var(--card2)",
+      background: on ? c + "18" : "transparent",
+      borderRadius: 8,
+      padding: "10px 8px"
+    }
+  }, React.createElement("b", {
+    style: {
+      color: c,
+      width: 86
+    }
+  }, n, on ? " ●" : ""), React.createElement("span", {
+    style: {
+      flex: 1,
+      textAlign: "right"
+    }
+  }, fmtDL(a), " → ", fmtDL(b)))), React.createElement("div", {
+    style: {
+      background: "#fb923c18",
+      border: "1px solid #fb923c55",
       borderRadius: 12,
-      padding: 12
+      padding: "12px 14px",
+      marginTop: 10,
+      textAlign: "center"
     }
   }, React.createElement("div", {
+    className: "dim",
     style: {
-      fontSize: 13,
-      marginBottom: 10,
-      lineHeight: 1.6
+      fontSize: 10,
+      fontWeight: 700,
+      letterSpacing: 1
     }
-  }, "Start the bulk today? Your logs stay. Start weight becomes your latest weigh-in (", latestKg.toFixed(1), " kg)."), React.createElement("div", {
+  }, "BULK STARTS"), React.createElement("div", {
+    className: "h",
+    style: {
+      fontSize: 26,
+      color: "#fb923c",
+      marginTop: 4
+    }
+  }, DAY_NAMES[dowOf(TL.bulkStart)], " ", fmtD(TL.bulkStart), " ", U(TL.bulkStart).getUTCFullYear()), React.createElement("div", {
+    className: "mu",
+    style: {
+      fontSize: 11,
+      marginTop: 4
+    }
+  }, diffDays(today, TL.bulkStart) > 0 ? diffDays(today, TL.bulkStart) + " days from today" : "started")), React.createElement("div", {
     style: {
       display: "flex",
-      gap: 8
+      gap: 8,
+      alignItems: "center",
+      marginTop: 12
     }
-  }, React.createElement("button", {
-    className: "btn primary",
-    onClick: () => {
-      saveSettings({
-        phase: "bulk",
-        start: today,
-        startWeight: Math.round(latestKg * 10) / 10,
-        goalWeight: Math.round((latestKg + 4) * 10) / 10,
-        waistGoal: num(S.waistGoal)
-      });
-      setConfirmSw(false);
-      A.setView("today");
-    }
-  }, "Yes, start bulk"), React.createElement("button", {
-    className: "btn",
-    onClick: () => setConfirmSw(false)
-  }, "Cancel"))) : React.createElement("button", {
-    className: "btn",
+  }, React.createElement("span", {
+    className: "mu",
     style: {
-      width: "100%"
-    },
-    onClick: () => {
-      if (window.confirm("Switch back to a CUT starting today?")) saveSettings({
-        phase: "cut",
-        start: today,
-        startWeight: Math.round(latestKg * 10) / 10
-      });
+      fontSize: 12,
+      flex: 1
     }
-  }, "Switch back to CUT…"))));
+  }, "Cut length: ", React.createElement("b", {
+    style: {
+      color: "var(--tx)"
+    }
+  }, S.cutWeeks, " weeks"), " (moves the dates after it)"), React.createElement("button", {
+    className: "btn sm",
+    onClick: () => saveSettings({
+      cutWeeks: Math.max(8, S.cutWeeks - 1)
+    })
+  }, "−1 wk"), React.createElement("button", {
+    className: "btn sm",
+    onClick: () => saveSettings({
+      cutWeeks: Math.min(24, S.cutWeeks + 1)
+    })
+  }, "+1 wk")), React.createElement("div", {
+    className: "dim",
+    style: {
+      fontSize: 11,
+      marginTop: 6,
+      lineHeight: 1.6
+    }
+  }, "Not at your goal by the end of the cut? Add a week or two here — everything after shifts automatically."))));
+}
+function BulkPlan() {
+  const A = useContext(Ctx);
+  const {
+    TL
+  } = A;
+  const m = TL.measuredTDEE;
+  const maint = m || PHASES.bridge.kcalBase;
+  const R = ({
+    a,
+    b
+  }) => React.createElement("div", {
+    className: "row",
+    style: {
+      alignItems: "flex-start"
+    }
+  }, React.createElement("span", {
+    className: "mu",
+    style: {
+      minWidth: 110
+    }
+  }, a), React.createElement("b", {
+    style: {
+      textAlign: "right",
+      fontWeight: 600
+    }
+  }, b));
+  return React.createElement(Sec, {
+    id: "bulkplan",
+    title: "BULK PLAN",
+    color: "#fb923c",
+    right: "starts " + fmtD(TL.bulkStart)
+  }, React.createElement("div", {
+    className: "mu",
+    style: {
+      fontSize: 12,
+      lineHeight: 1.7,
+      marginBottom: 10
+    }
+  }, "After the cut: 2 weeks at maintenance, then a slow lean bulk. Rates follow Renaissance Periodization (0.125–0.5% of body weight a week, 8–16 weeks) and Helms' natural-lifter guidelines."), React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: 1,
+      color: "#60a5fa",
+      margin: "8px 0 2px"
+    }
+  }, "1 · MAINTAIN · ", fmtD(TL.bridgeStart), " → ", fmtD(TL.bridgeEnd)), React.createElement(R, {
+    a: "Calories",
+    b: `${maint.toLocaleString()} every day (no refeed)`
+  }), React.createElement(R, {
+    a: "Where it comes from",
+    b: m ? "Measured from your last 4 weeks: average intake − weight trend" : "Estimate for now — replaced by your measured maintenance once there are 2+ weeks of weigh-ins and calorie logs"
+  }), React.createElement(R, {
+    a: "Protein · fat",
+    b: "170 g · 70 g"
+  }), React.createElement(R, {
+    a: "Training",
+    b: "Same split, full loads"
+  }), React.createElement(R, {
+    a: "Walking",
+    b: "2 park walks × 45 min + 20 min after lifts · 8–10k steps"
+  }), React.createElement(R, {
+    a: "Expect",
+    b: "+0.5–1 kg in week 1 (water + glycogen) — not fat"
+  }), React.createElement("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: 1,
+      color: "#fb923c",
+      margin: "14px 0 2px"
+    }
+  }, "2 · LEAN BULK · ", fmtD(TL.bulkStart), " → ", fmtD(TL.bulkEnd), " (", A.S.bulkWeeks, " weeks)"), React.createElement(R, {
+    a: "Calories",
+    b: `${(maint + 225).toLocaleString()} (maintenance + ~225) · refeed day ${(maint + 425).toLocaleString()}`
+  }), React.createElement(R, {
+    a: "Rate",
+    b: "+0.15–0.3 kg / week → about +2.5–4.5 kg total"
+  }), React.createElement(R, {
+    a: "Protein · fat",
+    b: "170 g (~2 g/kg) · 75 g"
+  }), React.createElement(R, {
+    a: "Training",
+    b: "Same 4 days + Pec Deck (Upper A) and Lying Leg Curl (Lower B) → chest ~11, hamstrings ~10 sets/week"
+  }), React.createElement(R, {
+    a: "Deloads",
+    b: "Weeks 5, 10, 15 (half sets, normal weights)"
+  }), React.createElement(R, {
+    a: "Walking",
+    b: "2 × 40 min park walks · 7–8k steps (heart health, appetite control)"
+  }), React.createElement(R, {
+    a: "Waist rule",
+    b: "Waist up > 2 cm while weight rises fast → drop 150 kcal"
+  }), React.createElement(R, {
+    a: "Coach check",
+    b: "Gaining > 0.3 kg/wk → −150 kcal · < 0.15 kg/wk for 2 weeks → +150 kcal"
+  }), React.createElement(R, {
+    a: "At the end",
+    b: "Measure + photos; then decide: keep bulking, maintain, or a short cut"
+  }));
 }
 ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
 </script>
