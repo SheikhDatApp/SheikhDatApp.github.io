@@ -170,31 +170,34 @@ const DAYS = {
     ex: [{
       id: "bench",
       n: "Barbell Bench Press",
+      bar: 20,
       s: 4,
       r: "6–8",
       rest: "2–3 min",
-      tip: "Retract shoulder blades, feet planted, 3-second controlled descent."
+      tip: "Log plates only (the app adds a +20 kg bar note). Full range: touch your chest every rep, 3 min rest. Retract shoulder blades, feet planted, 3-second controlled descent."
     }, {
       id: "pulldown",
       n: "Weighted Pull-ups / Lat Pulldown",
       s: 4,
       r: "8–10",
       rest: "2–3 min",
-      tip: "Full stretch at the bottom, drive elbows to hips."
+      tip: "Use a weight that lets you get a full stretch overhead and pull to the upper chest — 50–55 for now. Full stretch at the bottom, drive elbows to hips."
     }, {
       id: "db_shoulder_press",
+      db: true,
       n: "Seated DB Shoulder Press",
       s: 3,
       r: "8–10",
       rest: "75s",
-      tip: "Do it fresh. Don't flare elbows too wide."
+      tip: "24 for now (2 × 12) — own 3 × 10 before going up. Do it fresh. Don't flare elbows too wide."
     }, {
-      id: "cable_row_wide",
-      n: "Seated Cable Row (wide grip)",
+      id: "cable_row_close",
+      n: "Cable Row (close grip, V-handle)",
       s: 3,
       r: "10–12",
       rest: "75s",
-      tip: "Chest proud, no rounding, squeeze at the end."
+      start: "55–60",
+      tip: "Sit tall, chest up. Start each rep by pulling the shoulder blades back, then drive the elbows to your back pockets. Pause 1 sec, slow return to a full stretch. Don't lean back to move the weight."
     }, {
       id: "lateral_raise",
       n: "Cable Lateral Raise",
@@ -208,7 +211,7 @@ const DAYS = {
       s: 3,
       r: "10–12",
       rest: "60s",
-      tip: "Elbows pinned to your sides, no swinging. Lower slowly, squeeze at the top."
+      tip: "20–22.5 for now; no splitting sets. Elbows pinned to your sides, no swinging. Lower slowly, squeeze at the top."
     }, {
       id: "pec_deck",
       n: "Pec Deck / Machine Fly",
@@ -225,21 +228,22 @@ const DAYS = {
     kind: "lift",
     color: "#fbbf24",
     icon: "▼",
-    focus: "Quads-led — squat day",
+    focus: "Quads — machine squat day (back-friendly)",
     ex: [{
-      id: "squat",
-      n: "Barbell Back Squat",
+      id: "hack_squat",
+      n: "Hack Squat (machine)",
       s: 4,
-      r: "6–8",
+      r: "8–10",
       rest: "2–3 min",
-      tip: T.squat
+      start: "light — find a weight for 10 clean reps",
+      tip: "Back and hips flat on the pad the whole rep. Feet shoulder-width, mid-platform. Lower under control until thighs are at least parallel, drive through the whole foot. Replaces the barbell squat because of your lower-back pain — stop if the back hurts."
     }, {
       id: "leg_press",
       n: "Leg Press",
       s: 3,
       r: "10–12",
       rest: "75s",
-      tip: "High foot placement = more glutes. Don't lock out hard."
+      tip: "Feet shoulder-width mid-platform, toes slightly out. Lower only until your lower back starts to lift off the pad — no deeper. Knees track over toes, never lock out. Joint ache near the hip/knee: go a little wider, toes out more, shorten the range."
     }, {
       id: "leg_curl",
       n: "Seated Leg Curl",
@@ -255,13 +259,12 @@ const DAYS = {
       rest: "60s",
       tip: "Pause 2 sec in the bottom stretch every rep. When full reps fail, finish with a few bottom-half reps — the stretched position is what grows calves."
     }, {
-      id: "ab_wheel",
-      n: "Ab Wheel / Hanging Knee Raise",
+      id: "machine_crunch",
+      n: "Machine Crunch",
       s: 3,
       r: "10–15",
       rest: "60s",
-      bw: true,
-      tip: "Control the lowering. Ribs down, no swinging."
+      tip: "Curl your ribs toward your hips, don't pull with the arms. 1 sec squeeze, slow return. Fixed path = easy to feel the abs."
     }]
   },
   UB: {
@@ -273,6 +276,7 @@ const DAYS = {
     focus: "Incline, rows, side + rear delts, arms",
     ex: [{
       id: "incline_db_press",
+      db: true,
       n: "Incline DB Press",
       s: 4,
       r: "8–12",
@@ -280,11 +284,11 @@ const DAYS = {
       tip: "30–45° incline, squeeze at the top."
     }, {
       id: "chest_supported_row",
-      n: "Chest-Supported DB Row",
+      n: "Chest-Supported Row (Technogym machine)",
       s: 3,
       r: "10–12",
-      rest: "75s",
-      tip: "Takes lower-back fatigue out of the row."
+      rest: "90s",
+      tip: "50 for now and focus on feel. Neutral (inner) handles. Chest pinned to the pad all set. Start by squeezing the shoulder blades back, then drive the elbows past your ribs; 1 sec squeeze, slow 3-sec return to a full stretch. Log plates on both sides added."
     }, {
       id: "lateral_raise",
       n: "Cable Lateral Raise",
@@ -300,19 +304,19 @@ const DAYS = {
       rest: "60s",
       tip: "Lead with the elbows. The machine keeps your form consistent."
     }, {
-      id: "incline_curl",
-      n: "DB Incline Curl",
+      id: "preacher_curl",
+      n: "Machine Preacher Curl",
       s: 3,
       r: "10–12",
       rest: "60s",
-      tip: "Full stretch at the bottom = more biceps."
+      tip: "Armpits snug on the pad. Full stretch at the bottom (don't bounce), squeeze at the top. Replaces the incline curl, which hurt — easier on the front of the shoulder."
     }, {
       id: "overhead_tricep_ext",
-      n: "Overhead DB Tricep Extension",
+      n: "Overhead Cable Tricep Extension (rope)",
       s: 3,
       r: "10–12",
       rest: "60s",
-      tip: "Upper arms vertical, big stretch on the long head. Overhead work grew triceps ~40% more than pushdowns in research."
+      tip: "Face away from the cable, elbows pointing up and staying still. Big stretch behind the head, then extend fully and spread the rope. Overhead work grew triceps ~40% more than pushdowns in research."
     }]
   },
   LB: {
@@ -321,35 +325,36 @@ const DAYS = {
     kind: "lift",
     color: "#f59e0b",
     icon: "▼",
-    focus: "Hinge + glutes — posterior chain day",
+    focus: "Hamstrings + glutes — no spinal loading",
     ex: [{
-      id: "rdl",
-      n: "Romanian Deadlift",
+      id: "lying_leg_curl",
+      n: "Lying Leg Curl",
       s: 4,
-      r: "8–10",
-      rest: "2–3 min",
-      tip: T.rdl
-    }, {
-      id: "hip_thrust",
-      n: "Hip Thrust",
-      s: 3,
-      r: "8–12",
-      rest: "2 min",
-      tip: "Use ONE working weight for all 3 sets — if the reps drop a lot, fix setup, not the weight. " + T.thrust
-    }, {
-      id: "hack_goblet_squat",
-      n: "Hack Squat or Goblet Squat",
-      s: 3,
       r: "10–12",
       rest: "75s",
-      tip: "Pick a weight you can do for 10–12 on EVERY set. If set 1 is under 10 reps, it's too heavy — drop it. Goblet is great for form work."
+      tip: "Hips pressed into the pad. Curl all the way up, slow 3-sec lowering to a full stretch. Replaces the Romanian deadlift because of your lower-back pain."
+    }, {
+      id: "leg_press_high",
+      n: "Leg Press (feet high & wide)",
+      s: 3,
+      r: "12–15",
+      rest: "90s",
+      tip: "Feet high and a bit wider on the platform, toes slightly out — shifts the work to glutes and hamstrings. Stop the depth before your lower back lifts off the pad."
+    }, {
+      id: "back_extension",
+      n: "45° Back Extension",
+      s: 3,
+      r: "12–15",
+      rest: "60s",
+      bw: true,
+      tip: "Pad just below your hip bones. Hinge at the hips, chin tucked, squeeze the glutes to come up to a straight line — no arching past it. Bodyweight first; hold a plate only when 3 × 15 is easy. Stop if your lower back hurts."
     }, {
       id: "calf_seated",
       n: "Seated Calf Raise",
       s: 4,
       r: "15–20",
       rest: "60s",
-      tip: "Pause 2 sec in the bottom stretch every rep. When full reps fail, finish with a few bottom-half reps."
+      tip: "Go up to 35–40. Pause 2 sec in the bottom stretch every rep. When full reps fail, finish with a few bottom-half reps."
     }, {
       id: "cable_crunch",
       n: "Cable Crunch",
@@ -357,14 +362,6 @@ const DAYS = {
       r: "10–15",
       rest: "60s",
       tip: "Kneel facing the cable, rope by your head. Curl your ribs down toward your hips — round the spine, don't just bend at the hips. Hold 1 sec squeezed, return slowly to a full stretch. Hips stay still."
-    }, {
-      id: "lying_leg_curl",
-      n: "Lying Leg Curl",
-      s: 3,
-      r: "10–12",
-      rest: "60s",
-      only: "bulk",
-      tip: "Bulk only: second hamstring curl of the week. Hips pressed into the pad, slow 3-sec lowering."
     }]
   },
   WALK: {
@@ -463,6 +460,12 @@ const MEASURES = [{
   base: 38,
   guide: "Middle of the neck, just below the Adam's apple. Snug, not tight, look straight ahead."
 }];
+const V5_DAY_EX = {
+  UA: ["bench", "pulldown", "db_shoulder_press", "cable_row_wide", "lateral_raise", "ez_curl"],
+  LA: ["squat", "leg_press", "leg_curl", "calf_standing", "ab_wheel"],
+  UB: ["incline_db_press", "chest_supported_row", "lateral_raise", "rear_delt_fly", "incline_curl", "overhead_tricep_ext"],
+  LB: ["rdl", "hip_thrust", "hack_goblet_squat", "calf_seated", "plank"]
+};
 const RETIRED_EX = [{
   id: "face_pull",
   n: "Face Pulls"
@@ -491,17 +494,38 @@ const RETIRED_EX = [{
   id: "bulgarian_split_squat",
   n: "Bulgarian Split Squat"
 }, {
-  id: "cable_row_close",
-  n: "Cable Row (close grip)"
-}, {
   id: "deadlift",
   n: "Deadlift (conventional)"
 }, {
   id: "plank",
   n: "Plank"
+}, {
+  id: "squat",
+  n: "Barbell Back Squat"
+}, {
+  id: "rdl",
+  n: "Romanian Deadlift"
+}, {
+  id: "hip_thrust",
+  n: "Hip Thrust"
+}, {
+  id: "hack_goblet_squat",
+  n: "Hack Squat or Goblet Squat"
+}, {
+  id: "ab_wheel",
+  n: "Ab Wheel / Hanging Knee Raise"
+}, {
+  id: "cable_row_wide",
+  n: "Seated Cable Row (wide grip)"
+}, {
+  id: "incline_curl",
+  n: "DB Incline Curl"
 }];
 const EX_ALIASES = {
-  leg_curl: ["Leg Curl (seated or lying)"]
+  leg_curl: ["Leg Curl (seated or lying)"],
+  cable_row_close: ["Cable Row (close grip)"],
+  chest_supported_row: ["Chest-Supported DB Row"],
+  overhead_tricep_ext: ["Overhead DB Tricep Extension"]
 };
 const EXERCISES = (() => {
   const m = {};
@@ -604,10 +628,11 @@ function migrateV5(p) {
   });
   Object.keys(p.setsByDay || {}).forEach(d => Object.keys(p.setsByDay[d] || {}).forEach(key => {
     const [dk, ei, si] = key.split("-");
-    const ex = dk === "LB" && ei === "4" ? {
-      id: "plank"
-    } : DAYS[dk] && DAYS[dk].ex[+ei];
-    if (!ex) return;
+    const id = (V5_DAY_EX[dk] || [])[+ei];
+    if (!id) return;
+    const ex = {
+      id
+    };
     const D = day(d);
     D.lifts = D.lifts || {};
     const arr = D.lifts[ex.id] = D.lifts[ex.id] || [];
@@ -2259,16 +2284,14 @@ function LiftList({
     const [rmin, rmax] = parseReps(ex.r);
     const entries = exHistory(D, ex.id);
     const bw = !!ex.bw;
-    const best = bw ? null : workingBest(entries, rmin);
-    const target = best ? roundTo(best.w * mult, stepFor(best.w)) : null;
     const last = lastSession(entries, today);
+    const prog = bw ? null : nextTarget(ex, entries, last, rmin, rmax, mult, today);
+    const target = prog ? prog.w : null;
     const todaySets = A.setsOn(showDate, ex.id);
     const done = Array.from({
       length: nS
     }).filter((_, si) => (todaySets[si] || {}).done).length;
     const open = openEx === ei;
-    const lastTop = last ? Math.max(...last.sets.map(s => num(s.w) || 0)) : 0;
-    const hitTop = last && !bw && last.sets.filter(s => num(s.w) === lastTop).every(s => (num(s.r) || 0) >= rmax) && lastTop > 0;
     return React.createElement("div", {
       className: "card flat",
       key: ex.id,
@@ -2304,7 +2327,7 @@ function LiftList({
         color: day.color,
         fontWeight: 600
       }
-    }, target ? `Target ${fmtKg(target)} kg × ${rmin}–${rmax}` : "First time — start light, find a weight you can do for the top of the range", hitTop && mult === 1 && !isDeload && (!target || lastTop + stepFor(lastTop) > target) ? ` · ↑ try ${fmtKg(lastTop + stepFor(lastTop))} kg` : ""), last && React.createElement("div", {
+    }, ex.start && !entries.some(e => e.date >= A.P.start) ? `Start: ${ex.start}${/\d$/.test(ex.start) ? " kg" : ""} × ${rmin}–${rmax}` : target ? `Target ${fmtKg(target)} kg${ex.bar ? " (+" + ex.bar + " kg bar)" : ""} × ${rmin}–${rmax}${prog.dir === "up" ? "  ↑ up from last time" : prog.dir === "down" ? "  ↓ eased — missed reps last time" : ""}` : "First time — start light, find a weight you can do for the top of the range"), last && React.createElement("div", {
       className: "dim",
       style: {
         fontSize: 11,
@@ -2609,6 +2632,34 @@ function SleepInput({
     dec: false,
     small: true
   }));
+}
+const loadStep = (ex, w) => ex.db ? w >= 20 ? 4 : 2 : w < 15 ? 1.25 : 2.5;
+function nextTarget(ex, hist, last, rmin, rmax, mult, today) {
+  const recent = last && last.date >= addDays(today, -56) ? last : null;
+  if (!recent) {
+    const b = workingBest(hist, rmin);
+    return b ? {
+      w: roundTo(b.w * 0.9 * mult, loadStep(ex, b.w)),
+      dir: ""
+    } : null;
+  }
+  const top = Math.max(...recent.sets.map(s => s.w || 0));
+  if (!top) return null;
+  const atTop = recent.sets.filter(s => s.w === top);
+  const step = loadStep(ex, top);
+  let w = top,
+    dir = "";
+  if (atTop.every(s => (s.r || 0) >= rmax)) {
+    w = top + step;
+    dir = "up";
+  } else if (atTop.filter(s => (s.r || 0) < rmin).length > 1) {
+    w = Math.max(step, top - step);
+    dir = "down";
+  }
+  return {
+    w: mult < 1 ? roundTo(w * mult, step) : w,
+    dir
+  };
 }
 function coachVerdict(A) {
   const {
@@ -3431,7 +3482,7 @@ function PlanScreen() {
       lineHeight: 1.7,
       marginTop: 10
     }
-  }, "Progression: when you hit the top of the rep range on every set, add 2.5 kg (1.25 kg for small lifts) next time. Week 1 loads at 90% of your best. Deload weeks (5 and 9): half the sets at normal weights. Rest 2–3 min on the big lifts (bench, pulldown, squat, RDL; hip thrust 2 min), 60–75 s on isolation. Compounds: stop 1–3 reps short of failure; isolation: 0–1 rep short. Weekly hard sets ≈ chest 8 · back 10 · side delts 8 · biceps 6 · quads 10 · hamstrings 7 · calves 6 · abs 6."), ["UA", "LA", "UB", "LB"].map(kk => React.createElement("div", {
+  }, "Progression (the app sets each target from your last session): hit the top of the rep range on every set → it goes up one step (2.5 kg; 1.25 kg on small lifts; 2 kg per dumbbell). Miss the bottom of the range on 2+ sets → it eases one step. Barbell weights are logged as plates only. Week 1 loads at 90% of your best. Deload weeks (5 and 9): half the sets at normal weights. Rest 2–3 min on the big lifts (bench, pulldown, squat, RDL; hip thrust 2 min), 60–75 s on isolation. Compounds: stop 1–3 reps short of failure; isolation: 0–1 rep short. Weekly hard sets ≈ chest 8 · back 10 · side delts 8 · rear delts 8 · biceps ~11 · triceps ~8 · quads ~10 · hamstrings ~10 · calves 8 · abs 6."), ["UA", "LA", "UB", "LB"].map(kk => React.createElement("div", {
     key: kk,
     style: {
       marginTop: 12
